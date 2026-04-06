@@ -58,8 +58,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'データベースIDが設定されていません (type=' + type + ')' });
     }
 
-    // ソート設定（photoは日付なし→作成日ソートも可）
-    const sorts = (type === 'photo')
+    // ソート設定（photo/workはDateプロパティがないことがあるので作成日でソート）
+    const sorts = (type === 'photo' || type === 'work')
       ? [{ timestamp: 'created_time', direction: 'descending' }]
       : [{ property: 'Date', direction: 'descending' }];
 
@@ -81,6 +81,16 @@ export default async function handler(req, res) {
 
     const queryData = await queryRes.json();
 
+    // Notion APIがエラーを返した場合（権限なし・プロパティ名不一致など）
+    if (queryData.object === 'error') {
+      console.error('Notion query error:', queryData);
+      return res.status(500).json({
+        error: 'Notion API error',
+        message: queryData.message,
+        code: queryData.code,
+      });
+    }
+
     // type別のエントリ整形
     let entries;
 
@@ -90,7 +100,8 @@ export default async function handler(req, res) {
         title: extractTitle(page),
         date: extractDate(page),
         excerpt: extractExcerpt(page),
-        cover: extractCover(page),
+        // カバー画像 or Image ファイルプロパティ どちらでも拾う
+        cover: extractCover(page) || extractFileProperty(page, 'Image'),
         category: extractSelect(page, 'Category'),
         url: extractUrl(page, 'URL'),
         tags: extractMultiSelect(page, 'Tags'),
