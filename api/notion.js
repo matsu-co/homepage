@@ -95,33 +95,44 @@ export default async function handler(req, res) {
     let entries;
 
     if (type === 'work') {
-      entries = (queryData.results || []).map(page => ({
-        id: page.id,
-        title: extractTitle(page),
-        date: extractDate(page),
-        excerpt: extractExcerpt(page),
-        // カバー画像 or Image ファイルプロパティ どちらでも拾う
-        cover: extractCover(page) || extractFileProperty(page, 'Image'),
-        category: extractSelect(page, 'Category'),
-        url: extractUrl(page, 'URL'),
-        tags: extractMultiSelect(page, 'Tags'),
-      }));
+      entries = (queryData.results || []).map(page => {
+        const images = extractFileList(page, 'Image');
+        return {
+          id: page.id,
+          title: extractTitle(page),
+          date: extractDate(page),
+          excerpt: extractExcerpt(page),
+          // Image プロパティの最初の画像をサムネイルに（カバーは使わない）
+          cover: images[0] || '',
+          images, // モーダル用にすべての画像を配列で
+          category: extractSelect(page, 'Category'),
+          url: extractUrl(page, 'URL'),
+          tags: extractMultiSelect(page, 'Tags'),
+        };
+      });
     } else if (type === 'photo') {
-      entries = (queryData.results || []).map(page => ({
-        id: page.id,
-        title: extractTitle(page),
-        image: extractCover(page) || extractFileProperty(page, 'Image'),
-        caption: extractExcerpt(page),
-      }));
+      entries = (queryData.results || []).map(page => {
+        const images = extractFileList(page, 'Image');
+        return {
+          id: page.id,
+          title: extractTitle(page),
+          // Image プロパティ優先、なければカバー
+          image: images[0] || extractCover(page),
+          caption: extractExcerpt(page),
+        };
+      });
     } else {
-      // diary / comicdiary
-      entries = (queryData.results || []).map(page => ({
-        id: page.id,
-        title: extractTitle(page),
-        date: extractDate(page),
-        excerpt: extractExcerpt(page),
-        cover: extractCover(page),
-      }));
+      // diary / comicdiary（Imageプロパティ優先、なければカバー）
+      entries = (queryData.results || []).map(page => {
+        const images = extractFileList(page, 'Image');
+        return {
+          id: page.id,
+          title: extractTitle(page),
+          date: extractDate(page),
+          excerpt: extractExcerpt(page),
+          cover: images[0] || extractCover(page),
+        };
+      });
     }
 
     return res.status(200).json({ entries });
@@ -178,10 +189,14 @@ function extractUrl(page, propName) {
 }
 
 function extractFileProperty(page, propName) {
+  const list = extractFileList(page, propName);
+  return list[0] || '';
+}
+
+function extractFileList(page, propName) {
   const prop = page.properties?.[propName];
-  if (!prop?.files?.length) return '';
-  const file = prop.files[0];
-  if (file.file?.url) return file.file.url;
-  if (file.external?.url) return file.external.url;
-  return '';
+  if (!prop?.files?.length) return [];
+  return prop.files
+    .map(f => f.file?.url || f.external?.url || '')
+    .filter(Boolean);
 }
