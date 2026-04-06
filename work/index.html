@@ -8,11 +8,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        /* スライダー専用の追加スタイル */
+        .slider-outer { position: relative; width: 100%; overflow: hidden; margin-bottom: 20px; border-radius: 4px; }
+        .slider-track { display: flex; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .slider-item { flex: 0 0 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.02); }
+        .slider-item img { max-width: 100%; max-height: 65vh; object-fit: contain; }
+        
+        .slider-nav { display: flex; justify-content: center; gap: 15px; margin-top: 10px; align-items: center; }
+        .nav-btn { background: #eee; border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; color: #555; }
+        .nav-btn:disabled { opacity: 0.3; cursor: default; }
+        .dots { display: flex; gap: 8px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; border: none; padding: 0; }
+        .dot.active { background: #a08a6e; }
+    </style>
 </head>
 <body class="bg-paper">
-    <div class="paper-bg">
-        <img src="../paper.png" alt="" class="paper-texture">
-    </div>
+    <div class="paper-bg"><img src="../paper.png" alt="" class="paper-texture"></div>
 
     <div class="page-wrapper" style="max-width: 960px; position: relative; z-index: 1;">
         <header class="page-header">
@@ -25,95 +37,105 @@
                 <h2 class="section-title">work（お仕事）</h2>
                 <div id="work-list" class="work-grid">読み込み中...</div>
             </section>
-
             <section class="work-section">
                 <h2 class="section-title">Life work（くらしのデザイン）</h2>
                 <div id="lifework-list" class="work-grid">読み込み中...</div>
             </section>
         </main>
-
-        <footer class="page-footer">
-            &copy; matsushima CHIHIRO.
-        </footer>
+        <footer class="page-footer">&copy; matsushima CHIHIRO.</footer>
     </div>
 
     <div id="modal" class="modal" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <button onclick="closeModal()" class="close-btn" aria-label="閉じる">&times;</button>
-            <div id="modal-images" class="modal-images">
-                </div>
+            <button onclick="closeModal()" class="close-btn">&times;</button>
+            
+            <div class="slider-outer">
+                <div id="modal-track" class="slider-track"></div>
+            </div>
+            
+            <div id="slider-controls" class="slider-nav">
+                <button id="prev-btn" class="nav-btn" onclick="moveSlider(-1)">←</button>
+                <div id="modal-dots" class="dots"></div>
+                <button id="next-btn" class="nav-btn" onclick="moveSlider(1)">→</button>
+            </div>
+
             <div class="modal-info">
-                <h2 id="modal-title"></h2>
+                <h2 id="modal-title" style="margin-top:20px;"></h2>
                 <p id="modal-description" style="white-space: pre-wrap;"></p>
-                <div id="modal-tags" class="work-modal-tags"></div>
+                <div id="modal-tags" class="work-modal-tags" style="justify-content:center;"></div>
             </div>
         </div>
     </div>
 
     <script>
+        let currentIdx = 0;
+        let imageCount = 0;
+
         async function loadWork() {
-            try {
-                // api/notion.js を呼び出す
-                const res = await fetch('/api/notion?type=work');
-                const data = await res.json();
-                
-                if (data.error) {
-                    document.getElementById('work-list').innerHTML = `<p style="color:red">Error: ${data.error}</p>`;
-                    return;
-                }
+            const res = await fetch('/api/notion?type=work');
+            const data = await res.json();
+            const wList = document.getElementById('work-list');
+            const lList = document.getElementById('lifework-list');
+            wList.innerHTML = ''; lList.innerHTML = '';
 
-                const wList = document.getElementById('work-list');
-                const lList = document.getElementById('lifework-list');
-                wList.innerHTML = '';
-                lList.innerHTML = '';
+            data.entries.forEach(e => {
+                const div = document.createElement('div');
+                div.className = 'work-card';
+                div.onclick = () => openModal(e);
+                div.innerHTML = `<div class="work-thumbnail-container"><img src="${e.thumbnail}" loading="lazy"></div><p>${e.title}</p>`;
+                if (e.category.toLowerCase().includes('life')) { lList.appendChild(div); } 
+                else { wList.appendChild(div); }
+            });
+        }
 
-                data.entries.forEach(e => {
-                    const div = document.createElement('div');
-                    div.className = 'work-card';
-                    
-                    // クリックでモーダルを開く設定
-                    div.onclick = () => {
-                        // 画像をすべて縦に並べて表示（スライダーよりスマホで見やすい）
-                        document.getElementById('modal-images').innerHTML = 
-                            e.images.map(url => `<img src="${url}" loading="lazy">`).join('');
-                        
-                        document.getElementById('modal-title').innerText = e.title;
-                        document.getElementById('modal-description').innerText = e.description;
-                        
-                        // タグの表示
-                        const tagContainer = document.getElementById('modal-tags');
-                        tagContainer.innerHTML = (e.tags || []).map(t => `<span class="work-tag">${t}</span>`).join('');
-                        
-                        document.getElementById('modal').style.display = 'block';
-                        document.body.style.overflow = 'hidden'; // 背景スクロールを止める
-                    };
+        function openModal(e) {
+            const track = document.getElementById('modal-track');
+            const dots = document.getElementById('modal-dots');
+            currentIdx = 0;
+            imageCount = e.images.length;
 
-                    // カードの中身（枠を揃える thumbnail-container を使用）
-                    div.innerHTML = `
-                        <div class="work-thumbnail-container">
-                            <img src="${e.thumbnail}" alt="${e.title}" loading="lazy">
-                        </div>
-                        <p>${e.title}</p>
-                    `;
+            track.innerHTML = e.images.map(url => `<div class="slider-item"><img src="${url}"></div>`).join('');
+            dots.innerHTML = e.images.map((_, i) => `<button class="dot ${i===0?'active':''}" onclick="goToSlide(${i})"></button>`).join('');
+            
+            document.getElementById('modal-title').innerText = e.title;
+            document.getElementById('modal-description').innerText = e.description;
+            document.getElementById('modal-tags').innerHTML = (e.tags || []).map(t => `<span class="work-tag">${t}</span>`).join('');
+            
+            document.getElementById('slider-controls').style.display = (imageCount > 1) ? 'flex' : 'none';
+            
+            updateSlider();
+            document.getElementById('modal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
 
-                    // カテゴリで振り分け
-                    if (e.category.toLowerCase().includes('life')) {
-                        lList.appendChild(div);
-                    } else {
-                        wList.appendChild(div);
-                    }
-                });
-            } catch (e) {
-                console.error("Fetch error:", e);
-            }
+        function moveSlider(step) {
+            currentIdx = Math.max(0, Math.min(currentIdx + step, imageCount - 1));
+            updateSlider();
+        }
+
+        function goToSlide(i) {
+            currentIdx = i;
+            updateSlider();
+        }
+
+        function updateSlider() {
+            const track = document.getElementById('modal-track');
+            track.style.transform = `translateX(-${currentIdx * 100}%)`;
+            
+            // ボタンの有効/無効
+            document.getElementById('prev-btn').disabled = (currentIdx === 0);
+            document.getElementById('next-btn').disabled = (currentIdx === imageCount - 1);
+            
+            // ドットの更新
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIdx));
         }
 
         function closeModal() {
             document.getElementById('modal').style.display = 'none';
-            document.body.style.overflow = ''; // スクロール再開
+            document.body.style.overflow = '';
         }
 
-        // ページを開いた時にデータを読み込む
         loadWork();
     </script>
 </body>
