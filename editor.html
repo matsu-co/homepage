@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>レイアウトエディタ - matsushima CHIHIRO.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Shippori Mincho', serif;
+      background: #2a2a2a;
+      color: #eee;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* --- ツールバー --- */
+    .toolbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+      border-bottom: 1px solid #444;
+      font-size: 13px;
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .toolbar-title {
+      font-size: 14px;
+      color: #ccc;
+      letter-spacing: 0.05em;
+    }
+
+    .toolbar button {
+      background: #444;
+      color: #eee;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+
+    .toolbar button:hover { background: #555; }
+    .toolbar button.primary { background: #a08a6e; color: #fff; }
+    .toolbar button.primary:hover { background: #b89e7e; }
+
+    .mode-tabs {
+      display: flex;
+      gap: 2px;
+      background: #333;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .mode-tab {
+      padding: 6px 16px;
+      background: transparent;
+      color: #aaa;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .mode-tab.active { background: #555; color: #fff; }
+
+    /* --- キャンバスエリア --- */
+    .editor-area {
+      position: absolute;
+      top: 48px;
+      left: 0;
+      right: 280px;
+      bottom: 0;
+      overflow: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #333;
+    }
+
+    .canvas-frame {
+      position: relative;
+      background: #f0ece4;
+      overflow: hidden;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+    }
+
+    .canvas-frame.pc { width: 960px; height: 540px; }
+    .canvas-frame.sp { width: 375px; height: 667px; }
+
+    .canvas-frame .paper-texture {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    /* --- ドラッグ可能なオブジェクト --- */
+    .draggable {
+      position: absolute;
+      cursor: move;
+      user-select: none;
+      outline: 2px solid transparent;
+      transition: outline-color 0.15s;
+    }
+
+    .draggable:hover { outline-color: rgba(160, 138, 110, 0.6); }
+    .draggable.selected { outline: 2px solid #a08a6e; }
+    .draggable.dragging { opacity: 0.8; z-index: 100; }
+
+    .draggable img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      display: block;
+    }
+
+    .draggable .label {
+      position: absolute;
+      top: -20px;
+      left: 0;
+      font-size: 10px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 2px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+    }
+
+    .draggable:hover .label,
+    .draggable.selected .label { opacity: 1; }
+
+    /* リサイズハンドル */
+    .resize-handle {
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      width: 10px;
+      height: 10px;
+      background: #a08a6e;
+      border-radius: 2px;
+      cursor: nwse-resize;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .draggable.selected .resize-handle { opacity: 1; }
+
+    /* --- サイドパネル --- */
+    .side-panel {
+      position: fixed;
+      top: 48px;
+      right: 0;
+      width: 280px;
+      bottom: 0;
+      background: #1e1e1e;
+      border-left: 1px solid #444;
+      overflow-y: auto;
+      padding: 16px;
+      font-size: 13px;
+    }
+
+    .panel-section {
+      margin-bottom: 20px;
+    }
+
+    .panel-section h3 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #888;
+      margin-bottom: 10px;
+      font-weight: 400;
+    }
+
+    .prop-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .prop-label {
+      width: 50px;
+      font-size: 12px;
+      color: #999;
+      text-align: right;
+    }
+
+    .prop-input {
+      flex: 1;
+      background: #333;
+      border: 1px solid #555;
+      color: #eee;
+      padding: 4px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-family: monospace;
+    }
+
+    .prop-input:focus { border-color: #a08a6e; outline: none; }
+
+    /* オブジェクト一覧 */
+    .obj-list-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-size: 12px;
+      color: #ccc;
+    }
+
+    .obj-list-item:hover { background: #2a2a2a; }
+    .obj-list-item.active { background: #333; color: #fff; }
+
+    .obj-list-item .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #666;
+    }
+
+    .obj-list-item.active .dot { background: #a08a6e; }
+
+    /* --- CSS出力モーダル --- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #1e1e1e;
+      border-radius: 8px;
+      width: 600px;
+      max-height: 80vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #444;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 { font-size: 14px; font-weight: 400; }
+
+    .modal-body {
+      padding: 16px 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-body pre {
+      background: #111;
+      padding: 16px;
+      border-radius: 4px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #b0d0b0;
+      white-space: pre-wrap;
+      font-family: 'SF Mono', 'Consolas', monospace;
+    }
+
+    .modal-footer {
+      padding: 12px 20px;
+      border-top: 1px solid #444;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ツールバー -->
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <span class="toolbar-title">レイアウトエディタ</span>
+      <div class="mode-tabs">
+        <button class="mode-tab active" data-mode="pc">PC (16:9)</button>
+        <button class="mode-tab" data-mode="sp">スマホ (9:16)</button>
+      </div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button onclick="resetPositions()">リセット</button>
+      <button class="primary" onclick="exportCSS()">CSSを書き出す</button>
+    </div>
+  </div>
+
+  <!-- キャンバス -->
+  <div class="editor-area">
+    <div class="canvas-frame pc" id="canvasFrame">
+      <img src="paper.png" class="paper-texture" alt="">
+      <!-- オブジェクトはJSで生成 -->
+    </div>
+  </div>
+
+  <!-- サイドパネル -->
+  <div class="side-panel">
+    <div class="panel-section">
+      <h3>選択中のオブジェクト</h3>
+      <div id="selectedInfo" style="color:#666; font-size:12px;">クリックして選択</div>
+      <div id="propEditor" style="display:none;">
+        <div class="prop-row">
+          <span class="prop-label">top</span>
+          <input class="prop-input" id="propTop" type="text" suffix="%">
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">left</span>
+          <input class="prop-input" id="propLeft" type="text">
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">width</span>
+          <input class="prop-input" id="propWidth" type="text">
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <h3>オブジェクト一覧</h3>
+      <div id="objList"></div>
+    </div>
+
+    <div class="panel-section" style="margin-top:auto; padding-top:16px; border-top:1px solid #333;">
+      <h3>使い方</h3>
+      <p style="font-size:11px; color:#888; line-height:1.7;">
+        ドラッグで移動、右下のハンドルでサイズ変更。<br>
+        PC/スマホを切り替えてそれぞれ調整できます。<br>
+        「CSSを書き出す」で style.css に貼れるコードが出力されます。
+      </p>
+    </div>
+  </div>
+
+  <!-- CSS出力モーダル -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>CSS 書き出し</h2>
+        <button onclick="closeModal()" style="background:none; border:none; color:#999; font-size:18px; cursor:pointer;">&times;</button>
+      </div>
+      <div class="modal-body">
+        <pre id="cssOutput"></pre>
+      </div>
+      <div class="modal-footer">
+        <button onclick="copyCSS()">コピー</button>
+        <button onclick="closeModal()">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ============================
+       オブジェクト定義
+       ============================ */
+    const objects = [
+      { id: 'logo',    label: 'ロゴ',           src: 'matsushimachihiro01.png', hasLink: false },
+      { id: 'star',    label: '星（メニュー）',  src: 'star01.png',             hasLink: true  },
+      { id: 'flower',  label: 'ドライフラワー',  src: 'Flower01.png',           hasLink: false },
+      { id: 'window',  label: '窓 → work',      src: 'window01.png',           hasLink: true  },
+      { id: 'pic',     label: '額縁 → about',   src: 'pic01.png',              hasLink: true  },
+      { id: 'memo',    label: 'メモ',            src: 'memo01.png',             hasLink: false },
+      { id: 'book',    label: '本棚 → comic',   src: 'book01.png',             hasLink: true  },
+      { id: 'table',   label: 'テーブル → diary',src: 'table01.png',           hasLink: true  },
+      { id: 'camera',  label: 'カメラ → archive',src: 'camera01.png',          hasLink: true  },
+      { id: 'hikouki', label: 'ひこうき → mail', src: 'hikouki01.png',          hasLink: true  },
+    ];
+
+    // 現在のCSSから初期位置（%値）
+    const defaults = {
+      pc: {
+        logo:    { top: 4.4,  left: 2.9,  width: 27.9 },
+        star:    { top: 2.7,  left: 86.5, width: 11.9 },
+        flower:  { top: 19.6, left: 21.1, width: 11.2 },
+        window:  { top: 4.8,  left: 32.6, width: 32.3 },
+        pic:     { top: 25.3, left: 65.3, width: 15.6 },
+        memo:    { top: 49.3, left: 21.1, width: 10.2 },
+        book:    { top: 7.1,  left: 65.6, width: 14.3 },
+        table:   { top: 48.9, left: 32.2, width: 34.7 },
+        camera:  { top: 59.9, left: 70.2, width: 18.3 },
+        hikouki: { top: 81.6, left: 8.0,  width: 14.7 },
+      },
+      sp: {
+        logo:    { top: 3.0,  left: 4.8,  width: 57.9 },
+        star:    { top: 2.7,  left: 73.9, width: 22.2 },
+        flower:  { top: 18.8, left: 0.9,  width: 20.5 },
+        window:  { top: 14.2, left: 16.1, width: 65.3 },
+        pic:     { top: 15.4, left: 72.6, width: 24.9 },
+        memo:    { top: 34.5, left: 74.7, width: 19.2 },
+        book:    { top: 40.8, left: 1.7,  width: 23.9 },
+        table:   { top: 44.0, left: 17.5, width: 65.4 },
+        camera:  { top: 69.6, left: 64.4, width: 32.1 },
+        hikouki: { top: 84.3, left: 5.6,  width: 28.0 },
+      }
+    };
+
+    let positions = JSON.parse(JSON.stringify(defaults));
+    let currentMode = 'pc';
+    let selectedId = null;
+    let dragState = null;
+
+    const canvasFrame = document.getElementById('canvasFrame');
+
+    /* --- 初期化 --- */
+    function init() {
+      // オブジェクト要素を生成
+      objects.forEach(obj => {
+        const el = document.createElement('div');
+        el.className = 'draggable';
+        el.dataset.id = obj.id;
+        el.innerHTML = `
+          <img src="${obj.src}" alt="${obj.label}">
+          <span class="label">${obj.label}</span>
+          <div class="resize-handle"></div>
+        `;
+        canvasFrame.appendChild(el);
+      });
+
+      // オブジェクト一覧を生成
+      renderObjList();
+      applyPositions();
+      setupEvents();
+    }
+
+    function renderObjList() {
+      const list = document.getElementById('objList');
+      list.innerHTML = '';
+      objects.forEach(obj => {
+        const item = document.createElement('div');
+        item.className = 'obj-list-item' + (selectedId === obj.id ? ' active' : '');
+        item.innerHTML = `<span class="dot"></span>${obj.label}`;
+        item.onclick = () => selectObject(obj.id);
+        list.appendChild(item);
+      });
+    }
+
+    function applyPositions() {
+      const pos = positions[currentMode];
+      document.querySelectorAll('.draggable').forEach(el => {
+        const id = el.dataset.id;
+        const p = pos[id];
+        if (!p) return;
+        el.style.top = p.top + '%';
+        el.style.left = p.left + '%';
+        el.style.width = p.width + '%';
+      });
+    }
+
+    /* --- 選択 --- */
+    function selectObject(id) {
+      selectedId = id;
+      document.querySelectorAll('.draggable').forEach(el => {
+        el.classList.toggle('selected', el.dataset.id === id);
+      });
+      renderObjList();
+      updatePropEditor();
+    }
+
+    function updatePropEditor() {
+      const info = document.getElementById('selectedInfo');
+      const editor = document.getElementById('propEditor');
+
+      if (!selectedId) {
+        info.style.display = '';
+        editor.style.display = 'none';
+        return;
+      }
+
+      info.style.display = 'none';
+      editor.style.display = 'block';
+
+      const p = positions[currentMode][selectedId];
+      document.getElementById('propTop').value = p.top.toFixed(1) + '%';
+      document.getElementById('propLeft').value = p.left.toFixed(1) + '%';
+      document.getElementById('propWidth').value = p.width.toFixed(1) + '%';
+    }
+
+    /* --- イベント --- */
+    function setupEvents() {
+      // モード切替
+      document.querySelectorAll('.mode-tab').forEach(tab => {
+        tab.onclick = () => {
+          currentMode = tab.dataset.mode;
+          document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          canvasFrame.className = 'canvas-frame ' + currentMode;
+          applyPositions();
+          updatePropEditor();
+        };
+      });
+
+      // ドラッグ
+      canvasFrame.addEventListener('mousedown', startDrag);
+      window.addEventListener('mousemove', onDrag);
+      window.addEventListener('mouseup', endDrag);
+
+      // タッチ対応
+      canvasFrame.addEventListener('touchstart', e => {
+        const touch = e.touches[0];
+        startDrag({ target: e.target, clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => e.preventDefault() });
+      }, { passive: false });
+      window.addEventListener('touchmove', e => {
+        if (!dragState) return;
+        const touch = e.touches[0];
+        onDrag({ clientX: touch.clientX, clientY: touch.clientY });
+      }, { passive: false });
+      window.addEventListener('touchend', endDrag);
+
+      // プロパティ入力
+      ['propTop', 'propLeft', 'propWidth'].forEach(prop => {
+        const input = document.getElementById(prop);
+        input.addEventListener('change', () => {
+          if (!selectedId) return;
+          const val = parseFloat(input.value);
+          if (isNaN(val)) return;
+          const key = prop.replace('prop', '').toLowerCase();
+          positions[currentMode][selectedId][key] = val;
+          applyPositions();
+        });
+      });
+
+      // キャンバスクリックで選択解除
+      canvasFrame.addEventListener('click', (e) => {
+        if (e.target === canvasFrame || e.target.classList.contains('paper-texture')) {
+          selectObject(null);
+        }
+      });
+    }
+
+    function startDrag(e) {
+      const draggable = e.target.closest('.draggable');
+      if (!draggable) return;
+      e.preventDefault();
+
+      const id = draggable.dataset.id;
+      selectObject(id);
+
+      const rect = canvasFrame.getBoundingClientRect();
+      const isResize = e.target.classList.contains('resize-handle');
+
+      dragState = {
+        id,
+        el: draggable,
+        isResize,
+        startX: e.clientX,
+        startY: e.clientY,
+        startTop: positions[currentMode][id].top,
+        startLeft: positions[currentMode][id].left,
+        startWidth: positions[currentMode][id].width,
+        canvasRect: rect,
+      };
+
+      draggable.classList.add('dragging');
+    }
+
+    function onDrag(e) {
+      if (!dragState) return;
+
+      const { id, el, isResize, startX, startY, startTop, startLeft, startWidth, canvasRect } = dragState;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+
+      const pctX = (dx / canvasRect.width) * 100;
+      const pctY = (dy / canvasRect.height) * 100;
+
+      if (isResize) {
+        positions[currentMode][id].width = Math.max(2, startWidth + pctX);
+      } else {
+        positions[currentMode][id].top = Math.max(-5, Math.min(95, startTop + pctY));
+        positions[currentMode][id].left = Math.max(-5, Math.min(98, startLeft + pctX));
+      }
+
+      applyPositions();
+      updatePropEditor();
+    }
+
+    function endDrag() {
+      if (dragState) {
+        dragState.el.classList.remove('dragging');
+        dragState = null;
+      }
+    }
+
+    /* --- リセット --- */
+    function resetPositions() {
+      positions[currentMode] = JSON.parse(JSON.stringify(defaults[currentMode]));
+      applyPositions();
+      updatePropEditor();
+    }
+
+    /* --- CSS書き出し --- */
+    function exportCSS() {
+      const pc = positions.pc;
+      const sp = positions.sp;
+
+      let css = '/* === PC レイアウト === */\n\n';
+
+      objects.forEach(obj => {
+        const p = pc[obj.id];
+        // star uses "right" in original CSS
+        if (obj.id === 'star') {
+          css += `.${obj.id} {\n`;
+          css += `  top: ${p.top.toFixed(1)}%;\n`;
+          css += `  right: ${(100 - p.left - p.width).toFixed(1)}%;\n`;
+          css += `  width: ${p.width.toFixed(1)}%;\n`;
+          css += `}\n\n`;
+        } else if (['pic', 'memo', 'camera'].includes(obj.id)) {
+          css += `.${obj.id} {\n`;
+          css += `  top: ${p.top.toFixed(1)}%;\n`;
+          css += `  right: ${(100 - p.left - p.width).toFixed(1)}%;\n`;
+          css += `  width: ${p.width.toFixed(1)}%;\n`;
+          css += `}\n\n`;
+        } else {
+          css += `.${obj.id} {\n`;
+          css += `  top: ${p.top.toFixed(1)}%;\n`;
+          css += `  left: ${p.left.toFixed(1)}%;\n`;
+          css += `  width: ${p.width.toFixed(1)}%;\n`;
+          css += `}\n\n`;
+        }
+      });
+
+      css += '\n/* === スマホ レイアウト (@media max-width: 768px) === */\n\n';
+
+      objects.forEach(obj => {
+        const p = sp[obj.id];
+        if (['star', 'pic', 'memo', 'camera'].includes(obj.id)) {
+          css += `.${obj.id} {\n`;
+          css += `  top: ${p.top.toFixed(1)}%;\n`;
+          css += `  right: ${(100 - p.left - p.width).toFixed(1)}%;\n`;
+          css += `  width: ${p.width.toFixed(1)}%;\n`;
+          css += `}\n\n`;
+        } else {
+          css += `.${obj.id} {\n`;
+          css += `  top: ${p.top.toFixed(1)}%;\n`;
+          css += `  left: ${p.left.toFixed(1)}%;\n`;
+          css += `  width: ${p.width.toFixed(1)}%;\n`;
+          css += `}\n\n`;
+        }
+      });
+
+      document.getElementById('cssOutput').textContent = css;
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+
+    function copyCSS() {
+      const text = document.getElementById('cssOutput').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector('.modal-footer button:first-child');
+        btn.textContent = 'コピーしました';
+        setTimeout(() => { btn.textContent = 'コピー'; }, 1500);
+      });
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+    }
+
+    // 起動
+    init();
+  </script>
+</body>
+</html>

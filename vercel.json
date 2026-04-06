@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    { "source": "/work", "destination": "/work/index.html" },
+    { "source": "/about", "destination": "/about/index.html" },
+    { "source": "/diary", "destination": "/diary/index.html" },
+    { "source": "/comicdiary", "destination": "/comicdiary/index.html" },
+    { "source": "/archive", "destination": "/archive/index.html" }
+  ]
+}

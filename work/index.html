@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>work - matsushima CHIHIRO.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="paper-bg">
+    <img src="../paper.png" alt="" class="paper-texture">
+  </div>
+
+  <div class="page-wrapper" style="max-width: 960px;">
+    <header class="page-header">
+      <h1>work</h1>
+      <a href="../" class="back-link">← もどる</a>
+    </header>
+
+    <!-- お仕事セクション -->
+    <section class="work-section" id="workSection">
+      <h2 class="work-section-title">work（お仕事）</h2>
+      <div class="work-grid" id="workGrid">
+        <div class="loading" id="workLoading">読み込み中</div>
+      </div>
+    </section>
+
+    <!-- くらしのデザインセクション -->
+    <section class="work-section" id="lifeSection">
+      <h2 class="work-section-title">Life work（くらしのデザイン）</h2>
+      <div class="work-grid" id="lifeGrid">
+        <div class="loading" id="lifeLoading">読み込み中</div>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      &copy; matsushima CHIHIRO.
+    </footer>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    (async () => {
+      const workGrid = document.getElementById('workGrid');
+      const lifeGrid = document.getElementById('lifeGrid');
+      const workLoading = document.getElementById('workLoading');
+      const lifeLoading = document.getElementById('lifeLoading');
+
+      const entries = await NotionHelper.getEntries('work');
+      workLoading.style.display = 'none';
+      lifeLoading.style.display = 'none';
+
+      if (entries.length === 0) {
+        workGrid.innerHTML = '<p class="work-empty">Notionと連携すると、ここに作品が表示されます。<br>詳しくは SETUP-NOTION.md をご覧ください。</p>';
+        lifeGrid.innerHTML = '';
+        document.getElementById('lifeSection').style.display = 'none';
+        return;
+      }
+
+      // Category で振り分け（"Life work" はライフワークセクション、それ以外はお仕事セクション）
+      const workItems = [];
+      const lifeItems = [];
+
+      entries.forEach(entry => {
+        const cat = (entry.category || '').toLowerCase();
+        if (cat.includes('life')) {
+          lifeItems.push(entry);
+        } else {
+          workItems.push(entry);
+        }
+      });
+
+      function renderCards(grid, items) {
+        grid.innerHTML = '';
+        if (items.length === 0) {
+          grid.innerHTML = '<p class="work-empty">まだ作品がありません</p>';
+          return;
+        }
+        items.forEach(entry => {
+          const card = document.createElement('div');
+          card.className = 'work-card';
+          const linkStart = entry.url ? `<a href="${entry.url}" target="_blank" rel="noopener">` : '<div>';
+          const linkEnd = entry.url ? '</a>' : '</div>';
+
+          card.innerHTML = `
+            ${linkStart}
+              ${entry.cover ? `<img src="${entry.cover}" alt="" loading="lazy">` : '<div class="work-card-noimg"></div>'}
+              <div class="work-card-body">
+                <h3 class="work-card-title">${entry.title || '無題'}</h3>
+                ${entry.excerpt ? `<p class="work-card-desc">${entry.excerpt}</p>` : ''}
+                ${entry.tags && entry.tags.length ? `<div class="work-card-tags">${entry.tags.map(t => `<span class="work-tag">${t}</span>`).join('')}</div>` : ''}
+              </div>
+            ${linkEnd}
+          `;
+          grid.appendChild(card);
+        });
+      }
+
+      renderCards(workGrid, workItems);
+
+      if (lifeItems.length === 0) {
+        document.getElementById('lifeSection').style.display = 'none';
+      } else {
+        renderCards(lifeGrid, lifeItems);
+      }
+    })();
+  </script>
+</body>
+</html>

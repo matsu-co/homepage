@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ラベル位置エディタ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Shippori Mincho', serif;
+      background: #2a2a2a;
+      color: #eee;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .toolbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 48px;
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+      border-bottom: 1px solid #444;
+      font-size: 13px;
+    }
+
+    .toolbar-left { display: flex; align-items: center; gap: 16px; }
+    .toolbar-title { font-size: 14px; color: #ccc; letter-spacing: 0.05em; }
+
+    .toolbar button {
+      background: #444; color: #eee; border: none;
+      padding: 6px 14px; border-radius: 4px; cursor: pointer;
+      font-size: 12px; font-family: inherit; transition: background 0.2s;
+    }
+    .toolbar button:hover { background: #555; }
+    .toolbar button.primary { background: #a08a6e; color: #fff; }
+    .toolbar button.primary:hover { background: #b89e7e; }
+
+    .mode-tabs { display: flex; gap: 2px; background: #333; border-radius: 4px; overflow: hidden; }
+    .mode-tab {
+      padding: 6px 16px; background: transparent; color: #aaa;
+      border: none; cursor: pointer; font-size: 12px; font-family: inherit; transition: all 0.2s;
+    }
+    .mode-tab.active { background: #555; color: #fff; }
+
+    .editor-area {
+      position: absolute;
+      top: 48px; left: 0; right: 280px; bottom: 0;
+      overflow: auto;
+      display: flex; align-items: center; justify-content: center;
+      background: #333;
+    }
+
+    .canvas-frame {
+      position: relative;
+      background: #f0ece4;
+      overflow: hidden;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+    }
+    .canvas-frame.pc { width: 960px; height: 540px; }
+    .canvas-frame.sp { width: 375px; height: 667px; }
+
+    .canvas-frame .paper-texture {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; pointer-events: none;
+    }
+
+    /* オブジェクト（固定、半透明） */
+    .obj-fixed {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+    .obj-fixed img {
+      width: 100%; height: 100%;
+      object-fit: contain; display: block;
+    }
+
+    /* ドラッグ可能なラベル */
+    .label-draggable {
+      position: absolute;
+      cursor: move;
+      user-select: none;
+      font-family: 'Shippori Mincho', serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: #5a5040;
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+      padding: 4px 8px;
+      border-radius: 3px;
+      z-index: 10;
+      transition: outline-color 0.15s;
+      outline: 1px dashed transparent;
+    }
+    .label-draggable:hover { outline-color: rgba(160, 138, 110, 0.5); }
+    .label-draggable.selected { outline: 1px solid #a08a6e; background: rgba(160,138,110,0.1); }
+    .label-draggable.dragging { opacity: 0.7; }
+
+    /* サイドパネル */
+    .side-panel {
+      position: fixed;
+      top: 48px; right: 0; width: 280px; bottom: 0;
+      background: #1e1e1e;
+      border-left: 1px solid #444;
+      overflow-y: auto;
+      padding: 16px;
+      font-size: 13px;
+    }
+
+    .panel-section { margin-bottom: 20px; }
+    .panel-section h3 {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+      color: #888; margin-bottom: 10px; font-weight: 400;
+    }
+
+    .prop-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .prop-label { width: 50px; font-size: 12px; color: #999; text-align: right; }
+    .prop-input {
+      flex: 1; background: #333; border: 1px solid #555; color: #eee;
+      padding: 4px 8px; border-radius: 3px; font-size: 12px; font-family: monospace;
+    }
+    .prop-input:focus { border-color: #a08a6e; outline: none; }
+
+    .obj-list-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 8px; border-radius: 4px; cursor: pointer;
+      transition: background 0.15s; font-size: 12px; color: #ccc;
+    }
+    .obj-list-item:hover { background: #2a2a2a; }
+    .obj-list-item.active { background: #333; color: #fff; }
+    .obj-list-item .dot { width: 8px; height: 8px; border-radius: 50%; background: #666; }
+    .obj-list-item.active .dot { background: #a08a6e; }
+
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 2000; display: none;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #1e1e1e; border-radius: 8px;
+      width: 600px; max-height: 80vh; overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .modal-header {
+      padding: 16px 20px; border-bottom: 1px solid #444;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-header h2 { font-size: 14px; font-weight: 400; }
+    .modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; }
+    .modal-body pre {
+      background: #111; padding: 16px; border-radius: 4px;
+      font-size: 12px; line-height: 1.6; color: #b0d0b0;
+      white-space: pre-wrap; font-family: 'SF Mono', 'Consolas', monospace;
+    }
+    .modal-footer {
+      padding: 12px 20px; border-top: 1px solid #444;
+      display: flex; justify-content: flex-end; gap: 8px;
+    }
+
+    .hint {
+      font-size: 11px; color: #888; line-height: 1.7;
+      margin-top: 12px; padding-top: 12px; border-top: 1px solid #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <span class="toolbar-title">ラベル位置エディタ</span>
+      <div class="mode-tabs">
+        <button class="mode-tab active" data-mode="pc">PC</button>
+        <button class="mode-tab" data-mode="sp">スマホ</button>
+      </div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button onclick="resetPositions()">リセット</button>
+      <button class="primary" onclick="exportCSS()">CSSを書き出す</button>
+    </div>
+  </div>
+
+  <div class="editor-area">
+    <div class="canvas-frame pc" id="canvasFrame">
+      <img src="paper.png" class="paper-texture" alt="">
+    </div>
+  </div>
+
+  <div class="side-panel">
+    <div class="panel-section">
+      <h3>選択中のラベル</h3>
+      <div id="selectedInfo" style="color:#666; font-size:12px;">クリックして選択</div>
+      <div id="propEditor" style="display:none;">
+        <div class="prop-row">
+          <span class="prop-label">top</span>
+          <input class="prop-input" id="propTop" type="text">
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">left</span>
+          <input class="prop-input" id="propLeft" type="text">
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <h3>ラベル一覧</h3>
+      <div id="objList"></div>
+    </div>
+
+    <div class="hint">
+      ラベルをドラッグして位置を調整。<br>
+      オブジェクト画像は半透明で固定表示されます。<br>
+      PC/スマホそれぞれ調整してCSSを書き出してください。
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>CSS 書き出し</h2>
+        <button onclick="closeModal()" style="background:none;border:none;color:#999;font-size:18px;cursor:pointer;">&times;</button>
+      </div>
+      <div class="modal-body">
+        <pre id="cssOutput"></pre>
+      </div>
+      <div class="modal-footer">
+        <button onclick="copyCSS()">コピー</button>
+        <button onclick="closeModal()">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const items = [
+      { id: 'window',  label: '\\ work /',       src: 'window01.png' },
+      { id: 'pic',     label: '\\ about /',      src: 'pic01.png' },
+      { id: 'memo',    label: '\\ hitokoto /',    src: 'memo01.png' },
+      { id: 'book',    label: '\\ comic diary /', src: 'book01.png' },
+      { id: 'table',   label: '\\ diary /',       src: 'table01.png' },
+      { id: 'camera',  label: '\\ photo /',       src: 'camera01.png' },
+      { id: 'hikouki', label: '\\ contact /',     src: 'hikouki01.png' },
+    ];
+
+    // オブジェクト位置（固定表示用）
+    const objPos = {
+      pc: {
+        window:  { top: 4.8,  left: 32.6, width: 32.3 },
+        pic:     { top: 25.3, left: 65.3, width: 15.6 },
+        memo:    { top: 49.3, left: 21.1, width: 10.2 },
+        book:    { top: 7.1,  left: 65.6, width: 14.3 },
+        table:   { top: 48.9, left: 32.2, width: 34.7 },
+        camera:  { top: 59.9, left: 70.2, width: 18.3 },
+        hikouki: { top: 81.6, left: 8.0,  width: 14.7 },
+      },
+      sp: {
+        window:  { top: 14.2, left: 16.1, width: 65.3 },
+        pic:     { top: 15.4, left: 72.6, width: 24.9 },
+        memo:    { top: 34.5, left: 74.7, width: 19.2 },
+        book:    { top: 40.8, left: 1.7,  width: 23.9 },
+        table:   { top: 44.0, left: 17.5, width: 65.4 },
+        camera:  { top: 69.6, left: 64.4, width: 32.1 },
+        hikouki: { top: 84.3, left: 5.6,  width: 28.0 },
+      }
+    };
+
+    // ラベル位置（初期値＝オブジェクト中央）
+    function defaultLabelPos(mode) {
+      const out = {};
+      items.forEach(item => {
+        const o = objPos[mode][item.id];
+        out[item.id] = {
+          top:  o.top + 2,
+          left: o.left + o.width / 2 - 3,
+        };
+      });
+      return out;
+    }
+
+    const defaults = { pc: defaultLabelPos('pc'), sp: defaultLabelPos('sp') };
+    let positions = JSON.parse(JSON.stringify(defaults));
+    let currentMode = 'pc';
+    let selectedId = null;
+    let dragState = null;
+
+    const canvasFrame = document.getElementById('canvasFrame');
+
+    function init() {
+      // オブジェクト画像（半透明固定）
+      items.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'obj-fixed';
+        el.dataset.id = item.id;
+        el.innerHTML = `<img src="${item.src}" alt="">`;
+        canvasFrame.appendChild(el);
+      });
+
+      // ドラッグ可能なラベル
+      items.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'label-draggable';
+        el.dataset.id = item.id;
+        el.textContent = item.label;
+        canvasFrame.appendChild(el);
+      });
+
+      renderObjList();
+      applyPositions();
+      setupEvents();
+    }
+
+    function applyPositions() {
+      const oPos = objPos[currentMode];
+      const lPos = positions[currentMode];
+
+      document.querySelectorAll('.obj-fixed').forEach(el => {
+        const id = el.dataset.id;
+        const p = oPos[id];
+        if (!p) return;
+        el.style.top = p.top + '%';
+        el.style.left = p.left + '%';
+        el.style.width = p.width + '%';
+      });
+
+      document.querySelectorAll('.label-draggable').forEach(el => {
+        const id = el.dataset.id;
+        const p = lPos[id];
+        if (!p) return;
+        el.style.top = p.top + '%';
+        el.style.left = p.left + '%';
+      });
+    }
+
+    function renderObjList() {
+      const list = document.getElementById('objList');
+      list.innerHTML = '';
+      items.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'obj-list-item' + (selectedId === item.id ? ' active' : '');
+        el.innerHTML = `<span class="dot"></span>${item.label}`;
+        el.onclick = () => selectLabel(item.id);
+        list.appendChild(el);
+      });
+    }
+
+    function selectLabel(id) {
+      selectedId = id;
+      document.querySelectorAll('.label-draggable').forEach(el => {
+        el.classList.toggle('selected', el.dataset.id === id);
+      });
+      renderObjList();
+      updatePropEditor();
+    }
+
+    function updatePropEditor() {
+      const info = document.getElementById('selectedInfo');
+      const editor = document.getElementById('propEditor');
+      if (!selectedId) { info.style.display = ''; editor.style.display = 'none'; return; }
+      info.style.display = 'none';
+      editor.style.display = 'block';
+      const p = positions[currentMode][selectedId];
+      document.getElementById('propTop').value = p.top.toFixed(1) + '%';
+      document.getElementById('propLeft').value = p.left.toFixed(1) + '%';
+    }
+
+    function setupEvents() {
+      document.querySelectorAll('.mode-tab').forEach(tab => {
+        tab.onclick = () => {
+          currentMode = tab.dataset.mode;
+          document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          canvasFrame.className = 'canvas-frame ' + currentMode;
+          applyPositions();
+          updatePropEditor();
+        };
+      });
+
+      canvasFrame.addEventListener('mousedown', startDrag);
+      window.addEventListener('mousemove', onDrag);
+      window.addEventListener('mouseup', endDrag);
+
+      canvasFrame.addEventListener('touchstart', e => {
+        const t = e.touches[0];
+        startDrag({ target: e.target, clientX: t.clientX, clientY: t.clientY, preventDefault: () => e.preventDefault() });
+      }, { passive: false });
+      window.addEventListener('touchmove', e => {
+        if (!dragState) return;
+        const t = e.touches[0];
+        onDrag({ clientX: t.clientX, clientY: t.clientY });
+      }, { passive: false });
+      window.addEventListener('touchend', endDrag);
+
+      ['propTop', 'propLeft'].forEach(prop => {
+        document.getElementById(prop).addEventListener('change', () => {
+          if (!selectedId) return;
+          const val = parseFloat(document.getElementById(prop).value);
+          if (isNaN(val)) return;
+          const key = prop.replace('prop', '').toLowerCase();
+          positions[currentMode][selectedId][key] = val;
+          applyPositions();
+        });
+      });
+
+      canvasFrame.addEventListener('click', e => {
+        if (e.target === canvasFrame || e.target.classList.contains('paper-texture')) {
+          selectLabel(null);
+        }
+      });
+    }
+
+    function startDrag(e) {
+      const label = e.target.closest('.label-draggable');
+      if (!label) return;
+      e.preventDefault();
+      const id = label.dataset.id;
+      selectLabel(id);
+      const rect = canvasFrame.getBoundingClientRect();
+      dragState = {
+        id, el: label,
+        startX: e.clientX, startY: e.clientY,
+        startTop: positions[currentMode][id].top,
+        startLeft: positions[currentMode][id].left,
+        canvasRect: rect,
+      };
+      label.classList.add('dragging');
+    }
+
+    function onDrag(e) {
+      if (!dragState) return;
+      const { id, startX, startY, startTop, startLeft, canvasRect } = dragState;
+      const pctX = ((e.clientX - startX) / canvasRect.width) * 100;
+      const pctY = ((e.clientY - startY) / canvasRect.height) * 100;
+      positions[currentMode][id].top = Math.max(-5, Math.min(98, startTop + pctY));
+      positions[currentMode][id].left = Math.max(-5, Math.min(98, startLeft + pctX));
+      applyPositions();
+      updatePropEditor();
+    }
+
+    function endDrag() {
+      if (dragState) { dragState.el.classList.remove('dragging'); dragState = null; }
+    }
+
+    function resetPositions() {
+      positions[currentMode] = JSON.parse(JSON.stringify(defaults[currentMode]));
+      applyPositions();
+      updatePropEditor();
+    }
+
+    function exportCSS() {
+      const pc = positions.pc;
+      const sp = positions.sp;
+
+      let css = '/* === PC ラベル位置 === */\n\n';
+      items.forEach(item => {
+        const p = pc[item.id];
+        css += `.${item.id} .obj-label {\n`;
+        css += `  top: ${p.top.toFixed(1)}%;\n`;
+        css += `  left: ${p.left.toFixed(1)}%;\n`;
+        css += `}\n\n`;
+      });
+
+      css += '\n/* === スマホ ラベル位置 (@media max-width: 768px) === */\n\n';
+      items.forEach(item => {
+        const p = sp[item.id];
+        css += `.${item.id} .obj-label {\n`;
+        css += `  top: ${p.top.toFixed(1)}%;\n`;
+        css += `  left: ${p.left.toFixed(1)}%;\n`;
+        css += `}\n\n`;
+      });
+
+      document.getElementById('cssOutput').textContent = css;
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+
+    function copyCSS() {
+      navigator.clipboard.writeText(document.getElementById('cssOutput').textContent).then(() => {
+        const btn = document.querySelector('.modal-footer button:first-child');
+        btn.textContent = 'コピーしました';
+        setTimeout(() => { btn.textContent = 'コピー'; }, 1500);
+      });
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>photo - matsushima CHIHIRO.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="paper-bg">
+    <img src="../paper.png" alt="" class="paper-texture">
+  </div>
+
+  <div class="page-wrapper" style="max-width: 1000px;">
+    <header class="page-header">
+      <h1>photo</h1>
+      <a href="../" class="back-link">← もどる</a>
+    </header>
+
+    <div class="photo-grid" id="photoGrid">
+      <div class="loading" id="photoLoading" style="grid-column: 1/-1;">読み込み中</div>
+    </div>
+
+    <!-- ライトボックス -->
+    <div class="photo-lightbox" id="photoLightbox">
+      <button class="photo-lightbox-close" id="lightboxClose" aria-label="閉じる">&times;</button>
+      <img src="" alt="" id="lightboxImg">
+      <p class="photo-lightbox-caption" id="lightboxCaption"></p>
+    </div>
+
+    <footer class="page-footer">
+      &copy; matsushima CHIHIRO.
+    </footer>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    (async () => {
+      const grid = document.getElementById('photoGrid');
+      const loading = document.getElementById('photoLoading');
+      const lightbox = document.getElementById('photoLightbox');
+      const lightboxImg = document.getElementById('lightboxImg');
+      const lightboxCaption = document.getElementById('lightboxCaption');
+      const lightboxClose = document.getElementById('lightboxClose');
+
+      const entries = await NotionHelper.getEntries('photo');
+      loading.style.display = 'none';
+
+      if (entries.length === 0) {
+        grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#b0a898; padding:40px;">Notionと連携すると、ここに写真が表示されます。<br>詳しくは SETUP-NOTION.md をご覧ください。</p>';
+        return;
+      }
+
+      entries.forEach(entry => {
+        const imgUrl = entry.image;
+        if (!imgUrl) return;
+
+        const img = document.createElement('img');
+        img.src = imgUrl;
+        img.alt = entry.title || '';
+        img.loading = 'lazy';
+        img.onclick = () => {
+          lightboxImg.src = imgUrl;
+          lightboxCaption.textContent = entry.caption || entry.title || '';
+          lightbox.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        };
+        grid.appendChild(img);
+      });
+
+      // ライトボックスを閉じる
+      function closeLightbox() {
+        lightbox.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+      lightboxClose.onclick = closeLightbox;
+      lightbox.onclick = (e) => { if (e.target === lightbox) closeLightbox(); };
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+    })();
+  </script>
+</body>
+</html>

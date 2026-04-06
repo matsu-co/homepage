@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>matsushima CHIHIRO.</title>
+  <meta name="description" content="松島千尋のポートフォリオサイト">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 背景の紙テクスチャ -->
+  <div class="paper-bg">
+    <img src="paper.png" alt="" class="paper-texture">
+  </div>
+
+  <!-- メインキャンバス -->
+  <div class="canvas">
+
+    <!-- ロゴ -->
+    <div class="element logo">
+      <img src="matsushimachihiro01.png" alt="matsushima CHIHIRO.">
+    </div>
+
+    <!-- 星（メニュー） -->
+    <button class="element star" id="menuToggle" aria-label="メニューを開く">
+      <img src="star01.png" alt="メニュー">
+    </button>
+
+    <!-- ドライフラワー（装飾） -->
+    <div class="element flower">
+      <img src="Flower01.png" alt="ドライフラワー">
+    </div>
+
+    <!-- 窓 → /work -->
+    <a href="work/" class="element window hoverable" aria-label="Work">
+      <img src="window01.png" alt="窓 - Work">
+      <span class="obj-label">\ work /</span>
+    </a>
+
+    <!-- 額縁 → /about -->
+    <a href="about/" class="element pic hoverable" aria-label="About">
+      <img src="pic01.png" alt="額縁 - About">
+      <span class="obj-label">\ about /</span>
+    </a>
+
+    <!-- メモ（ひとこと表示） -->
+    <div class="element memo" id="memo" aria-label="ひとことメッセージ">
+      <img src="memo01.png" alt="メモ">
+      <span class="obj-label">\ memo /</span>
+      <div class="memo-tooltip" id="memoTooltip"></div>
+    </div>
+
+    <!-- 本棚 → /comicdiary -->
+    <a href="comicdiary/" class="element book hoverable" aria-label="イラスト日記">
+      <img src="book01.png" alt="本棚 - イラスト日記">
+      <span class="obj-label">\ comic diary /</span>
+    </a>
+
+    <!-- テーブル（ノート） → /diary -->
+    <a href="diary/" class="element table hoverable" aria-label="文章日記">
+      <img src="table01.png" alt="テーブル - 文章日記">
+      <span class="obj-label">\ diary /</span>
+    </a>
+
+    <!-- カメラ → /archive -->
+    <a href="archive/" class="element camera hoverable" aria-label="写真アーカイブ">
+      <img src="camera01.png" alt="カメラ - 写真アーカイブ">
+      <span class="obj-label">\ photo /</span>
+    </a>
+
+    <!-- ひこうき → Gmail -->
+    <a href="mailto:chihiro.matsushima.work@gmail.com" class="element hikouki hoverable" aria-label="メールを送る">
+      <img src="hikouki01.png" alt="ひこうき - メール">
+      <span class="obj-label">\ contact /</span>
+    </a>
+
+  </div>
+
+  <!-- フルスクリーンメニュー -->
+  <div class="menu-overlay" id="menuOverlay">
+    <div class="menu-inner">
+      <button class="menu-close" id="menuClose" aria-label="メニューを閉じる">&times;</button>
+      <nav class="menu-nav">
+        <a href="work/">work</a>
+        <a href="about/">about</a>
+        <a href="comicdiary/">comic diary</a>
+        <a href="diary/">diary</a>
+        <a href="archive/">archive</a>
+        <a href="mailto:chihiro.matsushima.work@gmail.com">contact</a>
+      </nav>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
