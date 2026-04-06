@@ -41,6 +41,24 @@
     </footer>
   </div>
 
+  <!-- 詳細モーダル -->
+  <div class="work-modal" id="workModal" aria-hidden="true">
+    <div class="work-modal-inner" id="workModalInner">
+      <button class="work-modal-close" id="workModalClose" aria-label="閉じる">&times;</button>
+      <h2 class="work-modal-title" id="workModalTitle"></h2>
+
+      <div class="work-modal-slider" id="workModalSlider">
+        <div class="work-modal-slider-track" id="workModalTrack"></div>
+        <button class="work-modal-arrow prev" id="workModalPrev" aria-label="前へ">‹</button>
+        <button class="work-modal-arrow next" id="workModalNext" aria-label="次へ">›</button>
+        <div class="work-modal-dots" id="workModalDots"></div>
+      </div>
+
+      <p class="work-modal-description" id="workModalDesc"></p>
+      <div class="work-modal-tags" id="workModalTags"></div>
+    </div>
+  </div>
+
   <script src="../js/main.js"></script>
   <script>
     (async () => {
@@ -49,6 +67,104 @@
       const workLoading = document.getElementById('workLoading');
       const lifeLoading = document.getElementById('lifeLoading');
 
+      // モーダル要素
+      const modal = document.getElementById('workModal');
+      const modalInner = document.getElementById('workModalInner');
+      const modalClose = document.getElementById('workModalClose');
+      const modalTitle = document.getElementById('workModalTitle');
+      const modalTrack = document.getElementById('workModalTrack');
+      const modalPrev = document.getElementById('workModalPrev');
+      const modalNext = document.getElementById('workModalNext');
+      const modalDots = document.getElementById('workModalDots');
+      const modalDesc = document.getElementById('workModalDesc');
+      const modalTags = document.getElementById('workModalTags');
+
+      let currentImages = [];
+      let currentIdx = 0;
+
+      function showSlide(i) {
+        currentIdx = i;
+        [...modalTrack.querySelectorAll('img')].forEach((img, idx) => {
+          img.classList.toggle('active', idx === i);
+        });
+        [...modalDots.querySelectorAll('button')].forEach((b, idx) => {
+          b.classList.toggle('active', idx === i);
+        });
+        modalPrev.disabled = (i === 0);
+        modalNext.disabled = (i === currentImages.length - 1);
+      }
+
+      function openModal(entry) {
+        modalTitle.textContent = entry.title || '無題';
+        modalDesc.textContent = entry.excerpt || '';
+
+        // タグ
+        modalTags.innerHTML = '';
+        (entry.tags || []).forEach(t => {
+          const span = document.createElement('span');
+          span.className = 'work-tag';
+          span.textContent = t;
+          modalTags.appendChild(span);
+        });
+
+        // 画像スライダー構築
+        currentImages = entry.images && entry.images.length ? entry.images : (entry.cover ? [entry.cover] : []);
+        modalTrack.innerHTML = '';
+        modalDots.innerHTML = '';
+
+        if (currentImages.length === 0) {
+          modalTrack.innerHTML = '<p style="color:#b0a898;">画像がありません</p>';
+          modalPrev.style.display = 'none';
+          modalNext.style.display = 'none';
+        } else {
+          currentImages.forEach((src, i) => {
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = '';
+            img.loading = 'lazy';
+            if (i === 0) img.classList.add('active');
+            modalTrack.appendChild(img);
+
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.onclick = () => showSlide(i);
+            if (i === 0) dot.classList.add('active');
+            modalDots.appendChild(dot);
+          });
+
+          // 1枚だけなら矢印とドット非表示
+          const hasMany = currentImages.length > 1;
+          modalPrev.style.display = hasMany ? '' : 'none';
+          modalNext.style.display = hasMany ? '' : 'none';
+          modalDots.style.display = hasMany ? 'flex' : 'none';
+          showSlide(0);
+        }
+
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      modalClose.onclick = closeModal;
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+      modalPrev.onclick = () => { if (currentIdx > 0) showSlide(currentIdx - 1); };
+      modalNext.onclick = () => { if (currentIdx < currentImages.length - 1) showSlide(currentIdx + 1); };
+      document.addEventListener('keydown', (e) => {
+        if (!modal.classList.contains('open')) return;
+        if (e.key === 'Escape') closeModal();
+        if (e.key === 'ArrowLeft' && currentIdx > 0) showSlide(currentIdx - 1);
+        if (e.key === 'ArrowRight' && currentIdx < currentImages.length - 1) showSlide(currentIdx + 1);
+      });
+
+      // --- データ取得 ---
       const entries = await NotionHelper.getEntries('work');
       workLoading.style.display = 'none';
       lifeLoading.style.display = 'none';
@@ -64,17 +180,13 @@
         return;
       }
 
-      // Category で振り分け（"Life work" はライフワークセクション、それ以外はお仕事セクション）
+      // Category で振り分け
       const workItems = [];
       const lifeItems = [];
-
       entries.forEach(entry => {
         const cat = (entry.category || '').toLowerCase();
-        if (cat.includes('life')) {
-          lifeItems.push(entry);
-        } else {
-          workItems.push(entry);
-        }
+        if (cat.includes('life')) lifeItems.push(entry);
+        else workItems.push(entry);
       });
 
       function renderCards(grid, items) {
@@ -86,19 +198,13 @@
         items.forEach(entry => {
           const card = document.createElement('div');
           card.className = 'work-card';
-          const linkStart = entry.url ? `<a href="${entry.url}" target="_blank" rel="noopener">` : '<div>';
-          const linkEnd = entry.url ? '</a>' : '</div>';
-
           card.innerHTML = `
-            ${linkStart}
-              ${entry.cover ? `<img src="${entry.cover}" alt="" loading="lazy">` : '<div class="work-card-noimg"></div>'}
-              <div class="work-card-body">
-                <h3 class="work-card-title">${entry.title || '無題'}</h3>
-                ${entry.excerpt ? `<p class="work-card-desc">${entry.excerpt}</p>` : ''}
-                ${entry.tags && entry.tags.length ? `<div class="work-card-tags">${entry.tags.map(t => `<span class="work-tag">${t}</span>`).join('')}</div>` : ''}
-              </div>
-            ${linkEnd}
+            ${entry.cover ? `<img src="${entry.cover}" alt="" loading="lazy">` : '<div class="work-card-noimg"></div>'}
+            <div class="work-card-body">
+              <h3 class="work-card-title">${entry.title || '無題'}</h3>
+            </div>
           `;
+          card.addEventListener('click', () => openModal(entry));
           grid.appendChild(card);
         });
       }
