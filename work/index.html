@@ -1,222 +1,120 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>work - matsushima CHIHIRO.</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>work - matsu-co</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
-<body>
-  <div class="paper-bg">
-    <img src="../paper.png" alt="" class="paper-texture">
-  </div>
-
-  <div class="page-wrapper" style="max-width: 960px;">
-    <header class="page-header">
-      <h1>work</h1>
-      <a href="../" class="back-link">← もどる</a>
-    </header>
-
-    <!-- お仕事セクション -->
-    <section class="work-section" id="workSection">
-      <h2 class="work-section-title">work（お仕事）</h2>
-      <div class="work-grid" id="workGrid">
-        <div class="loading" id="workLoading">読み込み中</div>
-      </div>
-    </section>
-
-    <!-- くらしのデザインセクション -->
-    <section class="work-section" id="lifeSection">
-      <h2 class="work-section-title">Life work（くらしのデザイン）</h2>
-      <div class="work-grid" id="lifeGrid">
-        <div class="loading" id="lifeLoading">読み込み中</div>
-      </div>
-    </section>
-
-    <footer class="page-footer">
-      &copy; matsushima CHIHIRO.
-    </footer>
-  </div>
-
-  <!-- 詳細モーダル -->
-  <div class="work-modal" id="workModal" aria-hidden="true">
-    <div class="work-modal-inner" id="workModalInner">
-      <button class="work-modal-close" id="workModalClose" aria-label="閉じる">&times;</button>
-      <h2 class="work-modal-title" id="workModalTitle"></h2>
-
-      <div class="work-modal-slider" id="workModalSlider">
-        <div class="work-modal-slider-track" id="workModalTrack"></div>
-        <button class="work-modal-arrow prev" id="workModalPrev" aria-label="前へ">‹</button>
-        <button class="work-modal-arrow next" id="workModalNext" aria-label="次へ">›</button>
-        <div class="work-modal-dots" id="workModalDots"></div>
-      </div>
-
-      <p class="work-modal-description" id="workModalDesc"></p>
-      <div class="work-modal-tags" id="workModalTags"></div>
+<body class="bg-paper">
+    <div class="paper-bg">
+        <img src="../paper.png" alt="" class="paper-texture">
     </div>
-  </div>
 
-  <script src="../js/main.js"></script>
-  <script>
-    (async () => {
-      const workGrid = document.getElementById('workGrid');
-      const lifeGrid = document.getElementById('lifeGrid');
-      const workLoading = document.getElementById('workLoading');
-      const lifeLoading = document.getElementById('lifeLoading');
+    <div class="page-wrapper" style="max-width: 960px; position: relative; z-index: 1;">
+        <header class="page-header">
+            <h1>work</h1>
+            <a href="../index.html" class="back-link">← もどる</a>
+        </header>
 
-      // モーダル要素
-      const modal = document.getElementById('workModal');
-      const modalInner = document.getElementById('workModalInner');
-      const modalClose = document.getElementById('workModalClose');
-      const modalTitle = document.getElementById('workModalTitle');
-      const modalTrack = document.getElementById('workModalTrack');
-      const modalPrev = document.getElementById('workModalPrev');
-      const modalNext = document.getElementById('workModalNext');
-      const modalDots = document.getElementById('workModalDots');
-      const modalDesc = document.getElementById('workModalDesc');
-      const modalTags = document.getElementById('workModalTags');
+        <main>
+            <section class="work-section">
+                <h2 class="section-title">work（お仕事）</h2>
+                <div id="work-list" class="work-grid">読み込み中...</div>
+            </section>
 
-      let currentImages = [];
-      let currentIdx = 0;
+            <section class="work-section">
+                <h2 class="section-title">Life work（くらしのデザイン）</h2>
+                <div id="lifework-list" class="work-grid">読み込み中...</div>
+            </section>
+        </main>
 
-      function showSlide(i) {
-        currentIdx = i;
-        [...modalTrack.querySelectorAll('img')].forEach((img, idx) => {
-          img.classList.toggle('active', idx === i);
-        });
-        [...modalDots.querySelectorAll('button')].forEach((b, idx) => {
-          b.classList.toggle('active', idx === i);
-        });
-        modalPrev.disabled = (i === 0);
-        modalNext.disabled = (i === currentImages.length - 1);
-      }
+        <footer class="page-footer">
+            &copy; matsushima CHIHIRO.
+        </footer>
+    </div>
 
-      function openModal(entry) {
-        modalTitle.textContent = entry.title || '無題';
-        modalDesc.textContent = entry.excerpt || '';
-
-        // タグ
-        modalTags.innerHTML = '';
-        (entry.tags || []).forEach(t => {
-          const span = document.createElement('span');
-          span.className = 'work-tag';
-          span.textContent = t;
-          modalTags.appendChild(span);
-        });
-
-        // 画像スライダー構築
-        currentImages = entry.images && entry.images.length ? entry.images : (entry.cover ? [entry.cover] : []);
-        modalTrack.innerHTML = '';
-        modalDots.innerHTML = '';
-
-        if (currentImages.length === 0) {
-          modalTrack.innerHTML = '<p style="color:#b0a898;">画像がありません</p>';
-          modalPrev.style.display = 'none';
-          modalNext.style.display = 'none';
-        } else {
-          currentImages.forEach((src, i) => {
-            const img = document.createElement('img');
-            img.src = src;
-            img.alt = '';
-            img.loading = 'lazy';
-            if (i === 0) img.classList.add('active');
-            modalTrack.appendChild(img);
-
-            const dot = document.createElement('button');
-            dot.type = 'button';
-            dot.onclick = () => showSlide(i);
-            if (i === 0) dot.classList.add('active');
-            modalDots.appendChild(dot);
-          });
-
-          // 1枚だけなら矢印とドット非表示
-          const hasMany = currentImages.length > 1;
-          modalPrev.style.display = hasMany ? '' : 'none';
-          modalNext.style.display = hasMany ? '' : 'none';
-          modalDots.style.display = hasMany ? 'flex' : 'none';
-          showSlide(0);
-        }
-
-        modal.classList.add('open');
-        modal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-      }
-
-      function closeModal() {
-        modal.classList.remove('open');
-        modal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-      }
-
-      modalClose.onclick = closeModal;
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
-      });
-      modalPrev.onclick = () => { if (currentIdx > 0) showSlide(currentIdx - 1); };
-      modalNext.onclick = () => { if (currentIdx < currentImages.length - 1) showSlide(currentIdx + 1); };
-      document.addEventListener('keydown', (e) => {
-        if (!modal.classList.contains('open')) return;
-        if (e.key === 'Escape') closeModal();
-        if (e.key === 'ArrowLeft' && currentIdx > 0) showSlide(currentIdx - 1);
-        if (e.key === 'ArrowRight' && currentIdx < currentImages.length - 1) showSlide(currentIdx + 1);
-      });
-
-      // --- データ取得 ---
-      const entries = await NotionHelper.getEntries('work');
-      workLoading.style.display = 'none';
-      lifeLoading.style.display = 'none';
-
-      if (entries.length === 0) {
-        const err = window.__notionLastError;
-        const errMsg = err
-          ? `<br><small style="color:#c06;">[API: ${err.message || err.error || 'unknown'}${err.code ? ' / ' + err.code : ''}]</small>`
-          : '';
-        workGrid.innerHTML = `<p class="work-empty">Notionと連携すると、ここに作品が表示されます。<br>詳しくは SETUP-NOTION.md をご覧ください。${errMsg}</p>`;
-        lifeGrid.innerHTML = '';
-        document.getElementById('lifeSection').style.display = 'none';
-        return;
-      }
-
-      // Category で振り分け
-      const workItems = [];
-      const lifeItems = [];
-      entries.forEach(entry => {
-        const cat = (entry.category || '').toLowerCase();
-        if (cat.includes('life')) lifeItems.push(entry);
-        else workItems.push(entry);
-      });
-
-      function renderCards(grid, items) {
-        grid.innerHTML = '';
-        if (items.length === 0) {
-          grid.innerHTML = '<p class="work-empty">まだ作品がありません</p>';
-          return;
-        }
-        items.forEach(entry => {
-          const card = document.createElement('div');
-          card.className = 'work-card';
-          card.innerHTML = `
-            ${entry.cover ? `<img src="${entry.cover}" alt="" loading="lazy">` : '<div class="work-card-noimg"></div>'}
-            <div class="work-card-body">
-              <h3 class="work-card-title">${entry.title || '無題'}</h3>
+    <div id="modal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button onclick="closeModal()" class="close-btn" aria-label="閉じる">&times;</button>
+            <div id="modal-images" class="modal-images">
+                </div>
+            <div class="modal-info">
+                <h2 id="modal-title"></h2>
+                <p id="modal-description" style="white-space: pre-wrap;"></p>
+                <div id="modal-tags" class="work-modal-tags"></div>
             </div>
-          `;
-          card.addEventListener('click', () => openModal(entry));
-          grid.appendChild(card);
-        });
-      }
+        </div>
+    </div>
 
-      renderCards(workGrid, workItems);
+    <script>
+        async function loadWork() {
+            try {
+                // api/notion.js を呼び出す
+                const res = await fetch('/api/notion?type=work');
+                const data = await res.json();
+                
+                if (data.error) {
+                    document.getElementById('work-list').innerHTML = `<p style="color:red">Error: ${data.error}</p>`;
+                    return;
+                }
 
-      if (lifeItems.length === 0) {
-        document.getElementById('lifeSection').style.display = 'none';
-      } else {
-        renderCards(lifeGrid, lifeItems);
-      }
-    })();
-  </script>
+                const wList = document.getElementById('work-list');
+                const lList = document.getElementById('lifework-list');
+                wList.innerHTML = '';
+                lList.innerHTML = '';
+
+                data.entries.forEach(e => {
+                    const div = document.createElement('div');
+                    div.className = 'work-card';
+                    
+                    // クリックでモーダルを開く設定
+                    div.onclick = () => {
+                        // 画像をすべて縦に並べて表示（スライダーよりスマホで見やすい）
+                        document.getElementById('modal-images').innerHTML = 
+                            e.images.map(url => `<img src="${url}" loading="lazy">`).join('');
+                        
+                        document.getElementById('modal-title').innerText = e.title;
+                        document.getElementById('modal-description').innerText = e.description;
+                        
+                        // タグの表示
+                        const tagContainer = document.getElementById('modal-tags');
+                        tagContainer.innerHTML = (e.tags || []).map(t => `<span class="work-tag">${t}</span>`).join('');
+                        
+                        document.getElementById('modal').style.display = 'block';
+                        document.body.style.overflow = 'hidden'; // 背景スクロールを止める
+                    };
+
+                    // カードの中身（枠を揃える thumbnail-container を使用）
+                    div.innerHTML = `
+                        <div class="work-thumbnail-container">
+                            <img src="${e.thumbnail}" alt="${e.title}" loading="lazy">
+                        </div>
+                        <p>${e.title}</p>
+                    `;
+
+                    // カテゴリで振り分け
+                    if (e.category.toLowerCase().includes('life')) {
+                        lList.appendChild(div);
+                    } else {
+                        wList.appendChild(div);
+                    }
+                });
+            } catch (e) {
+                console.error("Fetch error:", e);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.body.style.overflow = ''; // スクロール再開
+        }
+
+        // ページを開いた時にデータを読み込む
+        loadWork();
+    </script>
 </body>
 </html>
