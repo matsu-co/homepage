@@ -54,7 +54,11 @@
       lifeLoading.style.display = 'none';
 
       if (entries.length === 0) {
-        workGrid.innerHTML = '<p class="work-empty">Notionと連携すると、ここに作品が表示されます。<br>詳しくは SETUP-NOTION.md をご覧ください。</p>';
+        const err = window.__notionLastError;
+        const errMsg = err
+          ? `<br><small style="color:#c06;">[API: ${err.message || err.error || 'unknown'}${err.code ? ' / ' + err.code : ''}]</small>`
+          : '';
+        workGrid.innerHTML = `<p class="work-empty">Notionと連携すると、ここに作品が表示されます。<br>詳しくは SETUP-NOTION.md をご覧ください。${errMsg}</p>`;
         lifeGrid.innerHTML = '';
         document.getElementById('lifeSection').style.display = 'none';
         return;
