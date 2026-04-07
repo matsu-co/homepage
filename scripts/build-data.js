@@ -12,7 +12,7 @@ async function getPageContent(pageId, token) {
 
 async function fetchData(dbId, token, fileName) {
   if (!dbId) return;
-  console.log(`--- START FETCHING: ${fileName} ---`);
+  console.log(`--- FETCHING ${fileName} ---`);
 
   try {
     const res = await fetch(`https://api.notion.com/v1/databases/${dbId}/query`, {
@@ -23,13 +23,15 @@ async function fetchData(dbId, token, fileName) {
 
     const data = await res.json();
     const entries = [];
+
     for (const page of data.results) {
       const p = page.properties;
+      
+      // 画像をすべて取得（スライダーに必須）
       const imgProp = p['ファイル&メディア'] || p['Image'] || p['Excerpt'];
       const images = imgProp?.files?.map(f => f.file?.url || f.external?.url).filter(Boolean) || [];
-      const blocks = await getPageContent(page.id, token);
       
-      // お仕事の説明文(Description)を最優先で守るロジック
+      const blocks = await getPageContent(page.id, token);
       let desc = p['Description']?.rich_text?.[0]?.plain_text || p['Summary']?.rich_text?.[0]?.plain_text || "";
       if (!desc) {
         desc = blocks.find(b => b.type === 'paragraph')?.paragraph?.rich_text?.[0]?.plain_text || "";
@@ -39,18 +41,18 @@ async function fetchData(dbId, token, fileName) {
         id: page.id,
         title: p.Name?.title?.[0]?.plain_text || p.Title?.title?.[0]?.plain_text || '無題',
         date: p['Date']?.date?.start || '',
-        description: desc.length > 80 ? desc.substring(0, 80) + '...' : desc,
+        description: desc,
         category: p.Category?.select?.name || '',
         tags: p.Tags?.multi_select?.map(t => t.name) || [],
         thumbnail: images[0] || page.cover?.file?.url || '',
+        images: images, // スライダー用の画像配列
         contentBlocks: blocks
       });
     }
 
-    entries.sort((a, b) => new Date(b.date) - new Date(a.date));
     fs.writeFileSync(fileName, JSON.stringify({ entries }));
     console.log(`--- SUCCESS: ${fileName} ---`);
-  } catch (err) { console.error(`--- FAILED ${fileName}:`, err); }
+  } catch (err) { console.error(err); }
 }
 
 async function main() {
@@ -60,5 +62,4 @@ async function main() {
   await fetchData(process.env.NOTION_DIARY_DB_ID, token, 'diary-data.json');
   await fetchData(process.env.NOTION_COMIC_DB_ID, token, 'comic-data.json');
 }
-
 main();
