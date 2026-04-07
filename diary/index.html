@@ -8,89 +8,125 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* 日記一覧のスタイル */
+    .diary-card { display: flex; gap: 20px; padding: 20px 0; border-bottom: 1px solid #e0ddd5; text-decoration: none; color: inherit; align-items: flex-start; }
+    .diary-card:hover { opacity: 0.8; }
+    .diary-card-img { width: 120px; height: 120px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+    .diary-card-body { flex: 1; }
+    .diary-card-date { font-size: 0.85rem; color: #b0a898; margin-bottom: 5px; }
+    .diary-card-title { font-size: 1.2rem; margin: 0 0 10px 0; }
+    .diary-card-excerpt { font-size: 0.9rem; line-height: 1.6; color: #666; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+    /* 記事詳細のスタイル */
+    .article-container { max-width: 700px; margin: 40px auto; line-height: 1.8; }
+    .article-container img { max-width: 100%; height: auto; border-radius: 8px; margin: 20px 0; }
+    
+    /* 記事ナビゲーション（前へ・次へ） */
+    .article-nav { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 20px; border-top: 1px solid #e0ddd5; }
+    .nav-link { text-decoration: none; color: #b0a898; font-size: 0.9rem; max-width: 45%; }
+    .nav-link:hover { color: #333; }
+    .nav-label { display: block; font-size: 0.75rem; margin-bottom: 5px; }
+  </style>
 </head>
 <body>
-  <div class="paper-bg">
-    <img src="../paper.png" alt="" class="paper-texture">
-  </div>
+  <div class="paper-bg"><img src="../paper.png" alt="" class="paper-texture"></div>
 
   <div class="page-wrapper">
     <header class="page-header">
       <h1>diary</h1>
-      <a href="../" class="back-link">← もどる</a>
+      <a href="../" class="back-link" id="backLink">← もどる</a>
     </header>
 
-    <!-- 記事一覧 -->
-    <div class="entries" id="diaryEntries">
-      <div class="loading" id="diaryLoading">読み込み中</div>
+    <div id="diaryEntries">
+      <div class="loading" id="diaryLoading">読み込み中...</div>
     </div>
 
-    <!-- 記事詳細（動的表示） -->
-    <div class="article-content" id="diaryArticle" style="display:none;"></div>
+    <div class="article-content" id="diaryArticle" style="display:none;">
+      <div class="article-container" id="articleBody"></div>
+      <nav class="article-nav">
+        <a id="prevLink" class="nav-link" style="visibility:hidden;"><span class="nav-label">← 前の記事</span><span id="prevTitle"></span></a>
+        <a id="nextLink" class="nav-link" style="visibility:hidden; text-align:right;"><span class="nav-label">次の記事 →</span><span id="nextTitle"></span></a>
+      </nav>
+    </div>
 
-    <footer class="page-footer">
-      &copy; matsushima CHIHIRO.
-    </footer>
+    <footer class="page-footer">&copy; matsushima CHIHIRO.</footer>
   </div>
 
   <script src="../js/main.js"></script>
-<script>
-  (async () => {
-    const params = new URLSearchParams(window.location.search);
-    const pageId = params.get('id');
-    
-    // ここの名前を千裕さんのHTML（id="diaryEntries"）に合わせました！
-    const entriesEl = document.getElementById('diaryEntries');
-    const articleEl = document.getElementById('diaryArticle');
-    const loadingEl = document.getElementById('diaryLoading');
+  <script>
+    (async () => {
+      const params = new URLSearchParams(window.location.search);
+      const pageId = params.get('id');
+      const entriesEl = document.getElementById('diaryEntries');
+      const articleEl = document.getElementById('diaryArticle');
+      const loadingEl = document.getElementById('diaryLoading');
+      const backLink = document.getElementById('backLink');
 
-    if (pageId) {
-      // --- 【詳細表示】ここは今まで通り Notion に聞きに行きます ---
-      entriesEl.style.display = 'none';
-      articleEl.style.display = 'block';
+      // データの読み込み
+      const response = await fetch('../diary-data.json');
+      const data = await response.json();
+      const entries = data.entries || [];
 
-      const data = await NotionHelper.getEntry(pageId);
-      if (data && data.blocks) {
-        const titleHtml = data.title ? `<h2 style="margin-bottom:8px;">${data.title}</h2>` : '';
-        const dateHtml = data.date ? `<p class="entry-date">${data.date}</p>` : '';
-        articleEl.innerHTML = titleHtml + dateHtml + NotionHelper.blocksToHtml(data.blocks);
+      if (pageId) {
+        // --- 記事詳細表示 ---
+        entriesEl.style.display = 'none';
+        articleEl.style.display = 'block';
+        backLink.href = './'; // 詳細のときは一覧に戻るように変更
+
+        // 前後の記事を見つける
+        const currentIndex = entries.findIndex(e => e.id === pageId);
+        if (currentIndex !== -1) {
+          if (currentIndex < entries.length - 1) {
+            const next = entries[currentIndex + 1];
+            document.getElementById('nextLink').style.visibility = 'visible';
+            document.getElementById('nextLink').href = `?id=${next.id}`;
+            document.getElementById('nextTitle').innerText = next.title;
+          }
+          if (currentIndex > 0) {
+            const prev = entries[currentIndex - 1];
+            document.getElementById('prevLink').style.visibility = 'visible';
+            document.getElementById('prevLink').href = `?id=${prev.id}`;
+            document.getElementById('prevTitle').innerText = prev.title;
+          }
+        }
+
+        // 本文（ブロック）の取得
+        const articleBody = document.getElementById('articleBody');
+        const content = await NotionHelper.getEntry(pageId);
+        if (content && content.blocks) {
+          const titleHtml = `<h2>${content.title}</h2><p class="diary-card-date">${content.date || ''}</p>`;
+          articleBody.innerHTML = titleHtml + NotionHelper.blocksToHtml(content.blocks);
+        } else {
+          articleBody.innerHTML = '<p>読み込みに失敗しました。</p>';
+        }
       } else {
-        articleEl.innerHTML = '<p>記事を読み込めませんでした。</p>';
-      }
-    } else {
-      // --- 【一覧表示】ここを爆速化！ ---
-      try {
-        const response = await fetch('../diary-data.json');
-        if (!response.ok) throw new Error('データが見つかりません');
-        const data = await response.json();
-        const entries = data.entries;
-
+        // --- 一覧表示 ---
         loadingEl.style.display = 'none';
-
-        if (!entries || entries.length === 0) {
+        if (entries.length === 0) {
           entriesEl.innerHTML = '<p style="text-align:center; color:#b0a898; padding:40px;">日記はまだ投稿されていません。</p>';
           return;
         }
 
         entries.forEach(entry => {
-          const card = document.createElement('div');
-          card.className = 'entry-card';
-          // JSONデータ（title, description, categoryなど）を使ってカードを作ります
+          const card = document.createElement('a');
+          card.href = `?id=${entry.id}`;
+          card.className = 'diary-card';
+          
+          const imgHtml = entry.thumbnail ? `<img src="${entry.thumbnail}" class="diary-card-img" alt="">` : '';
+          
           card.innerHTML = `
-            <a href="?id=${entry.id}">
-              <p class="entry-date">${entry.category || ''}</p>
-              <h3 class="entry-title">${entry.title || '無題'}</h3>
-              <p class="entry-excerpt">${entry.description || ''}</p>
-            </a>
+            ${imgHtml}
+            <div class="diary-card-body">
+              <div class="diary-card-date">${entry.date || ''}</div>
+              <h3 class="diary-card-title">${entry.title}</h3>
+              <p class="diary-card-excerpt">${entry.description}</p>
+            </div>
           `;
           entriesEl.appendChild(card);
         });
-      } catch (err) {
-        console.error('読み込みエラー:', err);
-        loadingEl.innerText = '日記の読み込みに失敗しました。';
       }
-    }
-  })();
-</script>
+    })();
+  </script>
 </body>
 </html>
