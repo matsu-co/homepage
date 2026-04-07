@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// --- 【共通】Notionの本文（blocks）を取得 ---
+// --- 【共通】本文を取得する ---
 async function getPageContent(pageId, token) {
   try {
     const res = await fetch(`https://api.notion.com/v1/blocks/${pageId}/children`, {
@@ -12,8 +12,8 @@ async function getPageContent(pageId, token) {
   } catch (e) { return []; }
 }
 
-// --- 【Notion】Work, Photo, Diaryを救出する関数 ---
-async function fetchNotionData(dbId, token, fileName, isFullDetail = true) {
+// --- 【Notion】Work, Photo, Diaryを正しく拾う ---
+async function fetchNotionData(dbId, token, fileName) {
   if (!dbId) return;
   try {
     const res = await fetch(`https://api.notion.com/v1/databases/${dbId}/query`, {
@@ -22,39 +22,35 @@ async function fetchNotionData(dbId, token, fileName, isFullDetail = true) {
       body: JSON.stringify({ filter: { property: 'Published', checkbox: { equals: true } } }),
     });
     const data = await res.json();
-    if (!data.results) return;
-
     const entries = [];
     for (const page of data.results) {
       const p = page.properties;
       const imgProp = p['ファイル&メディア'] || p['Image'] || p['Excerpt'];
       const images = imgProp?.files?.map(f => f.file?.url || f.external?.url).filter(Boolean) || [];
-      const blocks = isFullDetail ? await getPageContent(page.id, token) : [];
+      const blocks = await getPageContent(page.id, token);
       
-      // 【救出】WorkのDescriptionとDiaryのSummaryを両方守ります
+      // WorkのDescription、DiaryのSummary、両方を守ります
       let desc = p['Description']?.rich_text?.[0]?.plain_text || p['Summary']?.rich_text?.[0]?.plain_text || "";
-      if (!desc && isFullDetail) {
+      if (!desc) {
         desc = blocks.find(b => b.type === 'paragraph')?.paragraph?.rich_text?.[0]?.plain_text || "";
       }
 
       entries.push({
         id: page.id,
         title: p.Name?.title?.[0]?.plain_text || p.Title?.title?.[0]?.plain_text || '無題',
-        date: p['Date']?.date?.start || '', // Diaryの日付を救出
+        date: p['Date']?.date?.start || '', // Diaryの「undefined」を直します
         description: desc,
-        category: p.Category?.select?.name || '', // Workのカテゴリ（Life work）を救出
+        category: p.Category?.select?.name || '', // Workのカテゴリ分けを救出
         thumbnail: images[0] || page.cover?.file?.url || '',
-        images: images,
+        images: images, // スライダー用の画像を救出
         contentBlocks: blocks
       });
     }
-    entries.sort((a, b) => new Date(b.date) - new Date(a.date));
     fs.writeFileSync(fileName, JSON.stringify({ entries }));
-    console.log(`--- SUCCESS: ${fileName} ---`);
   } catch (err) { console.error(err); }
 }
 
-// --- 【Local】Comic用のMarkdownを読み込む関数 ---
+// --- 【Local】Comicを読み込む ---
 function fetchLocalComics() {
   const dir = './content/comic';
   if (!fs.existsSync(dir)) return [];
@@ -78,13 +74,12 @@ function fetchLocalComics() {
 
 async function main() {
   const token = process.env.NOTION_API_KEY;
-  // 既存のNotionチームを全員復職させます
+  // Notionのデータ作成を復活
   await fetchNotionData(process.env.NOTION_WORK_DB_ID, token, 'work-data.json');
   await fetchNotionData(process.env.NOTION_PHOTO_DB_ID, token, 'photo-data.json');
   await fetchNotionData(process.env.NOTION_DIARY_DB_ID, token, 'diary-data.json');
-  // Comicは新入りのHTML方式
+  // ComicはHTML/Markdown方式
   const comics = fetchLocalComics();
   fs.writeFileSync('comic-data.json', JSON.stringify({ entries: comics }));
-  console.log(`--- FINISHED: All Sync Complete ---`);
 }
 main();
