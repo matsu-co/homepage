@@ -67,76 +67,62 @@
         </div>
     </div>
 
-    <script>
-        let currentIdx = 0;
-        let imageCount = 0;
+    <script src="../js/main.js"></script>
+  <script>
+    (async () => {
+      const params = new URLSearchParams(window.location.search);
+      const pageId = params.get('id');
+      
+      // 千裕さんのHTMLにある「名前（ID）」を正確に指定しています
+      const grid = document.getElementById('workGrid');
+      const detail = document.getElementById('workDetail');
+      const loading = document.getElementById('workLoading');
+      const detailBody = document.getElementById('detailBody');
+      const backLink = document.getElementById('backLink');
 
-        async function loadWork() {
-            const res = await fetch('../work-data.json');
-            const data = await res.json();
-            const wList = document.getElementById('work-list');
-            const lList = document.getElementById('lifework-list');
-            wList.innerHTML = ''; lList.innerHTML = '';
+      try {
+        // Vercelが焼いた「最新の爆速データ」を取りに行きます
+        const response = await fetch('../work-data.json');
+        if (!response.ok) throw new Error('data missing');
+        const data = await response.json();
+        const entries = data.entries || [];
 
-            data.entries.forEach(e => {
-                const div = document.createElement('div');
-                div.className = 'work-card';
-                div.onclick = () => openModal(e);
-                div.innerHTML = `<div class="work-thumbnail-container"><img src="${e.thumbnail}" loading="lazy"></div><p>${e.title}</p>`;
-                if (e.category.toLowerCase().includes('life')) { lList.appendChild(div); } 
-                else { wList.appendChild(div); }
-            });
+        if (pageId) {
+          // --- 【詳細表示モード】 ---
+          grid.style.display = 'none';
+          detail.style.display = 'block';
+          if (backLink) backLink.href = './'; // 詳細のときは一覧に戻る設定
+
+          // 保存されたデータの中から、該当するお仕事を探します
+          const entry = entries.find(e => e.id === pageId);
+          if (entry && entry.contentBlocks) {
+            // 保存済みの本文（blocks）をHTMLに変換して表示！
+            const contentHtml = NotionHelper.blocksToHtml(entry.contentBlocks);
+            detailBody.innerHTML = `<h2>${entry.title}</h2>` + contentHtml;
+          } else {
+            detailBody.innerHTML = '<p>詳細データが見つかりません。もう一度「反映ボタン」を押してみてください。</p>';
+          }
+        } else {
+          // --- 【一覧表示モード】 ---
+          if (loading) loading.style.display = 'none';
+          entries.forEach(entry => {
+            const card = document.createElement('a');
+            card.href = `?id=${entry.id}`;
+            card.className = 'work-card';
+            // Description（説明文）を優先して表示するように戻しました
+            card.innerHTML = `
+              <img src="${entry.thumbnail}" alt="" loading="lazy">
+              <h3>${entry.title}</h3>
+              <p>${entry.description || ''}</p>
+            `;
+            grid.appendChild(card);
+          });
         }
-
-        function openModal(e) {
-            const track = document.getElementById('modal-track');
-            const dots = document.getElementById('modal-dots');
-            currentIdx = 0;
-            imageCount = e.images.length;
-
-            track.innerHTML = e.images.map(url => `<div class="slider-item"><img src="${url}"></div>`).join('');
-            dots.innerHTML = e.images.map((_, i) => `<button class="dot ${i===0?'active':''}" onclick="goToSlide(${i})"></button>`).join('');
-            
-            document.getElementById('modal-title').innerText = e.title;
-            document.getElementById('modal-description').innerText = e.description;
-            document.getElementById('modal-tags').innerHTML = (e.tags || []).map(t => `<span class="work-tag">${t}</span>`).join('');
-            
-            document.getElementById('slider-controls').style.display = (imageCount > 1) ? 'flex' : 'none';
-            
-            updateSlider();
-            document.getElementById('modal').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function moveSlider(step) {
-            currentIdx = Math.max(0, Math.min(currentIdx + step, imageCount - 1));
-            updateSlider();
-        }
-
-        function goToSlide(i) {
-            currentIdx = i;
-            updateSlider();
-        }
-
-        function updateSlider() {
-            const track = document.getElementById('modal-track');
-            track.style.transform = `translateX(-${currentIdx * 100}%)`;
-            
-            // ボタンの有効/無効
-            document.getElementById('prev-btn').disabled = (currentIdx === 0);
-            document.getElementById('next-btn').disabled = (currentIdx === imageCount - 1);
-            
-            // ドットの更新
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIdx));
-        }
-
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-            document.body.style.overflow = '';
-        }
-
-        loadWork();
-    </script>
+      } catch (err) {
+        console.error('読み込み失敗:', err);
+        if (loading) loading.innerText = 'お仕事の読み込みに失敗しました。';
+      }
+    })();
+  </script>
 </body>
 </html>
