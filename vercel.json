@@ -5,6 +5,6 @@
     { "source": "/about", "destination": "/about/index.html" },
     { "source": "/diary", "destination": "/diary/index.html" },
     { "source": "/comicdiary", "destination": "/comicdiary/index.html" },
-    { "source": "/archive", "destination": "/archive/index.html" }
+    { "source": "/photo", "destination": "/photo/index.html" }
   ]
 }
