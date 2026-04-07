@@ -1,15 +1,12 @@
 const fs = require('fs');
-const path = require('path');
 
-async function main() {
-  console.log("--- START FETCHING FROM NOTION ---");
-  const dbId = process.env.NOTION_WORK_DB_ID;
-  const token = process.env.NOTION_API_KEY;
-
-  if (!dbId || !token) {
-    console.error("ERROR: Notion ID or API Key is missing in Vercel settings!");
+// Notionからデータを取ってきて保存する共通の関数
+async function fetchData(dbId, token, fileName) {
+  if (!dbId) {
+    console.log(`--- SKIP: Database ID for ${fileName} is missing ---`);
     return;
   }
+  console.log(`--- START FETCHING: ${fileName} ---`);
 
   try {
     const res = await fetch(`https://api.notion.com/v1/databases/${dbId}/query`, {
@@ -25,14 +22,11 @@ async function main() {
     });
 
     const data = await res.json();
-    if (!data.results) {
-      throw new Error("Notion API returned an error: " + JSON.stringify(data));
-    }
+    if (!data.results) throw new Error(JSON.stringify(data));
 
     const entries = data.results.map(page => {
       const p = page.properties;
       const images = p.Image?.files?.map(f => f.file?.url || f.external?.url).filter(Boolean) || [];
-      
       return {
         id: page.id,
         title: p.Name?.title?.[0]?.plain_text || p.Title?.title?.[0]?.plain_text || '無題',
@@ -44,16 +38,23 @@ async function main() {
       };
     });
 
-    // 【ここが最大のポイント】
-    // 複雑なフォルダ（public/data）を作らず、一番上の階層に直接「work-data.json」として保存します。
-    // これならVercelが絶対に見失いません。
-    fs.writeFileSync('work-data.json', JSON.stringify({ entries }));
-    
-    console.log(`--- SUCCESS: work-data.json saved (${entries.length} items) ---`);
+    // 以前の「data/」フォルダは使わず、直接保存してVercelの迷子を防ぎます
+    fs.writeFileSync(fileName, JSON.stringify({ entries }));
+    console.log(`--- SUCCESS: ${fileName} saved (${entries.length} items) ---`);
   } catch (err) {
-    console.error("--- FETCH FAILED ---", err);
-    process.exit(1); // 失敗したことをVercelにハッキリ伝えます
+    console.error(`--- FAILED: ${fileName} ---`, err);
   }
+}
+
+async function main() {
+  const token = process.env.NOTION_API_KEY;
+  
+  // 4つのデータベースを順番に処理します
+  // VercelのEnvironment Variablesにこれら全てのIDが入っている必要があります
+  await fetchData(process.env.NOTION_WORK_DB_ID, token, 'work-data.json');
+  await fetchData(process.env.NOTION_PHOTO_DB_ID, token, 'photo-data.json');
+  await fetchData(process.env.NOTION_DIARY_DB_ID, token, 'diary-data.json');
+  await fetchData(process.env.NOTION_COMIC_DB_ID, token, 'comic-data.json');
 }
 
 main();
