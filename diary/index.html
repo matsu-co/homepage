@@ -18,7 +18,7 @@
     }
     .diary-card:hover { opacity: 0.8; }
     
-    /* 画像を適切なサイズに固定（巨大化防止） */
+    /* 一覧画面での画像を適切なサイズに固定（巨大化防止） */
     .diary-card-img {
       width: 160px;
       height: 120px;
@@ -31,7 +31,7 @@
     .diary-card-date { font-size: 0.85rem; color: #b0a898; margin-bottom: 6px; font-family: sans-serif; }
     .diary-card-title { font-size: 1.25rem; margin: 0 0 10px 0; font-weight: 600; }
     
-    /* 本文を3行で制限し「...」をつける魔法 */
+    /* 一覧画面での本文を3行で制限し「...」をつける魔法 */
     .diary-card-excerpt {
       font-size: 0.95rem;
       line-height: 1.7;
@@ -52,14 +52,18 @@
       padding-bottom: 80px;
     }
     .article-container h2 { font-size: 1.8rem; margin-bottom: 10px; }
+    
+    /* 【修正・再調整】画像を中央に配置し、適切な大きさに制限（均等に縮小） */
     .article-container img {
-      width: 100%;
-      height: auto; /* 均等に縮小 */
-      border-radius: 8px;
-      margin: 32px 0;
+      width: auto;
+      max-width: 400px; /* 以前よりさらに小さく設定 */
+      height: auto;
+      display: block;
+      margin: 30px auto; /* 中央揃えに */
+      border-radius: 4px;
     }
 
-    /* 詳細画面のナビゲーション（タイトル付き矢印） */
+    /* 詳細画面のナビゲーション（色を修正） */
     .article-nav {
       display: flex;
       justify-content: space-between;
@@ -67,10 +71,15 @@
       padding-top: 30px;
       border-top: 1px solid #e0ddd5;
     }
-    .nav-link { text-decoration: none; color: #b0a898; max-width: 45%; }
-    .nav-link:hover { color: #333; }
-    .nav-label { display: block; font-size: 0.75rem; margin-bottom: 4px; color: #ccc; }
-    .nav-title { display: block; font-size: 0.9rem; font-weight: 600; }
+    .nav-link { text-decoration: none; max-width: 45%; }
+    
+    /* 【修正】文字をはっきりと見える色に（黒に近いグレー） */
+    .nav-label { display: block; font-size: 0.75rem; margin-bottom: 4px; color: #666; }
+    .nav-title { display: block; font-size: 0.9rem; font-weight: 600; color: #333; }
+    
+    /* ホバー時の色も調整 */
+    .nav-link:hover .nav-label { color: #333; }
+    .nav-link:hover .nav-title { color: #000; }
   </style>
 </head>
 <body>
@@ -129,15 +138,17 @@
           // 前後の記事タイトルを取得
           const idx = entries.findIndex(e => e.id === pageId);
           if (idx !== -1) {
-            if (idx > 0) {
-              const prev = entries[idx - 1];
+            // 前の記事（一覧では下にある記事）
+            if (idx < entries.length - 1) {
+              const prev = entries[idx + 1];
               const pLink = document.getElementById('prevLink');
               pLink.style.visibility = 'visible';
               pLink.href = `?id=${prev.id}`;
               document.getElementById('prevTitle').innerText = prev.title;
             }
-            if (idx < entries.length - 1) {
-              const next = entries[idx + 1];
+            // 次の記事（一覧では上にある記事）
+            if (idx > 0) {
+              const next = entries[idx - 1];
               const nLink = document.getElementById('nextLink');
               nLink.style.visibility = 'visible';
               nLink.href = `?id=${next.id}`;
