@@ -8,6 +8,31 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* 矢印ボタンのスタイル */
+    .photo-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: white;
+      font-size: 3rem;
+      cursor: pointer;
+      padding: 20px;
+      z-index: 1001;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+    .photo-nav-btn:hover { opacity: 1; }
+    .photo-nav-btn.prev { left: 10px; }
+    .photo-nav-btn.next { right: 10px; }
+    
+    /* スマホでは矢印を少し小さく */
+    @media (max-width: 600px) {
+      .photo-nav-btn { font-size: 2rem; padding: 10px; }
+    }
+  </style>
 </head>
 <body>
   <div class="paper-bg">
@@ -24,10 +49,13 @@
       <div class="loading" id="photoLoading" style="grid-column: 1/-1;">読み込み中</div>
     </div>
 
-    <!-- ライトボックス -->
     <div class="photo-lightbox" id="photoLightbox">
       <button class="photo-lightbox-close" id="lightboxClose" aria-label="閉じる">&times;</button>
+      
+      <button class="photo-nav-btn prev" id="navPrev" aria-label="前へ">&#10094;</button>
       <img src="" alt="" id="lightboxImg">
+      <button class="photo-nav-btn next" id="navNext" aria-label="次へ">&#10095;</button>
+      
       <p class="photo-lightbox-caption" id="lightboxCaption"></p>
     </div>
 
@@ -36,7 +64,6 @@
     </footer>
   </div>
 
-  <script src="../js/main.js"></script>
   <script>
     (async () => {
       const grid = document.getElementById('photoGrid');
@@ -45,22 +72,39 @@
       const lightboxImg = document.getElementById('lightboxImg');
       const lightboxCaption = document.getElementById('lightboxCaption');
       const lightboxClose = document.getElementById('lightboxClose');
+      const navPrev = document.getElementById('navPrev');
+      const navNext = document.getElementById('navNext');
+
+      let currentEntries = [];
+      let currentIndex = 0;
+
+      // ライトボックスの中身を更新する関数
+      function updateLightbox(index) {
+        if (index < 0) index = currentEntries.length - 1;
+        if (index >= currentEntries.length) index = 0;
+        
+        currentIndex = index;
+        const entry = currentEntries[currentIndex];
+        const imgUrl = entry.thumbnail || (entry.images && entry.images[0]);
+        
+        lightboxImg.src = imgUrl;
+        lightboxCaption.textContent = entry.description || entry.title || '';
+      }
 
       try {
         const response = await fetch('../photo-data.json');
         if (!response.ok) throw new Error('データが見つかりません');
         const data = await response.json();
-        const entries = data.entries; // build-data.jsで作った形式に合わせます
+        currentEntries = data.entries || [];
         
         loading.style.display = 'none';
 
-        if (!entries || entries.length === 0) {
+        if (currentEntries.length === 0) {
           grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#b0a898; padding:40px;">写真がまだ登録されていないようです。</p>';
           return;
         }
 
-        entries.forEach(entry => {
-          // build-data.js では「thumbnail」という名前にしているので、それに合わせます
+        currentEntries.forEach((entry, index) => {
           const imgUrl = entry.thumbnail || (entry.images && entry.images[0]);
           if (!imgUrl) return;
 
@@ -69,8 +113,7 @@
           img.alt = entry.title || '';
           img.loading = 'lazy';
           img.onclick = () => {
-            lightboxImg.src = imgUrl;
-            lightboxCaption.textContent = entry.description || entry.title || '';
+            updateLightbox(index);
             lightbox.classList.add('open');
             document.body.style.overflow = 'hidden';
           };
@@ -81,14 +124,24 @@
         loading.innerText = '写真の読み込みに失敗しました。';
       }
 
-      // ライトボックスを閉じる
+      // 前後のナビゲーションイベント
+      navPrev.onclick = (e) => { e.stopPropagation(); updateLightbox(currentIndex - 1); };
+      navNext.onclick = (e) => { e.stopPropagation(); updateLightbox(currentIndex + 1); };
+
+      // キーボード操作（左右の矢印キー）
+      document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('open')) return;
+        if (e.key === 'ArrowLeft') updateLightbox(currentIndex - 1);
+        if (e.key === 'ArrowRight') updateLightbox(currentIndex + 1);
+        if (e.key === 'Escape') closeLightbox();
+      });
+
       function closeLightbox() {
         lightbox.classList.remove('open');
         document.body.style.overflow = '';
       }
       lightboxClose.onclick = closeLightbox;
       lightbox.onclick = (e) => { if (e.target === lightbox) closeLightbox(); };
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
     })();
   </script>
 </body>
