@@ -4,29 +4,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>diary - matsushima CHIHIRO.</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    /* 日記一覧のスタイル */
-    .diary-card { display: flex; gap: 20px; padding: 20px 0; border-bottom: 1px solid #e0ddd5; text-decoration: none; color: inherit; align-items: flex-start; }
-    .diary-card:hover { opacity: 0.8; }
-    .diary-card-img { width: 120px; height: 120px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
-    .diary-card-body { flex: 1; }
-    .diary-card-date { font-size: 0.85rem; color: #b0a898; margin-bottom: 5px; }
-    .diary-card-title { font-size: 1.2rem; margin: 0 0 10px 0; }
-    .diary-card-excerpt { font-size: 0.9rem; line-height: 1.6; color: #666; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    /* 一覧の「3行で…」の魔法 */
+    .diary-card-excerpt {
+      display: -webkit-box;
+      -webkit-line-clamp: 3; /* 3行で制限 */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 8px;
+    }
 
-    /* 記事詳細のスタイル */
-    .article-container { max-width: 700px; margin: 40px auto; line-height: 1.8; }
-    .article-container img { max-width: 100%; height: auto; border-radius: 8px; margin: 20px 0; }
-    
-    /* 記事ナビゲーション（前へ・次へ） */
-    .article-nav { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 20px; border-top: 1px solid #e0ddd5; }
-    .nav-link { text-decoration: none; color: #b0a898; font-size: 0.9rem; max-width: 45%; }
-    .nav-link:hover { color: #333; }
-    .nav-label { display: block; font-size: 0.75rem; margin-bottom: 5px; }
+    /* 詳細画面の画像を「爆速」かつ「綺麗に」表示する設定 */
+    .article-container img {
+      width: 100%;
+      max-width: 600px; /* 大きすぎないように制限 */
+      height: auto;
+      display: block;
+      margin: 30px auto;
+      border-radius: 4px;
+      /* 読み込みを軽く感じさせる工夫 */
+      content-visibility: auto; 
+    }
+
+    /* 記事詳細の縦スクロールを読みやすく */
+    .article-container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding-bottom: 100px;
+      line-height: 2;
+      letter-spacing: 0.05em;
+    }
   </style>
 </head>
 <body>
@@ -44,9 +55,9 @@
 
     <div class="article-content" id="diaryArticle" style="display:none;">
       <div class="article-container" id="articleBody"></div>
-      <nav class="article-nav">
-        <a id="prevLink" class="nav-link" style="visibility:hidden;"><span class="nav-label">← 前の記事</span><span id="prevTitle"></span></a>
-        <a id="nextLink" class="nav-link" style="visibility:hidden; text-align:right;"><span class="nav-label">次の記事 →</span><span id="nextTitle"></span></a>
+      <nav class="article-nav" style="display:flex; justify-content:space-between; margin-top:50px; border-top:1px solid #eee; padding-top:20px;">
+        <a id="prevLink" class="nav-link" style="visibility:hidden; color:#b0a898; text-decoration:none;">← 前の記事</a>
+        <a id="nextLink" class="nav-link" style="visibility:hidden; color:#b0a898; text-decoration:none; text-align:right;">次の記事 →</a>
       </nav>
     </div>
 
@@ -60,10 +71,8 @@
       const pageId = params.get('id');
       const entriesEl = document.getElementById('diaryEntries');
       const articleEl = document.getElementById('diaryArticle');
-      const loadingEl = document.getElementById('diaryLoading');
       const backLink = document.getElementById('backLink');
 
-      // データの読み込み
       const response = await fetch('../diary-data.json');
       const data = await response.json();
       const entries = data.entries || [];
@@ -72,53 +81,42 @@
         // --- 記事詳細表示 ---
         entriesEl.style.display = 'none';
         articleEl.style.display = 'block';
-        backLink.href = './'; // 詳細のときは一覧に戻るように変更
+        
+        // 【修正】詳細のときは「diary一覧」に戻るように
+        backLink.href = './'; 
 
-        // 前後の記事を見つける
         const currentIndex = entries.findIndex(e => e.id === pageId);
         if (currentIndex !== -1) {
           if (currentIndex < entries.length - 1) {
             const next = entries[currentIndex + 1];
-            document.getElementById('nextLink').style.visibility = 'visible';
-            document.getElementById('nextLink').href = `?id=${next.id}`;
-            document.getElementById('nextTitle').innerText = next.title;
+            const nextEl = document.getElementById('nextLink');
+            nextEl.style.visibility = 'visible';
+            nextEl.href = `?id=${next.id}`;
           }
           if (currentIndex > 0) {
             const prev = entries[currentIndex - 1];
-            document.getElementById('prevLink').style.visibility = 'visible';
-            document.getElementById('prevLink').href = `?id=${prev.id}`;
-            document.getElementById('prevTitle').innerText = prev.title;
+            const prevEl = document.getElementById('prevLink');
+            prevEl.style.visibility = 'visible';
+            prevEl.href = `?id=${prev.id}`;
           }
         }
 
-        // 本文（ブロック）の取得
         const articleBody = document.getElementById('articleBody');
         const content = await NotionHelper.getEntry(pageId);
         if (content && content.blocks) {
-          const titleHtml = `<h2>${content.title}</h2><p class="diary-card-date">${content.date || ''}</p>`;
-          articleBody.innerHTML = titleHtml + NotionHelper.blocksToHtml(content.blocks);
-        } else {
-          articleBody.innerHTML = '<p>読み込みに失敗しました。</p>';
+          articleBody.innerHTML = `<h2>${content.title}</h2><p style="color:#b0a898; font-size:0.8rem;">${content.date || ''}</p>` + NotionHelper.blocksToHtml(content.blocks);
         }
       } else {
         // --- 一覧表示 ---
-        loadingEl.style.display = 'none';
-        if (entries.length === 0) {
-          entriesEl.innerHTML = '<p style="text-align:center; color:#b0a898; padding:40px;">日記はまだ投稿されていません。</p>';
-          return;
-        }
-
+        document.getElementById('diaryLoading').style.display = 'none';
         entries.forEach(entry => {
           const card = document.createElement('a');
           card.href = `?id=${entry.id}`;
           card.className = 'diary-card';
-          
-          const imgHtml = entry.thumbnail ? `<img src="${entry.thumbnail}" class="diary-card-img" alt="">` : '';
-          
           card.innerHTML = `
-            ${imgHtml}
+            ${entry.thumbnail ? `<img src="${entry.thumbnail}" class="diary-card-img">` : ''}
             <div class="diary-card-body">
-              <div class="diary-card-date">${entry.date || ''}</div>
+              <div class="diary-card-date">${entry.date}</div>
               <h3 class="diary-card-title">${entry.title}</h3>
               <p class="diary-card-excerpt">${entry.description}</p>
             </div>
