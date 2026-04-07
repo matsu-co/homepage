@@ -2,5 +2,8 @@
   "name": "matsushima-chihiro-website",
   "version": "1.0.0",
   "private": true,
-  "description": "matsushima CHIHIRO. portfolio website"
+  "description": "matsushima CHIHIRO. portfolio website",
+  "scripts": {
+    "build": "node scripts/build-data.js"
+  }
 }
