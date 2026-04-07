@@ -33,50 +33,34 @@
     </footer>
   </div>
 
-  <script src="../js/main.js"></script>
   <script>
-    (async () => {
-      const params = new URLSearchParams(window.location.search);
-      const pageId = params.get('id');
-      const entriesEl = document.getElementById('comicEntries');
-      const articleEl = document.getElementById('comicArticle');
-      const loadingEl = document.getElementById('comicLoading');
+  (async () => {
+    const grid = document.getElementById('comicGrid');
+    const loading = document.getElementById('comicLoading');
 
-      if (pageId) {
-        entriesEl.style.display = 'none';
-        articleEl.style.display = 'block';
+    try {
+      // 自分のフォルダから焼かれた爆速データを読み込む
+      const response = await fetch('../comic-data.json');
+      const data = await response.json();
+      const entries = data.entries || [];
 
-        const data = await NotionHelper.getEntry(pageId);
-        if (data && data.blocks) {
-          const titleHtml = data.title ? `<h2 style="margin-bottom:8px;">${data.title}</h2>` : '';
-          const dateHtml = data.date ? `<p class="entry-date">${data.date}</p>` : '';
-          articleEl.innerHTML = titleHtml + dateHtml + NotionHelper.blocksToHtml(data.blocks);
-        } else {
-          articleEl.innerHTML = '<p>記事を読み込めませんでした。</p>';
-        }
-      } else {
-        const entries = await NotionHelper.getEntries('comicdiary');
-        loadingEl.style.display = 'none';
+      if (loading) loading.style.display = 'none';
 
-        if (entries.length === 0) {
-          entriesEl.innerHTML = '<p style="text-align:center; color:#b0a898; padding:40px;">Notionと連携すると、ここにイラスト日記が表示されます。<br>詳しくは SETUP-NOTION.md をご覧ください。</p>';
-          return;
-        }
-
-        entries.forEach(entry => {
-          const card = document.createElement('div');
-          card.className = 'entry-card';
-          card.innerHTML = `
-            <a href="?id=${entry.id}">
-              ${entry.cover ? `<img class="entry-cover" src="${entry.cover}" alt="">` : ''}
-              <p class="entry-date">${entry.date || ''}</p>
-              <h3 class="entry-title">${entry.title || '無題'}</h3>
-            </a>
-          `;
-          entriesEl.appendChild(card);
-        });
-      }
-    })();
-  </script>
+      entries.forEach(entry => {
+        const div = document.createElement('div');
+        div.className = 'comic-card';
+        // 画像は /public/images/comic/ の中から直接出します
+        div.innerHTML = `
+          <img src="${entry.thumbnail}" alt="${entry.title}" style="width:100%; height:auto;">
+          <h3>${entry.title}</h3>
+          <p style="font-size:0.8rem; color:#666;">${entry.description}</p>
+        `;
+        grid.appendChild(div);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  })();
+</script>
 </body>
 </html>
