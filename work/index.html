@@ -1,73 +1,45 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>work - matsu-co</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/style.css">
-    <style>
-        /* スライダー専用の追加スタイル */
-        .slider-outer { position: relative; width: 100%; overflow: hidden; margin-bottom: 20px; border-radius: 4px; }
-        .slider-track { display: flex; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-        .slider-item { flex: 0 0 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.02); }
-        .slider-item img { max-width: 100%; max-height: 65vh; object-fit: contain; }
-        
-        .slider-nav { display: flex; justify-content: center; gap: 15px; margin-top: 10px; align-items: center; }
-        .nav-btn { background: #eee; border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; color: #555; }
-        .nav-btn:disabled { opacity: 0.3; cursor: default; }
-        .dots { display: flex; gap: 8px; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; border: none; padding: 0; }
-        .dot.active { background: #a08a6e; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>work - matsushima CHIHIRO.</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* 確実に表示するための最低限のスタイル */
+    .work-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px 0; }
+    .work-card { text-decoration: none; color: inherit; border: 1px solid #eee; border-radius: 8px; overflow: hidden; background: white; transition: transform 0.2s; }
+    .work-card:hover { transform: translateY(-5px); }
+    .work-card img { width: 100%; height: 200px; object-fit: cover; }
+    .work-card-info { padding: 15px; }
+    .work-card h3 { margin: 0 0 10px 0; font-size: 1.1rem; }
+    .work-card p { font-size: 0.9rem; color: #666; margin: 0; }
+    
+    .loading { text-align: center; padding: 50px; color: #b0a898; }
+    .detail-content { max-width: 800px; margin: 0 auto; padding: 20px; }
+    .detail-content img { max-width: 100%; height: auto; border-radius: 8px; margin: 20px 0; }
+  </style>
 </head>
-<body class="bg-paper">
-    <div class="paper-bg"><img src="../paper.png" alt="" class="paper-texture"></div>
+<body>
+  <div class="paper-bg"><img src="../paper.png" alt="" class="paper-texture"></div>
 
-    <div class="page-wrapper" style="max-width: 960px; position: relative; z-index: 1;">
-        <header class="page-header">
-            <h1>work</h1>
-            <a href="../index.html" class="back-link">← もどる</a>
-        </header>
+  <div class="page-wrapper">
+    <header class="page-header">
+      <h1>work</h1>
+      <a href="../" class="back-link" id="backLink">← もどる</a>
+    </header>
 
-        <main>
-            <section class="work-section">
-                <h2 class="section-title">work（お仕事）</h2>
-                <div id="work-list" class="work-grid">読み込み中...</div>
-            </section>
-            <section class="work-section">
-                <h2 class="section-title">Life work（くらしのデザイン）</h2>
-                <div id="lifework-list" class="work-grid">読み込み中...</div>
-            </section>
-        </main>
-        <footer class="page-footer">&copy; matsushima CHIHIRO.</footer>
+    <div class="work-grid" id="workGrid">
+      <div class="loading" id="workLoading">読み込み中...</div>
     </div>
 
-    <div id="modal" class="modal" onclick="closeModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <button onclick="closeModal()" class="close-btn">&times;</button>
-            
-            <div class="slider-outer">
-                <div id="modal-track" class="slider-track"></div>
-            </div>
-            
-            <div id="slider-controls" class="slider-nav">
-                <button id="prev-btn" class="nav-btn" onclick="moveSlider(-1)">←</button>
-                <div id="modal-dots" class="dots"></div>
-                <button id="next-btn" class="nav-btn" onclick="moveSlider(1)">→</button>
-            </div>
-
-            <div class="modal-info">
-                <h2 id="modal-title" style="margin-top:20px;"></h2>
-                <p id="modal-description" style="white-space: pre-wrap;"></p>
-                <div id="modal-tags" class="work-modal-tags" style="justify-content:center;"></div>
-            </div>
-        </div>
+    <div id="workDetail" style="display:none;">
+      <div class="detail-content" id="detailBody"></div>
     </div>
 
-  <script src="../js/main.js"></script>
+    <footer class="page-footer">&copy; matsushima CHIHIRO.</footer>
+  </div>
+
   <script>
     (async () => {
       const params = new URLSearchParams(window.location.search);
@@ -76,27 +48,40 @@
       const detail = document.getElementById('workDetail');
       const loading = document.getElementById('workLoading');
       const detailBody = document.getElementById('detailBody');
+      const backLink = document.getElementById('backLink');
 
       try {
-        // 先ほど確認した「ズラーッとした文字（データ）」を読み込みます
+        // データの取得
         const response = await fetch('../work-data.json');
-        if (!response.ok) throw new Error('Network response was not ok');
+        if (!response.ok) throw new Error('データが見つかりません');
         const data = await response.json();
         const entries = data.entries || [];
 
-        // データが届いたら、何はともあれ「読み込み中」を消す！
+        // 読み込み中を消す
         if (loading) loading.style.display = 'none';
 
         if (pageId) {
           // --- 詳細表示 ---
           grid.style.display = 'none';
           detail.style.display = 'block';
+          if (backLink) backLink.href = './';
+
           const entry = entries.find(e => e.id === pageId);
-          if (entry && entry.contentBlocks) {
-            // 焼き付けてある本文をHTMLに変換して表示
-            detailBody.innerHTML = `<h2>${entry.title}</h2>` + NotionHelper.blocksToHtml(entry.contentBlocks);
-          } else {
-            detailBody.innerHTML = '<p>詳細データがまだ準備できていないようです。1分待ってから再読み込みするか、Notionの反映ボタンをもう一度押してください。</p>';
+          if (entry) {
+            let html = `<h2>${entry.title}</h2>`;
+            // 本文(blocks)を簡易的にHTMLへ変換
+            if (entry.contentBlocks) {
+              entry.contentBlocks.forEach(block => {
+                if (block.type === 'paragraph') {
+                  const text = block.paragraph.rich_text?.[0]?.plain_text || '';
+                  html += `<p>${text}</p>`;
+                } else if (block.type === 'image') {
+                  const url = block.image.file?.url || block.image.external?.url;
+                  html += `<img src="${url}" alt="">`;
+                }
+              });
+            }
+            detailBody.innerHTML = html;
           }
         } else {
           // --- 一覧表示 ---
@@ -105,19 +90,18 @@
             card.href = `?id=${entry.id}`;
             card.className = 'work-card';
             card.innerHTML = `
-              <img src="${entry.thumbnail}" alt="" loading="lazy">
-              <h3>${entry.title}</h3>
-              <p>${entry.description || ''}</p>
+              <img src="${entry.thumbnail}" alt="">
+              <div class="work-card-info">
+                <h3>${entry.title}</h3>
+                <p>${entry.description || ''}</p>
+              </div>
             `;
             grid.appendChild(card);
           });
         }
       } catch (err) {
         console.error('Error:', err);
-        // 万が一失敗しても「読み込み中」を消してエラーを出す
-        if (loading) {
-          loading.innerText = '読み込みに失敗しました。1分待ってからページを更新してみてください。';
-        }
+        if (loading) loading.innerText = '読み込みに失敗しました。ページを更新してみてください。';
       }
     })();
   </script>
