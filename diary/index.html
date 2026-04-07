@@ -6,110 +6,55 @@
   <title>diary - matsushima CHIHIRO.</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    /* 一覧表示用のスタイル：画像とテキストを横に並べる */
-    .diary-card {
-      display: flex;
-      gap: 24px;
-      padding: 30px 0;
-      border-bottom: 1px solid #e0ddd5;
-      text-decoration: none;
-      color: inherit;
-      align-items: flex-start;
-    }
-    .diary-card:hover { opacity: 0.8; }
-    
-    /* 一覧画面での画像を適切なサイズに固定（巨大化防止） */
-    .diary-card-img {
-      width: 160px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 4px;
-      flex-shrink: 0;
-    }
-    
-    .diary-card-body { flex: 1; }
-    .diary-card-date { font-size: 0.85rem; color: #b0a898; margin-bottom: 6px; font-family: sans-serif; }
-    .diary-card-title { font-size: 1.25rem; margin: 0 0 10px 0; font-weight: 600; }
-    
-    /* 一覧画面での本文を3行で制限し「...」をつける魔法 */
-    .diary-card-excerpt {
-      font-size: 0.95rem;
-      line-height: 1.7;
-      color: #666;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    /* 全体の横揺れを防ぐ設定 */
+    html, body { overflow-x: hidden; width: 100%; margin: 0; padding: 0; }
+    * { box-sizing: border-box; }
 
-    /* 詳細画面：ブログ風の縦スクロール設定 */
-    .article-container {
-      max-width: 680px;
-      margin: 40px auto;
-      line-height: 2;
-      letter-spacing: 0.03em;
-      padding-bottom: 80px;
+    /* 一覧のレイアウト */
+    .diary-card { display: flex; gap: 20px; padding: 25px 0; border-bottom: 1px solid #e0ddd5; text-decoration: none; color: inherit; }
+    .diary-card-img { width: 120px; height: 90px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+    .diary-card-body { flex: 1; min-width: 0; }
+    .diary-card-title { font-size: 1.1rem; margin: 5px 0; }
+    .diary-card-excerpt { font-size: 0.9rem; color: #666; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    /* 【超重要】詳細画面の画像ズレを直す設定 */
+    .article-container { 
+      width: 100%;
+      max-width: 600px; 
+      margin: 0 auto; 
+      padding: 20px; /* 左右に余白を作る */
     }
-    .article-container h2 { font-size: 1.8rem; margin-bottom: 10px; }
-    
-    /* 【修正・再調整】画像を中央に配置し、適切な大きさに制限（均等に縮小） */
-    .article-container img {
-      width: auto;
-      max-width: 400px; /* 以前よりさらに小さく設定 */
-      height: auto;
+    .article-container img { 
       display: block;
-      margin: 30px auto; /* 中央揃えに */
+      width: 100%; /* 横幅いっぱいまで */
+      max-width: 100%; /* 親要素を超えない */
+      height: auto; /* 縦横比を保つ */
+      margin: 30px auto; 
       border-radius: 4px;
     }
 
-    /* 詳細画面のナビゲーション（色を修正） */
-    .article-nav {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 60px;
-      padding-top: 30px;
-      border-top: 1px solid #e0ddd5;
-    }
-    .nav-link { text-decoration: none; max-width: 45%; }
-    
-    /* 【修正】文字をはっきりと見える色に（黒に近いグレー） */
-    .nav-label { display: block; font-size: 0.75rem; margin-bottom: 4px; color: #666; }
-    .nav-title { display: block; font-size: 0.9rem; font-weight: 600; color: #333; }
-    
-    /* ホバー時の色も調整 */
-    .nav-link:hover .nav-label { color: #333; }
-    .nav-link:hover .nav-title { color: #000; }
+    .article-nav { display: flex; justify-content: space-between; margin-top: 40px; padding: 20px; border-top: 1px solid #eee; }
+    .nav-link { text-decoration: none; color: #333; font-weight: bold; font-size: 0.9rem; max-width: 45%; }
+    .nav-label { display: block; font-size: 0.7rem; color: #b0a898; margin-bottom: 5px; }
   </style>
 </head>
 <body>
   <div class="paper-bg"><img src="../paper.png" alt="" class="paper-texture"></div>
-
   <div class="page-wrapper">
-    <header class="page-header">
+    <header class="page-header" style="padding: 20px;">
       <h1>diary</h1>
       <a href="../" class="back-link" id="backLink">← もどる</a>
     </header>
 
-    <div id="diaryEntries">
-      <div class="loading" id="diaryLoading">読み込み中...</div>
-    </div>
+    <div id="diaryEntries"></div>
 
     <div class="article-content" id="diaryArticle" style="display:none;">
       <div class="article-container" id="articleBody"></div>
-      
       <nav class="article-nav">
-        <a id="prevLink" class="nav-link" style="visibility:hidden;">
-          <span class="nav-label">← 前の記事</span>
-          <span id="prevTitle" class="nav-title"></span>
-        </a>
-        <a id="nextLink" class="nav-link" style="visibility:hidden; text-align:right;">
-          <span class="nav-label">次の記事 →</span>
-          <span id="nextTitle" class="nav-title"></span>
-        </a>
+        <a id="prevLink" class="nav-link" style="visibility:hidden;"><span class="nav-label">← 前</span><span id="prevTitle"></span></a>
+        <a id="nextLink" class="nav-link" style="visibility:hidden; text-align:right;"><span class="nav-label">次 →</span><span id="nextTitle"></span></a>
       </nav>
     </div>
-
     <footer class="page-footer">&copy; matsushima CHIHIRO.</footer>
   </div>
 
@@ -122,70 +67,53 @@
       const articleEl = document.getElementById('diaryArticle');
       const backLink = document.getElementById('backLink');
 
-      try {
-        // 保存済みの爆速データを読み込み
-        const response = await fetch('../diary-data.json');
-        if (!response.ok) throw new Error('data missing');
-        const data = await response.json();
-        const entries = data.entries || [];
+      // 焼き付けたデータを読み込む（これで詳細も爆速になります！）
+      const response = await fetch('../diary-data.json');
+      const data = await response.json();
+      const entries = data.entries || [];
 
-        if (pageId) {
-          // --- 詳細表示モード ---
-          entriesEl.style.display = 'none';
-          articleEl.style.display = 'block';
-          backLink.href = './'; // 詳細から戻るときは一覧へ
+      if (pageId) {
+        entriesEl.style.display = 'none';
+        articleEl.style.display = 'block';
+        backLink.href = './';
 
-          // 前後の記事タイトルを取得
-          const idx = entries.findIndex(e => e.id === pageId);
-          if (idx !== -1) {
-            // 前の記事（一覧では下にある記事）
-            if (idx < entries.length - 1) {
-              const prev = entries[idx + 1];
-              const pLink = document.getElementById('prevLink');
-              pLink.style.visibility = 'visible';
-              pLink.href = `?id=${prev.id}`;
-              document.getElementById('prevTitle').innerText = prev.title;
-            }
-            // 次の記事（一覧では上にある記事）
-            if (idx > 0) {
-              const next = entries[idx - 1];
-              const nLink = document.getElementById('nextLink');
-              nLink.style.visibility = 'visible';
-              nLink.href = `?id=${next.id}`;
-              document.getElementById('nextTitle').innerText = next.title;
-            }
+        const idx = entries.findIndex(e => e.id === pageId);
+        const entry = entries[idx];
+
+        if (entry) {
+          // 前後のリンク設定
+          if (idx < entries.length - 1) {
+            const prev = entries[idx + 1];
+            const pLink = document.getElementById('prevLink');
+            pLink.style.visibility = 'visible'; pLink.href = `?id=${prev.id}`;
+            document.getElementById('prevTitle').innerText = prev.title;
+          }
+          if (idx > 0) {
+            const next = entries[idx - 1];
+            const nLink = document.getElementById('nextLink');
+            nLink.style.visibility = 'visible'; nLink.href = `?id=${next.id}`;
+            document.getElementById('nextTitle').innerText = next.title;
           }
 
-          // 本文をNotionから取得
+          // 本文を表示（すでに焼き付けてあるデータを使うので爆速！）
           const articleBody = document.getElementById('articleBody');
-          const content = await NotionHelper.getEntry(pageId);
-          if (content && content.blocks) {
-            articleBody.innerHTML = `<h2>${content.title}</h2><p class="diary-card-date">${content.date || ''}</p>` + NotionHelper.blocksToHtml(content.blocks);
-          }
-        } else {
-          // --- 一覧表示モード ---
-          document.getElementById('diaryLoading').style.display = 'none';
-          entries.forEach(entry => {
-            const card = document.createElement('a');
-            card.href = `?id=${entry.id}`;
-            card.className = 'diary-card';
-            
-            const imgHtml = entry.thumbnail ? `<img src="${entry.thumbnail}" class="diary-card-img" alt="">` : '';
-            
-            card.innerHTML = `
-              ${imgHtml}
-              <div class="diary-card-body">
-                <div class="diary-card-date">${entry.date || ''}</div>
-                <h3 class="diary-card-title">${entry.title}</h3>
-                <p class="diary-card-excerpt">${entry.description}</p>
-              </div>
-            `;
-            entriesEl.appendChild(card);
-          });
+          const contentHtml = NotionHelper.blocksToHtml(entry.contentBlocks);
+          articleBody.innerHTML = `<h2>${entry.title}</h2><p style="color:#b0a898;">${entry.date}</p>` + contentHtml;
         }
-      } catch (err) {
-        console.error(err);
-        document.getElementById('diaryLoading').innerText = '読み込みに失敗しました。';
+      } else {
+        entries.forEach(entry => {
+          const card = document.createElement('a');
+          card.href = `?id=${entry.id}`;
+          card.className = 'diary-card';
+          card.innerHTML = `
+            ${entry.thumbnail ? `<img src="${entry.thumbnail}" class="diary-card-img">` : ''}
+            <div class="diary-card-body">
+              <div style="font-size:0.8rem;color:#b0a898">${entry.date}</div>
+              <h3 class="diary-card-title">${entry.title}</h3>
+              <p class="diary-card-excerpt">${entry.description}</p>
+            </div>`;
+          entriesEl.appendChild(card);
+        });
       }
     })();
   </script>
