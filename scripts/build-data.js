@@ -1,26 +1,24 @@
 const fs = require('fs');
 
-// 本文からテキストを抽出する関数
-async function getPageSummary(pageId, token) {
+// 【重要】ページの中身（文章や写真のデータ）をすべて取得する関数
+async function getPageContent(pageId, token) {
   try {
-    const res = await fetch(`https://api.notion.com/v1/blocks/${pageId}/children?page_size=5`, {
+    const res = await fetch(`https://api.notion.com/v1/blocks/${pageId}/children`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Notion-Version': '2022-06-28',
       },
     });
     const data = await res.json();
-    // 最初の段落（paragraph）を探して、100文字程度を抜き出す
-    const firstParagraph = data.results.find(b => b.type === 'paragraph')?.paragraph?.rich_text?.[0]?.plain_text || '';
-    return firstParagraph.length > 80 ? firstParagraph.substring(0, 80) + '...' : firstParagraph;
+    return data.results || [];
   } catch (e) {
-    return '';
+    return [];
   }
 }
 
 async function fetchData(dbId, token, fileName) {
   if (!dbId) return;
-  console.log(`--- FETCHING ${fileName} ---`);
+  console.log(`--- FETCHING ${fileName} (Full Detail Mode) ---`);
 
   try {
     const res = await fetch(`https://api.notion.com/v1/databases/${dbId}/query`, {
@@ -38,21 +36,25 @@ async function fetchData(dbId, token, fileName) {
     const data = await res.json();
     const entries = [];
 
-    // 各ページの中身を順番に覗きに行きます
+    // 各ページの中身を順番に「焼き付け」に行きます
     for (const page of data.results) {
       const p = page.properties;
-      const imgProp = p['ファイル&メディア'] || p['Excerpt'] || p['Image'];
+      const imgProp = p['ファイル&メディア'] || p['Image'] || p['Excerpt'];
       const images = imgProp?.files?.map(f => f.file?.url || f.external?.url).filter(Boolean) || [];
       
-      // ここで本文の冒頭を取得！
-      const autoSummary = await getPageSummary(page.id, token);
+      // 本文の中身（ブロック）を丸ごと取得
+      const blocks = await getPageContent(page.id, token);
+      
+      // 最初の段落をサマリー（冒頭文）にする
+      const firstP = blocks.find(b => b.type === 'paragraph')?.paragraph?.rich_text?.[0]?.plain_text || "";
 
       entries.push({
         id: page.id,
         title: p.Name?.title?.[0]?.plain_text || p.Title?.title?.[0]?.plain_text || '無題',
         date: p['Date']?.date?.start || '',
-        description: autoSummary, // 自動取得した冒頭文を入れる
+        description: firstP.length > 70 ? firstP.substring(0, 70) + '...' : firstP,
         thumbnail: images[0] || page.cover?.file?.url || '',
+        contentBlocks: blocks // ★ここが重要！詳細ページ用の中身です
       });
     }
 
@@ -67,7 +69,7 @@ async function fetchData(dbId, token, fileName) {
 async function main() {
   const token = process.env.NOTION_API_KEY;
   await fetchData(process.env.NOTION_WORK_DB_ID, token, 'work-data.json');
-  await fetchData(process.env.NOTION_PHOTO_ID || process.env.NOTION_PHOTO_DB_ID, token, 'photo-data.json');
+  await fetchData(process.env.NOTION_PHOTO_DB_ID, token, 'photo-data.json');
   await fetchData(process.env.NOTION_DIARY_DB_ID, token, 'diary-data.json');
   await fetchData(process.env.NOTION_COMIC_DB_ID, token, 'comic-data.json');
 }
