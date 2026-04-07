@@ -46,30 +46,40 @@
       const lightboxCaption = document.getElementById('lightboxCaption');
       const lightboxClose = document.getElementById('lightboxClose');
 
-      const entries = await NotionHelper.getEntries('photo');
-      loading.style.display = 'none';
+      try {
+        const response = await fetch('../photo-data.json');
+        if (!response.ok) throw new Error('データが見つかりません');
+        const data = await response.json();
+        const entries = data.entries; // build-data.jsで作った形式に合わせます
+        
+        loading.style.display = 'none';
 
-      if (entries.length === 0) {
-        grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#b0a898; padding:40px;">Notionと連携すると、ここに写真が表示されます。<br>詳しくは SETUP-NOTION.md をご覧ください。</p>';
-        return;
+        if (!entries || entries.length === 0) {
+          grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#b0a898; padding:40px;">写真がまだ登録されていないようです。</p>';
+          return;
+        }
+
+        entries.forEach(entry => {
+          // build-data.js では「thumbnail」という名前にしているので、それに合わせます
+          const imgUrl = entry.thumbnail || (entry.images && entry.images[0]);
+          if (!imgUrl) return;
+
+          const img = document.createElement('img');
+          img.src = imgUrl;
+          img.alt = entry.title || '';
+          img.loading = 'lazy';
+          img.onclick = () => {
+            lightboxImg.src = imgUrl;
+            lightboxCaption.textContent = entry.description || entry.title || '';
+            lightbox.classList.add('open');
+            document.body.style.overflow = 'hidden';
+          };
+          grid.appendChild(img);
+        });
+      } catch (err) {
+        console.error('読み込みエラー:', err);
+        loading.innerText = '写真の読み込みに失敗しました。';
       }
-
-      entries.forEach(entry => {
-        const imgUrl = entry.image;
-        if (!imgUrl) return;
-
-        const img = document.createElement('img');
-        img.src = imgUrl;
-        img.alt = entry.title || '';
-        img.loading = 'lazy';
-        img.onclick = () => {
-          lightboxImg.src = imgUrl;
-          lightboxCaption.textContent = entry.caption || entry.title || '';
-          lightbox.classList.add('open');
-          document.body.style.overflow = 'hidden';
-        };
-        grid.appendChild(img);
-      });
 
       // ライトボックスを閉じる
       function closeLightbox() {
