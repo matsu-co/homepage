@@ -1,12 +1,8 @@
 const fs = require('fs');
 
-// Notionからデータを取ってきて保存する共通の関数
 async function fetchData(dbId, token, fileName) {
-  if (!dbId) {
-    console.log(`--- SKIP: Database ID for ${fileName} is missing ---`);
-    return;
-  }
-  console.log(`--- START FETCHING: ${fileName} ---`);
+  if (!dbId) return;
+  console.log(`--- FETCHING ${fileName} ---`);
 
   try {
     const res = await fetch(`https://api.notion.com/v1/databases/${dbId}/query`, {
@@ -26,11 +22,16 @@ async function fetchData(dbId, token, fileName) {
 
     const entries = data.results.map(page => {
       const p = page.properties;
-      const images = p.Image?.files?.map(f => f.file?.url || f.external?.url).filter(Boolean) || [];
+      
+      // 【ここを修正】
+      // Notionの列名「ファイル&メディア」または「Image」から画像を探します
+      const imageProperty = p['ファイル&メディア'] || p['Image'];
+      const images = imageProperty?.files?.map(f => f.file?.url || f.external?.url).filter(Boolean) || [];
+      
       return {
         id: page.id,
         title: p.Name?.title?.[0]?.plain_text || p.Title?.title?.[0]?.plain_text || '無題',
-        description: p.Description?.rich_text?.[0]?.plain_text || '',
+        description: p.Excerpt?.rich_text?.[0]?.plain_text || p.Description?.rich_text?.[0]?.plain_text || '',
         category: p.Category?.select?.name || '',
         tags: p.Tags?.multi_select?.map(t => t.name) || [],
         thumbnail: images[0] || page.cover?.file?.url || page.cover?.external?.url || '',
@@ -38,7 +39,6 @@ async function fetchData(dbId, token, fileName) {
       };
     });
 
-    // 以前の「data/」フォルダは使わず、直接保存してVercelの迷子を防ぎます
     fs.writeFileSync(fileName, JSON.stringify({ entries }));
     console.log(`--- SUCCESS: ${fileName} saved (${entries.length} items) ---`);
   } catch (err) {
@@ -48,9 +48,6 @@ async function fetchData(dbId, token, fileName) {
 
 async function main() {
   const token = process.env.NOTION_API_KEY;
-  
-  // 4つのデータベースを順番に処理します
-  // VercelのEnvironment Variablesにこれら全てのIDが入っている必要があります
   await fetchData(process.env.NOTION_WORK_DB_ID, token, 'work-data.json');
   await fetchData(process.env.NOTION_PHOTO_DB_ID, token, 'photo-data.json');
   await fetchData(process.env.NOTION_DIARY_DB_ID, token, 'diary-data.json');
