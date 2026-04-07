@@ -72,7 +72,7 @@
         let imageCount = 0;
 
         async function loadWork() {
-            const res = await fetch('/api/notion?type=work');
+            const res = await fetch('../data/work.json');
             const data = await res.json();
             const wList = document.getElementById('work-list');
             const lList = document.getElementById('lifework-list');
