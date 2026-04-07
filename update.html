@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>サイト更新中...</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f9f9f9; color: #333; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 90%; }
+        .spinner { border: 4px solid rgba(0,0,0,0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: #333; animation: spin 1s linear infinite; margin: 1rem auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="spinner"></div>
+        <h2 id="status">Vercelへ更新依頼を送っています...</h2>
+        <p>この画面は自動で閉じて構いません。</p>
+    </div>
+
+    <script>
+        // 千裕さんの本物のデプロイフックURLです
+        const DEPLOY_HOOK_URL = 'https://api.vercel.com/v1/integrations/deploy/prj_wGjdNbcqHXj6pPSc9AVkMULCCOGO/qL3j1wyeiJ';
+
+        fetch(DEPLOY_HOOK_URL, { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('status').innerText = '成功！1分ほどで反映されます。';
+                } else {
+                    document.getElementById('status').innerText = 'エラー：URLが正しくないようです。';
+                }
+            })
+            .catch(() => {
+                document.getElementById('status').innerText = '通信に失敗しました。';
+            });
+    </script>
+</body>
+</html>
