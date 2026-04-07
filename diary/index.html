@@ -34,51 +34,63 @@
   </div>
 
   <script src="../js/main.js"></script>
-  <script>
-    (async () => {
-      const params = new URLSearchParams(window.location.search);
-      const pageId = params.get('id');
-      const entriesEl = document.getElementById('diaryEntries');
-      const articleEl = document.getElementById('diaryArticle');
-      const loadingEl = document.getElementById('diaryLoading');
+<script>
+  (async () => {
+    const params = new URLSearchParams(window.location.search);
+    const pageId = params.get('id');
+    
+    // ここの名前を千裕さんのHTML（id="diaryEntries"）に合わせました！
+    const entriesEl = document.getElementById('diaryEntries');
+    const articleEl = document.getElementById('diaryArticle');
+    const loadingEl = document.getElementById('diaryLoading');
 
-      if (pageId) {
-        // 記事詳細表示
-        entriesEl.style.display = 'none';
-        articleEl.style.display = 'block';
+    if (pageId) {
+      // --- 【詳細表示】ここは今まで通り Notion に聞きに行きます ---
+      entriesEl.style.display = 'none';
+      articleEl.style.display = 'block';
 
-        const data = await NotionHelper.getEntry(pageId);
-        if (data && data.blocks) {
-          const titleHtml = data.title ? `<h2 style="margin-bottom:8px;">${data.title}</h2>` : '';
-          const dateHtml = data.date ? `<p class="entry-date">${data.date}</p>` : '';
-          articleEl.innerHTML = titleHtml + dateHtml + NotionHelper.blocksToHtml(data.blocks);
-        } else {
-          articleEl.innerHTML = '<p>記事を読み込めませんでした。</p>';
-        }
+      const data = await NotionHelper.getEntry(pageId);
+      if (data && data.blocks) {
+        const titleHtml = data.title ? `<h2 style="margin-bottom:8px;">${data.title}</h2>` : '';
+        const dateHtml = data.date ? `<p class="entry-date">${data.date}</p>` : '';
+        articleEl.innerHTML = titleHtml + dateHtml + NotionHelper.blocksToHtml(data.blocks);
       } else {
-        // 一覧表示
-        const entries = await NotionHelper.getEntries('diary');
+        articleEl.innerHTML = '<p>記事を読み込めませんでした。</p>';
+      }
+    } else {
+      // --- 【一覧表示】ここを爆速化！ ---
+      try {
+        const response = await fetch('../diary-data.json');
+        if (!response.ok) throw new Error('データが見つかりません');
+        const data = await response.json();
+        const entries = data.entries;
+
         loadingEl.style.display = 'none';
 
-        if (entries.length === 0) {
-          entriesEl.innerHTML = '<p style="text-align:center; color:#b0a898; padding:40px;">Notionと連携すると、ここに日記が表示されます。<br>詳しくは SETUP-NOTION.md をご覧ください。</p>';
+        if (!entries || entries.length === 0) {
+          entriesEl.innerHTML = '<p style="text-align:center; color:#b0a898; padding:40px;">日記はまだ投稿されていません。</p>';
           return;
         }
 
         entries.forEach(entry => {
           const card = document.createElement('div');
           card.className = 'entry-card';
+          // JSONデータ（title, description, categoryなど）を使ってカードを作ります
           card.innerHTML = `
             <a href="?id=${entry.id}">
-              <p class="entry-date">${entry.date || ''}</p>
+              <p class="entry-date">${entry.category || ''}</p>
               <h3 class="entry-title">${entry.title || '無題'}</h3>
-              ${entry.excerpt ? `<p class="entry-excerpt">${entry.excerpt}</p>` : ''}
+              <p class="entry-excerpt">${entry.description || ''}</p>
             </a>
           `;
           entriesEl.appendChild(card);
         });
+      } catch (err) {
+        console.error('読み込みエラー:', err);
+        loadingEl.innerText = '日記の読み込みに失敗しました。';
       }
-    })();
-  </script>
+    }
+  })();
+</script>
 </body>
 </html>
