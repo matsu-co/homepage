@@ -29,7 +29,6 @@ async function fetchNotionData(dbId, token, fileName) {
       const images = imgProp?.files?.map(f => f.file?.url || f.external?.url).filter(Boolean) || [];
       const blocks = await getPageContent(page.id, token);
       
-      // WorkのDescription、DiaryのSummary、両方を守ります
       let desc = p['Description']?.rich_text?.[0]?.plain_text || p['Summary']?.rich_text?.[0]?.plain_text || "";
       if (!desc) {
         desc = blocks.find(b => b.type === 'paragraph')?.paragraph?.rich_text?.[0]?.plain_text || "";
@@ -38,11 +37,11 @@ async function fetchNotionData(dbId, token, fileName) {
       entries.push({
         id: page.id,
         title: p.Name?.title?.[0]?.plain_text || p.Title?.title?.[0]?.plain_text || '無題',
-        date: p['Date']?.date?.start || '', // Diaryの「undefined」を直します
+        date: p['Date']?.date?.start || '',
         description: desc,
-        category: p.Category?.select?.name || '', // Workのカテゴリ分けを救出
+        category: p.Category?.select?.name || '',
         thumbnail: images[0] || page.cover?.file?.url || '',
-        images: images, // スライダー用の画像を救出
+        images: images,
         contentBlocks: blocks
       });
     }
@@ -52,7 +51,8 @@ async function fetchNotionData(dbId, token, fileName) {
 
 // --- 【Local】Comicを読み込む ---
 function fetchLocalComics() {
-  const dir = './content/comic';
+  // 千裕さんの希望通り「comicdiary」という名前のフォルダを探します
+  const dir = './content/comicdiary';
   if (!fs.existsSync(dir)) return [];
   const files = fs.readdirSync(dir);
   return files.filter(f => f.endsWith('.md')).map(file => {
@@ -65,7 +65,8 @@ function fetchLocalComics() {
       id: file.replace('.md', ''),
       title: title,
       date: date,
-      thumbnail: `../images/comic/${imgName}`,
+      // 画像は public/images/comicdiary/ の中にあるものを指すようにします
+      thumbnail: `../images/comicdiary/${imgName}`,
       description: body.substring(0, 80) + '...',
       contentBlocks: [{ type: 'paragraph', paragraph: { rich_text: [{ plain_text: body }] } }]
     };
@@ -74,11 +75,10 @@ function fetchLocalComics() {
 
 async function main() {
   const token = process.env.NOTION_API_KEY;
-  // Notionのデータ作成を復活
   await fetchNotionData(process.env.NOTION_WORK_DB_ID, token, 'work-data.json');
   await fetchNotionData(process.env.NOTION_PHOTO_DB_ID, token, 'photo-data.json');
   await fetchNotionData(process.env.NOTION_DIARY_DB_ID, token, 'diary-data.json');
-  // ComicはHTML/Markdown方式
+  
   const comics = fetchLocalComics();
   fs.writeFileSync('comic-data.json', JSON.stringify({ entries: comics }));
 }
