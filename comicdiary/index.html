@@ -6,8 +6,8 @@
   <title>comicdiary - matsushima CHIHIRO.</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    /* ヘッダーの赤いロゴ(01)：サイズを大きく調整 */
-    .header-logo { width: 100px; height: auto; margin-bottom: 15px; display: block; }
+    /* 【修正】ヘッダーの赤いロゴ(01)：大きく調整 */
+    .header-logo { width: 140px; height: auto; margin-bottom: 15px; display: block; }
     
     /* 一覧：2列デザイン */
     .comic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px 0; }
@@ -16,12 +16,18 @@
     .comic-info { margin-top: 8px; font-size: 0.85rem; line-height: 1.4; }
     .serial-no { font-weight: bold; margin-right: 4px; color: #a08a6e; }
 
+    /* タグのスタイル（詳細表示でも使用） */
+    .tag-label { 
+      background: #f0ede9; color: #888; padding: 2px 8px; border-radius: 12px; 
+      font-size: 0.75rem; margin-right: 5px; display: inline-block;
+    }
+
     /* タグフィルター */
     .tag-filter-container { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 20px; border-bottom: 1px solid #f0ede9; margin-bottom: 10px; }
     .filter-btn { border: 1px solid #e0ddd5; background: white; padding: 4px 12px; border-radius: 15px; cursor: pointer; font-size: 0.8rem; color: #888; white-space: nowrap; }
     .filter-btn.active { border-color: #a08a6e; color: #a08a6e; }
 
-    /* 詳細：シリアル・タイトル → 画像 → 本文 */
+    /* 詳細：シリアル・タイトル → 画像 → 本文 → タグ */
     .detail-header { margin-bottom: 30px; text-align: center; }
     .detail-title { font-size: 1.3rem; font-family: 'Shippori Mincho', serif; color: #5c5446; margin: 0; }
     .detail-serial { display: block; font-size: 1rem; color: #a08a6e; font-weight: bold; margin-bottom: 8px; }
@@ -29,8 +35,8 @@
     .article-images img { width: 100%; height: auto; border-radius: 2px; }
     .article-body { line-height: 2; color: #444; white-space: pre-wrap; padding: 0 10px; font-size: 1rem; }
     
-    /* フッター：画像02のみを表示（テキスト一切なし） */
-    .handwritten-footer { width: 280px; height: auto; margin: 100px auto 60px; display: block; }
+    /* 【修正】フッター：画像02（手書き名）のみを表示、大きく中央寄せ */
+    .handwritten-footer { width: 300px; height: auto; margin: 80px auto 40px; display: block; }
     
     .post-nav { display: flex; justify-content: space-between; padding: 40px 0; border-top: 1px dotted #e0ddd5; margin-top: 40px; }
     .nav-arrow { text-decoration: none; color: #a08a6e; font-size: 0.95rem; font-weight: bold; }
@@ -60,6 +66,8 @@
           <div id="detailImages" class="article-images"></div>
           <div id="detailText" class="article-body"></div>
           
+          <div id="detailTags" style="margin-top: 20px; padding: 0 10px;"></div>
+          
           <nav class="post-nav">
             <a id="prevPost" class="nav-arrow" href="#">← 前の投稿</a>
             <a id="nextPost" class="nav-arrow" href="#">次の投稿 →</a>
@@ -83,7 +91,6 @@
       const data = await response.json();
       const entries = data.entries || [];
 
-      // タグフィルターの生成（undefinedを排除）
       const allTags = [...new Set(entries.flatMap(e => e.tags || []))].filter(Boolean);
       const filterArea = document.getElementById('filterArea');
       if (allTags.length > 0) {
@@ -94,7 +101,6 @@
       }
 
       if (pageId) {
-        // --- 詳細表示 ---
         document.getElementById('comicGrid').style.display = 'none';
         document.getElementById('filterArea').style.display = 'none';
         document.getElementById('homeLink').style.display = 'none';
@@ -110,6 +116,11 @@
           document.getElementById('detailImages').innerHTML = entry.images.map(src => `<img src="${src}" loading="lazy">`).join('');
           document.getElementById('detailText').innerText = entry.description;
           
+          // 【追加】タグの表示処理
+          if (entry.tags && entry.tags.length > 0) {
+            document.getElementById('detailTags').innerHTML = entry.tags.map(t => `<span class="tag-label">${t}</span>`).join('');
+          }
+
           const prev = entries[idx + 1];
           const next = entries[idx - 1];
           const prevBtn = document.getElementById('prevPost');
@@ -118,7 +129,6 @@
           if (next) { nextBtn.href = `?id=${next.id}`; } else { nextBtn.style.visibility = 'hidden'; }
         }
       } else {
-        // --- 一覧表示 ---
         const filtered = currentTag ? entries.filter(e => e.tags.includes(currentTag)) : entries;
         const grid = document.getElementById('comicGrid');
         filtered.forEach(entry => {
