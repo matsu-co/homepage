@@ -6,8 +6,8 @@
   <title>comicdiary - matsushima CHIHIRO.</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    /* ヘッダーの赤いロゴ */
-    .header-logo { width: 60px; height: auto; margin-bottom: 10px; display: block; }
+    /* 【解決】ヘッダーの赤いロゴを大きく表示する */
+    .header-logo { height: 60px; width: auto; margin-bottom: 10px; display: block; }
     
     /* 一覧：2列デザイン */
     .comic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px 0; }
@@ -29,8 +29,8 @@
     .article-images img { width: 100%; height: auto; border-radius: 2px; }
     .article-body { line-height: 1.9; color: #444; white-space: pre-wrap; padding: 0 10px; font-size: 0.95rem; }
     
-    /* フッター：手書き名 */
-    .handwritten-footer { width: 140px; height: auto; margin: 60px auto 20px; display: block; }
+    /* 【解決】フッター：手書きサインを大きく表示し、不要なテキストを完全に削除する */
+    .handwritten-footer { width: 220px; height: auto; margin: 80px auto 30px; display: block; }
     
     .post-nav { display: flex; justify-content: space-between; padding: 40px 0 20px; border-top: 1px dotted #e0ddd5; margin-top: 40px; }
     .nav-arrow { text-decoration: none; color: #a08a6e; font-size: 0.9rem; font-weight: bold; }
@@ -38,6 +38,7 @@
     @media (max-width: 480px) {
       .comic-grid { gap: 10px; }
       .comic-info { font-size: 0.75rem; }
+      .handwritten-footer { width: 160px; }
     }
   </style>
 </head>
@@ -75,7 +76,6 @@
 
     <footer class="page-footer">
       <img src="../matsushimachihiro02.png" alt="matsushima CHIHIRO." class="handwritten-footer">
-      <p style="text-align: center; font-size: 0.7rem; color: #b0a898; letter-spacing: 0.1em;">© matsushima CHIHIRO.</p>
     </footer>
   </div>
 
@@ -105,7 +105,7 @@
         document.getElementById('filterArea').style.display = 'none';
         document.getElementById('comicDetail').style.display = 'block';
         
-        // 【修正】戻るボタンは一覧（./）へ
+        // 戻るボタンは一覧（./）へ
         document.getElementById('backLink').href = './';
         
         const idx = entries.findIndex(e => e.id === pageId);
@@ -133,4 +133,19 @@
         
         filtered.forEach(entry => {
           const card = document.createElement('a');
-          card.href = `?id=${
+          card.href = `?id=${entry.id}`;
+          card.className = 'comic-card';
+          card.innerHTML = `
+            <img src="${entry.thumbnail}" loading="lazy">
+            <div class="comic-info">
+              <span class="serial-no">${entry.serial}</span>
+              <span class="comic-title">${entry.title}</span>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
