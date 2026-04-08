@@ -929,7 +929,7 @@ button {
 
 /* 全ページ共通：フッターの手書きロゴ(02) */
 .handwritten-footer {
-    width: 220px !important; /* ここを150から220に大きくしました */
+    width: 320px !important; /* ここを150から220に大きくしました */
     height: auto;
     display: block;
     margin: 60px auto 40px !important;
