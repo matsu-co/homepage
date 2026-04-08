@@ -958,10 +958,11 @@ button {
 
 /* 余計な線を消し、茶色の線だけを活かす */
 .page-header {
-    border-bottom: 1px solid #d4cbbf; /* これが茶色い線です */
+    border-bottom: 1px solid #d4cbbf; /* 茶色い線 */
     padding-bottom: 20px;
     margin-bottom: 40px;
-    display: block !important; /* レイアウトを縦並びに固定 */
+    /* 【修正】text-align: center; を削除し、display: block; を追加 */
+    display: block !important; /* 中央寄せを解除し、縦並びに固定 */
 }
 
 /* フッターの不要なテキストを消去 */
