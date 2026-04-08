@@ -919,25 +919,55 @@ button {
   font-size: 0.88em;
 }
 
-/* 全ページ共通：ヘッダーの赤いロゴ(01) */
+/* ============================
+   全ページ共通：ブランドレイアウト
+   ============================ */
+
+/* ヘッダー：赤いロゴ(01) */
 .header-logo {
-    width: 180px !important; /* 好みの大きさに調整してください */
+    width: 180px !important; 
     height: auto;
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    transition: opacity 0.3s;
+}
+.header-logo:hover { opacity: 0.7; }
+
+/* ロゴのリンク設定（枠を消す） */
+.logo-link {
+    display: inline-block;
+    text-decoration: none;
+    border: none;
 }
 
-/* 全ページ共通：フッターの手書きロゴ(02) */
+/* ページ見出し(h1)の調整 */
+.page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #5a5040;
+    margin: 0;
+}
+
+/* フッター：手書き署名(02) */
 .handwritten-footer {
-    width: 260px !important; /* ここを150から220に大きくしました */
+    width: 260px !important; 
     height: auto;
     display: block;
-    margin: 60px auto 40px !important;
-    color: transparent; /* 文字化け対策 */
+    margin: 80px auto 40px !important;
 }
 
-/* フッターの不要なテキストを完全に消す */
-.page-footer p, 
-.page-footer span {
-    display: none !important;
+/* 余計な線を消し、茶色の線だけを活かす */
+.page-header {
+    border-bottom: 1px solid #d4cbbf; /* これが茶色い線です */
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+    display: block !important; /* レイアウトを縦並びに固定 */
 }
+
+/* フッターの不要なテキストを消去 */
+.page-footer {
+    border-top: 1px solid #d4cbbf;
+    margin-top: 60px;
+    text-align: center;
+}
+.page-footer p, .page-footer span { display: none !important; }
