@@ -6,49 +6,71 @@
   <title>comicdiary - matsushima CHIHIRO.</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    /* 2列デザイン（PCもスマホも） */
-    .comic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px 0; }
-    .comic-card { text-decoration: none; color: inherit; position: relative; }
-    .comic-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 4px; }
-    .comic-info { margin-top: 5px; font-size: 0.8rem; }
-    .serial-no { font-weight: bold; color: #a08a6e; margin-right: 5px; }
-    .tag-labels { display: flex; gap: 5px; margin-top: 3px; flex-wrap: wrap; }
-    .tag-label { background: #f0ede9; color: #888; padding: 1px 6px; border-radius: 10px; font-size: 0.7rem; }
-
-    /* タグフィルターのボタン */
-    .tag-filter-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; }
-    .filter-btn { border: 1px solid #e0ddd5; background: white; padding: 5px 12px; border-radius: 20px; cursor: pointer; white-space: nowrap; }
-    .filter-btn.active { background: #a08a6e; color: white; border-color: #a08a6e; }
-
-    /* 詳細：縦スクロール表示 */
-    .article-images { display: flex; flex-direction: column; gap: 20px; margin-bottom: 40px; }
-    .article-images img { width: 100%; height: auto; }
+    /* ヘッダーの手書きサイン */
+    .handwritten-header { width: 150px; height: auto; margin-top: 5px; display: block; }
     
-    /* 前後ナビゲーション */
-    .post-nav { display: flex; justify-content: space-between; padding: 40px 0; border-top: 1px solid #e0ddd5; }
-    .nav-arrow { text-decoration: none; color: #a08a6e; font-weight: bold; }
+    /* 一覧：2列デザイン */
+    .comic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px 0; }
+    .comic-card { text-decoration: none; color: #5c5446; display: block; }
+    .comic-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 2px; border: 1px solid #eee; }
+    .comic-info { margin-top: 8px; font-size: 0.85rem; line-height: 1.4; }
+    .serial-no { font-weight: bold; margin-right: 4px; }
+
+    /* タグフィルター（上部） */
+    .tag-filter-container { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 20px; }
+    .filter-btn { border: 1px solid #e0ddd5; background: rgba(255,255,255,0.5); padding: 4px 12px; border-radius: 15px; cursor: pointer; font-size: 0.8rem; color: #888; white-space: nowrap; }
+    .filter-btn.active { border-color: #a08a6e; color: #a08a6e; background: white; }
+
+    /* 詳細：情報の順番（タイトル→画像→テキスト） */
+    .detail-header { margin-bottom: 30px; text-align: center; }
+    .detail-title { font-size: 1.2rem; font-family: 'Shippori Mincho', serif; color: #5c5446; }
+    .detail-serial { display: block; font-size: 0.9rem; color: #a08a6e; font-weight: bold; margin-bottom: 5px; }
+    .article-images { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+    .article-images img { width: 100%; height: auto; border-radius: 2px; }
+    .article-body { line-height: 1.9; color: #444; white-space: pre-wrap; padding: 0 10px; }
+    
+    /* フッター：赤いロゴ */
+    .footer-logo { width: 60px; height: auto; margin: 40px auto; display: block; opacity: 0.8; }
+    
+    .post-nav { display: flex; justify-content: space-between; padding: 40px 0 20px; border-top: 1px dotted #e0ddd5; margin-top: 40px; }
+    .nav-arrow { text-decoration: none; color: #a08a6e; font-size: 0.9rem; }
   </style>
 </head>
 <body>
-  <div class="page-wrapper">
-    <header class="page-header">
-      <h1>comicdiary</h1>
-      <a href="../" class="back-link" id="backLink">← もどる</a>
+  <div class="page-wrapper" style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <header class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
+      <div>
+        <h1 style="font-size: 1.5rem; margin: 0;">work / comic</h1>
+        <img src="../matsushimachihiro02.png" alt="matsushima CHIHIRO." class="handwritten-header">
+      </div>
+      <a href="../" class="back-link" id="backLink" style="text-decoration: none; color: #b0a898;">← もどる</a>
     </header>
 
-    <div id="filterArea" class="tag-filter-container"></div>
-    <div id="comicGrid" class="comic-grid"></div>
-    
-    <div id="comicDetail" style="display:none;">
-      <div class="article-container">
-        <div id="detailImages" class="article-images"></div>
-        <div id="detailText" class="article-body"></div>
-        <nav class="post-nav">
-          <a id="prevPost" class="nav-arrow" href="#">← 前へ</a>
-          <a id="nextPost" class="nav-arrow" href="#">次へ →</a>
-        </nav>
+    <main>
+      <div id="filterArea" class="tag-filter-container"></div>
+      
+      <div id="comicGrid" class="comic-grid"></div>
+      
+      <div id="comicDetail" style="display:none;">
+        <article class="article-container">
+          <div class="detail-header">
+            <span id="detailSerial" class="detail-serial"></span>
+            <h2 id="detailTitle" class="detail-title"></h2>
+          </div>
+          <div id="detailImages" class="article-images"></div>
+          <div id="detailText" class="article-body"></div>
+          
+          <nav class="post-nav">
+            <a id="prevPost" class="nav-arrow" href="#">← 前の投稿</a>
+            <a id="nextPost" class="nav-arrow" href="#">次の投稿 →</a>
+          </nav>
+        </article>
       </div>
-    </div>
+    </main>
+
+    <footer class="page-footer">
+      <img src="../matsushimachihiro01.png" alt="logo" class="footer-logo">
+    </footer>
   </div>
 
   <script>
@@ -61,7 +83,7 @@
       const data = await response.json();
       const entries = data.entries || [];
 
-      // --- タグボタンの生成 ---
+      // --- タグボタン（上部） ---
       const allTags = [...new Set(entries.flatMap(e => e.tags))];
       const filterArea = document.getElementById('filterArea');
       filterArea.innerHTML = `<button class="filter-btn ${!currentTag?'active':''}" onclick="location.href='./'">すべて</button>` + 
@@ -73,13 +95,17 @@
         document.getElementById('filterArea').style.display = 'none';
         document.getElementById('comicDetail').style.display = 'block';
         
+        // 戻るボタンを「一覧（./）」に戻るように修正
+        document.getElementById('backLink').href = './';
+        
         const idx = entries.findIndex(e => e.id === pageId);
         const entry = entries[idx];
         
-        document.getElementById('detailImages').innerHTML = entry.images.map(src => `<img src="${src}">`).join('');
-        document.getElementById('detailText').innerHTML = `<h3>${entry.serial} ${entry.title}</h3><p>${entry.description}</p>`;
+        document.getElementById('detailSerial').innerText = entry.serial;
+        document.getElementById('detailTitle').innerText = entry.title;
+        document.getElementById('detailImages').innerHTML = entry.images.map(src => `<img src="${src}" loading="lazy">`).join('');
+        document.getElementById('detailText').innerText = entry.description;
         
-        // 前後ナビのリンク設定
         const prev = entries[idx + 1];
         const next = entries[idx - 1];
         const prevBtn = document.getElementById('prevPost');
@@ -101,7 +127,7 @@
             <img src="${entry.thumbnail}" loading="lazy">
             <div class="comic-info">
               <span class="serial-no">${entry.serial}</span>
-              <div class="tag-labels">${entry.tags.map(t => `<span class="tag-label">${t}</span>`).join('')}</div>
+              <span class="comic-title">${entry.title}</span>
             </div>
           `;
           grid.appendChild(card);
