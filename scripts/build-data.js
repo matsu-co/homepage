@@ -51,6 +51,7 @@ async function fetchNotionData(dbId, token, fileName) {
 }
 
 // --- 【Local】ComicをGitHubのフォルダから読み込む（最強強化版） ---
+// --- 【Local】ComicをGitHubのフォルダから読み込む（最強強化版） ---
 function fetchLocalComics() {
   const mdDir = './content/comicdiary'; 
   const imgDir = './images/comicdiary';
@@ -58,7 +59,6 @@ function fetchLocalComics() {
   if (!fs.existsSync(mdDir)) return [];
   const mdFiles = fs.readdirSync(mdDir).filter(f => f.endsWith('.md'));
 
-  // 画像フォルダの中身をあらかじめリスト化（拡張子の揺れを吸収するため）
   let imgFiles = [];
   if (fs.existsSync(imgDir)) {
     imgFiles = fs.readdirSync(imgDir);
@@ -66,31 +66,41 @@ function fetchLocalComics() {
 
   return mdFiles.map(file => {
     const content = fs.readFileSync(path.join(mdDir, file), 'utf8');
-    const title = content.match(/title\s*[:：]\s*(.*)/)?.[1]?.trim() || '無題';
-    const serial = content.match(/serial\s*[:：]\s*(.*)/)?.[1]?.trim() || '';
-    
-    // Markdownに書かれた画像名（例：IMG_3061）を抜き出す
-    const imgNameRaw = content.match(/image\s*[:：]\s*(.*)/)?.[1]?.trim() || '';
-    let foundImgName = imgNameRaw;
+    // Frontmatter(---で囲まれた部分)だけを正確に切り出す
+    const parts = content.split('---');
+    const header = parts[1] || '';
+    const body = parts.slice(2).join('---').trim();
 
-    // フォルダ内に一致するファイル（拡張子違い含む）があるか探す
-    if (imgNameRaw && imgFiles.length > 0) {
-      const imgNameBase = imgNameRaw.split('.').shift().toLowerCase();
-      const matchFile = imgFiles.find(f => f.split('.').shift().toLowerCase() === imgNameBase);
-      if (matchFile) foundImgName = matchFile; 
+    const title = header.match(/title\s*[:：]\s*(.*)/)?.[1]?.trim() || '無題';
+    const serial = header.match(/serial\s*[:：]\s*(.*)/)?.[1]?.trim() || '';
+    
+    // タグの抽出（無い場合は空配列にする）
+    const tagsMatch = header.match(/tags\s*[:：]\s*\[(.*)\]/);
+    const tags = tagsMatch ? tagsMatch[1].split(',').map(t => t.trim()).filter(Boolean) : [];
+    
+    // 画像の抽出（images: [a.jpg, b.jpg] または image: a.jpg 両方対応）
+    const imgsMatch = header.match(/images\s*[:：]\s*\[(.*)\]/);
+    let imageList = [];
+    if (imgsMatch) {
+      imageList = imgsMatch[1].split(',').map(i => i.trim()).filter(Boolean);
+    } else {
+      const singleImg = header.match(/image\s*[:：]\s*(.*)/)?.[1]?.trim();
+      if (singleImg) imageList = [singleImg];
     }
 
-    const thumbnailPath = `../images/comicdiary/${foundImgName}`;
-    const body = content.split('---').pop().trim();
+    // 実際のファイル名と照合してパスを作る
+    const fullPaths = imageList.map(img => {
+      const base = img.split('.').shift().toLowerCase();
+      const match = imgFiles.find(f => f.split('.').shift().toLowerCase() === base);
+      return `../images/comicdiary/${match || img}`;
+    });
 
     return {
       id: file.replace('.md', ''),
-      title, 
-      serial,
-      thumbnail: thumbnailPath,
-      images: [thumbnailPath], // 複数枚対応の準備
-      description: body,
-      contentBlocks: [{ type: 'paragraph', paragraph: { rich_text: [{ plain_text: body }] } }]
+      title, serial, tags,
+      images: fullPaths,
+      thumbnail: fullPaths[0] || '',
+      description: body
     };
   });
 }
