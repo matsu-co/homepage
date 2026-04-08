@@ -3,64 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>comic diary - matsushima CHIHIRO.</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
+  <title>comicdiary - matsushima CHIHIRO.</title>
   <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* 一覧のレイアウト */
+    .comic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; padding: 30px 0; }
+    .comic-card { text-decoration: none; color: inherit; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: transform 0.2s; }
+    .comic-card:hover { transform: translateY(-5px); }
+    .comic-card img { width: 100%; height: auto; display: block; }
+    .comic-card-info { padding: 20px; }
+    .comic-card-title { font-size: 1.1rem; margin: 0 0 5px 0; font-weight: 600; }
+    .comic-card-date { font-size: 0.8rem; color: #b0a898; }
+
+    /* 詳細表示（画像をクリックしたとき） */
+    .article-container { max-width: 700px; margin: 40px auto; padding: 20px; }
+    .article-container img { width: 100%; height: auto; border-radius: 4px; margin-bottom: 30px; }
+    .article-body { line-height: 1.8; letter-spacing: 0.03em; color: #333; }
+    
+    .loading { text-align: center; padding: 100px; color: #b0a898; }
+  </style>
 </head>
 <body>
-  <div class="paper-bg">
-    <img src="../paper.png" alt="" class="paper-texture">
-  </div>
+  <div class="paper-bg"><img src="../paper.png" alt="" class="paper-texture"></div>
 
   <div class="page-wrapper">
     <header class="page-header">
-      <h1>comic diary</h1>
-      <a href="../" class="back-link">← もどる</a>
+      <h1>comicdiary</h1>
+      <a href="../" class="back-link" id="backLink">← もどる</a>
     </header>
 
-    <!-- 記事一覧 -->
-    <div class="entries" id="comicEntries">
-      <div class="loading" id="comicLoading">読み込み中</div>
+    <div id="comicLoading" class="loading">読み込み中...</div>
+    <div id="comicGrid" class="comic-grid"></div>
+    <div id="comicDetail" style="display:none;">
+      <div class="article-container" id="detailBody"></div>
     </div>
 
-    <!-- 記事詳細（動的表示） -->
-    <div class="article-content" id="comicArticle" style="display:none;"></div>
-
-    <footer class="page-footer">
-      &copy; matsushima CHIHIRO.
-    </footer>
+    <footer class="page-footer">&copy; matsushima CHIHIRO.</footer>
   </div>
 
   <script>
-  (async () => {
-    const grid = document.getElementById('comicGrid');
-    const loading = document.getElementById('comicLoading');
+    (async () => {
+      const params = new URLSearchParams(window.location.search);
+      const pageId = params.get('id');
+      const grid = document.getElementById('comicGrid');
+      const detail = document.getElementById('comicDetail');
+      const loading = document.getElementById('comicLoading');
+      const detailBody = document.getElementById('detailBody');
+      const backLink = document.getElementById('backLink');
 
-    try {
-      // 自分のフォルダから焼かれた爆速データを読み込む
-      const response = await fetch('../comic-data.json');
-      const data = await response.json();
-      const entries = data.entries || [];
+      try {
+        // 先ほどの「ズラーッとした文字（データ）」を読み込みます
+        const response = await fetch('../comic-data.json');
+        const data = await response.json();
+        const entries = data.entries || [];
 
-      if (loading) loading.style.display = 'none';
+        if (loading) loading.style.display = 'none';
 
-      entries.forEach(entry => {
-        const div = document.createElement('div');
-        div.className = 'comic-card';
-        // 画像は /public/images/comic/ の中から直接出します
-        div.innerHTML = `
-          <img src="${entry.thumbnail}" alt="${entry.title}" style="width:100%; height:auto;">
-          <h3>${entry.title}</h3>
-          <p style="font-size:0.8rem; color:#666;">${entry.description}</p>
-        `;
-        grid.appendChild(div);
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  })();
-</script>
+        if (pageId) {
+          // --- 詳細表示 ---
+          grid.style.display = 'none';
+          detail.style.display = 'block';
+          backLink.href = './';
+
+          const entry = entries.find(e => e.id === pageId);
+          if (entry) {
+            let html = `<p class="comic-card-date">${entry.date}</p>`;
+            html += `<h2>${entry.title}</h2>`;
+            html += `<img src="${entry.thumbnail}" alt="">`;
+            // 本文（blocksではなく直のテキスト）を表示
+            if (entry.contentBlocks && entry.contentBlocks[0]) {
+              html += `<div class="article-body"><p>${entry.contentBlocks[0].paragraph.rich_text[0].plain_text}</p></div>`;
+            }
+            detailBody.innerHTML = html;
+          }
+        } else {
+          // --- 一覧表示 ---
+          entries.forEach(entry => {
+            const card = document.createElement('a');
+            card.href = `?id=${entry.id}`;
+            card.className = 'comic-card';
+            card.innerHTML = `
+              <img src="${entry.thumbnail}" alt="" loading="lazy">
+              <div class="comic-card-info">
+                <div class="comic-card-date">${entry.date}</div>
+                <h3 class="comic-card-title">${entry.title}</h3>
+              </div>
+            `;
+            grid.appendChild(card);
+          });
+        }
+      } catch (err) {
+        console.error(err);
+        if (loading) loading.innerText = '読み込みに失敗しました。';
+      }
+    })();
+  </script>
 </body>
 </html>
