@@ -50,29 +50,50 @@ async function fetchNotionData(dbId, token, fileName) {
   } catch (err) { console.error(err); }
 }
 
-// fetchLocalComics 関数の中身をこれに差し替えてください
+// --- 【Local】ComicをGitHubのフォルダから読み込む（最強強化版） ---
 function fetchLocalComics() {
-  const dir = './content/comicdiary';
-  if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir).filter(f => f.endsWith('.md')).map(file => {
-    const content = fs.readFileSync(path.join(dir, file), 'utf8');
+  const mdDir = './content/comicdiary'; 
+  const imgDir = './images/comicdiary';
+
+  if (!fs.existsSync(mdDir)) return [];
+  const mdFiles = fs.readdirSync(mdDir).filter(f => f.endsWith('.md'));
+
+  // 画像フォルダの中身をあらかじめリスト化（拡張子の揺れを吸収するため）
+  let imgFiles = [];
+  if (fs.existsSync(imgDir)) {
+    imgFiles = fs.readdirSync(imgDir);
+  }
+
+  return mdFiles.map(file => {
+    const content = fs.readFileSync(path.join(mdDir, file), 'utf8');
     const title = content.match(/title\s*[:：]\s*(.*)/)?.[1]?.trim() || '無題';
     const serial = content.match(/serial\s*[:：]\s*(.*)/)?.[1]?.trim() || '';
-    const tagsRaw = content.match(/tags\s*[:：]\s*\[(.*)\]/)?.[1] || '';
-    const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
-    const imgsRaw = content.match(/images\s*[:：]\s*\[(.*)\]/)?.[1] || '';
-    const images = imgsRaw.split(',').map(img => `../images/comicdiary/${img.trim()}`).filter(img => !img.endsWith('/'));
-    const body = content.split('---').pop().trim();
     
+    // Markdownに書かれた画像名（例：IMG_3061）を抜き出す
+    const imgNameRaw = content.match(/image\s*[:：]\s*(.*)/)?.[1]?.trim() || '';
+    let foundImgName = imgNameRaw;
+
+    // フォルダ内に一致するファイル（拡張子違い含む）があるか探す
+    if (imgNameRaw && imgFiles.length > 0) {
+      const imgNameBase = imgNameRaw.split('.').shift().toLowerCase();
+      const matchFile = imgFiles.find(f => f.split('.').shift().toLowerCase() === imgNameBase);
+      if (matchFile) foundImgName = matchFile; 
+    }
+
+    const thumbnailPath = `../images/comicdiary/${foundImgName}`;
+    const body = content.split('---').pop().trim();
+
     return {
       id: file.replace('.md', ''),
-      title, serial, tags, images,
-      thumbnail: images[0] || '',
-      description: body
+      title, 
+      serial,
+      thumbnail: thumbnailPath,
+      images: [thumbnailPath], // 複数枚対応の準備
+      description: body,
+      contentBlocks: [{ type: 'paragraph', paragraph: { rich_text: [{ plain_text: body }] } }]
     };
   });
 }
-
 // ...（main関数の中身も以前のままでOKです）...
 
 async function main() {
