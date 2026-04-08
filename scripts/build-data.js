@@ -51,28 +51,39 @@ async function fetchNotionData(dbId, token, fileName) {
 }
 
 // --- 【Local】Comicを読み込む ---
+// ...（上のNotion用の関数などはそのまま維持してください）...
+
 function fetchLocalComics() {
   const dir = './content/comicdiary';
   if (!fs.existsSync(dir)) return [];
-  const files = fs.readdirSync(dir);
-  return files.filter(f => f.endsWith('.md')).map(file => {
+  return fs.readdirSync(dir).filter(f => f.endsWith('.md')).map(file => {
     const content = fs.readFileSync(path.join(dir, file), 'utf8');
-    // ★全角コロンやスペースなしでも拾えるように正規表現を強化
-    const title = content.match(/title\s*[:：]\s*(.*)/)?.[1] || '無題';
-    const date = content.match(/date\s*[:：]\s*(.*)/)?.[1] || '';
-    const imgName = content.match(/image\s*[:：]\s*(.*)/)?.[1] || '';
+    
+    // タイトル、連番、タグ、画像を正規表現で抜き出します
+    const title = content.match(/title\s*[:：]\s*(.*)/)?.[1]?.trim() || '無題';
+    const serial = content.match(/serial\s*[:：]\s*(.*)/)?.[1]?.trim() || '';
+    const tagsRaw = content.match(/tags\s*[:：]\s*\[(.*)\]/)?.[1] || '';
+    const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
+    
+    // 画像は [img1.jpg, img2.jpg] のような配列に対応させます
+    const imgsRaw = content.match(/images\s*[:：]\s*\[(.*)\]/)?.[1] || '';
+    const images = imgsRaw.split(',').map(img => `../images/comicdiary/${img.trim()}`).filter(img => !img.endsWith('/'));
+    
     const body = content.split('---').pop().trim();
     
     return {
       id: file.replace('.md', ''),
       title: title,
-      date: date,
-      thumbnail: `../images/comicdiary/${imgName}`,
-      description: body.substring(0, 80) + '...',
-      contentBlocks: [{ type: 'paragraph', paragraph: { rich_text: [{ plain_text: body }] } }]
+      serial: serial, // #01 などの連番
+      tags: tags,     // タグの配列
+      images: images, // 画像の配列（複数枚）
+      thumbnail: images[0] || '', // 一覧には1枚目を出す
+      description: body
     };
   });
 }
+
+// ...（main関数の中身も以前のままでOKです）...
 
 async function main() {
   const token = process.env.NOTION_API_KEY;
