@@ -921,7 +921,7 @@ button {
 
 /* 全ページ共通：ヘッダーの赤いロゴ(01) */
 .header-logo {
-    width: 140px !important; /* 好みの大きさに調整してください */
+    width: 180px !important; /* 好みの大きさに調整してください */
     height: auto;
     display: block;
     margin-bottom: 10px;
@@ -929,11 +929,16 @@ button {
 
 /* 全ページ共通：フッターの手書きロゴ(02) */
 .handwritten-footer {
-    width: 300px !important; /* フッターなので少し大きめに */
+    width: 150px !important; /* フッターなので少し大きめに */
     height: auto;
     display: block;
-    margin: 60px auto 0 !important; /* 中央寄せ */
+    margin: 60px auto 20px !important; /* 中央寄せ */
 }
 
-/* フッターの余計なテキストを消す */
-.footer-text { display: none !important; }
+/* フッターに勝手に出てしまうテキストを、CSSの力で完全に封じ込めます */
+.page-footer p, 
+.page-footer span,
+.page-footer {
+    color: transparent !important; /* 万が一テキストがあっても見えなくする */
+    font-size: 0 !important;
+}
