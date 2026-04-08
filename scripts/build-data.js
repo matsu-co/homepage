@@ -50,34 +50,24 @@ async function fetchNotionData(dbId, token, fileName) {
   } catch (err) { console.error(err); }
 }
 
-// --- 【Local】Comicを読み込む ---
-// ...（上のNotion用の関数などはそのまま維持してください）...
-
+// fetchLocalComics 関数の中身をこれに差し替えてください
 function fetchLocalComics() {
   const dir = './content/comicdiary';
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir).filter(f => f.endsWith('.md')).map(file => {
     const content = fs.readFileSync(path.join(dir, file), 'utf8');
-    
-    // タイトル、連番、タグ、画像を正規表現で抜き出します
     const title = content.match(/title\s*[:：]\s*(.*)/)?.[1]?.trim() || '無題';
     const serial = content.match(/serial\s*[:：]\s*(.*)/)?.[1]?.trim() || '';
     const tagsRaw = content.match(/tags\s*[:：]\s*\[(.*)\]/)?.[1] || '';
     const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean);
-    
-    // 画像は [img1.jpg, img2.jpg] のような配列に対応させます
     const imgsRaw = content.match(/images\s*[:：]\s*\[(.*)\]/)?.[1] || '';
     const images = imgsRaw.split(',').map(img => `../images/comicdiary/${img.trim()}`).filter(img => !img.endsWith('/'));
-    
     const body = content.split('---').pop().trim();
     
     return {
       id: file.replace('.md', ''),
-      title: title,
-      serial: serial, // #01 などの連番
-      tags: tags,     // タグの配列
-      images: images, // 画像の配列（複数枚）
-      thumbnail: images[0] || '', // 一覧には1枚目を出す
+      title, serial, tags, images,
+      thumbnail: images[0] || '',
       description: body
     };
   });
