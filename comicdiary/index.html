@@ -49,14 +49,10 @@
 </head>
 <body>
   <div class="page-wrapper" style="max-width: 800px; margin: 0 auto; padding: 20px;">
-    <header class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 50px;">
-      <div>
-        <img src="../matsushimachihiro01.png" alt="" class="header-logo">
-        <h1 style="font-size: 1.6rem; margin: 0; font-family: 'Shippori Mincho', serif; color: #5c5446;">comicdiary</h1>
-      </div>
-      <a href="./" class="back-link" id="backLink" style="text-decoration: none; color: #b0a898; font-size: 1rem; display: none;">← 一覧にもどる</a>
-      <a href="../" class="back-link-home" id="homeLink" style="text-decoration: none; color: #b0a898; font-size: 1rem;">← ホーム</a>
-    </header>
+   <header class="page-header">
+  <h1>comicdiary</h1>
+</header>
+<a href="./" class="back-link" id="backLink" style="text-decoration: none; color: #b0a898; font-size: 1rem; display: none; margin-bottom: 20px; display: block;">← 一覧にもどる</a>
 
     <main>
       <div id="filterArea" class="tag-filter-container"></div>
@@ -82,9 +78,7 @@
       </div>
     </main>
 
-    <footer class="page-footer">
-      <img src="../matsushimachihiro02.png" alt="" class="handwritten-footer">
-    </footer>
+    <footer class="page-footer"></footer>
   </div>
 
   <script>
@@ -155,6 +149,9 @@
         });
       }
     })();
-  </script>
+ </script>
+
+  <script src="../js/layout.js"></script>
+
 </body>
 </html>
