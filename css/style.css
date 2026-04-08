@@ -918,3 +918,22 @@ button {
   border-radius: 3px;
   font-size: 0.88em;
 }
+
+/* 全ページ共通：ヘッダーの赤いロゴ(01) */
+.header-logo {
+    width: 140px !important; /* 好みの大きさに調整してください */
+    height: auto;
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* 全ページ共通：フッターの手書きロゴ(02) */
+.handwritten-footer {
+    width: 300px !important; /* フッターなので少し大きめに */
+    height: auto;
+    display: block;
+    margin: 60px auto 0 !important; /* 中央寄せ */
+}
+
+/* フッターの余計なテキストを消す */
+.footer-text { display: none !important; }
