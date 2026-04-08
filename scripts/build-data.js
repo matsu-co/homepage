@@ -12,7 +12,7 @@ async function getPageContent(pageId, token) {
   } catch (e) { return []; }
 }
 
-// --- 【Notion】Work, Photo, Diaryを正しく拾う ---
+// --- 【Notion】Work, Photo, Diaryを救出 ---
 async function fetchNotionData(dbId, token, fileName) {
   if (!dbId) return;
   try {
@@ -29,6 +29,7 @@ async function fetchNotionData(dbId, token, fileName) {
       const images = imgProp?.files?.map(f => f.file?.url || f.external?.url).filter(Boolean) || [];
       const blocks = await getPageContent(page.id, token);
       
+      // 【修正】WorkのDescriptionとDiaryの日付、どちらも確実に拾えるように
       let desc = p['Description']?.rich_text?.[0]?.plain_text || p['Summary']?.rich_text?.[0]?.plain_text || "";
       if (!desc) {
         desc = blocks.find(b => b.type === 'paragraph')?.paragraph?.rich_text?.[0]?.plain_text || "";
@@ -37,7 +38,7 @@ async function fetchNotionData(dbId, token, fileName) {
       entries.push({
         id: page.id,
         title: p.Name?.title?.[0]?.plain_text || p.Title?.title?.[0]?.plain_text || '無題',
-        date: p['Date']?.date?.start || '',
+        date: p.Date?.date?.start || p['日付']?.date?.start || '', // ★日付の揺れに対応
         description: desc,
         category: p.Category?.select?.name || '',
         thumbnail: images[0] || page.cover?.file?.url || '',
@@ -51,21 +52,21 @@ async function fetchNotionData(dbId, token, fileName) {
 
 // --- 【Local】Comicを読み込む ---
 function fetchLocalComics() {
-  // 千裕さんの希望通り「comicdiary」という名前のフォルダを探します
   const dir = './content/comicdiary';
   if (!fs.existsSync(dir)) return [];
   const files = fs.readdirSync(dir);
   return files.filter(f => f.endsWith('.md')).map(file => {
     const content = fs.readFileSync(path.join(dir, file), 'utf8');
-    const title = content.match(/title:\s*(.*)/)?.[1] || '無題';
-    const date = content.match(/date:\s*(.*)/)?.[1] || '';
-    const imgName = content.match(/image:\s*(.*)/)?.[1] || '';
+    // ★全角コロンやスペースなしでも拾えるように正規表現を強化
+    const title = content.match(/title\s*[:：]\s*(.*)/)?.[1] || '無題';
+    const date = content.match(/date\s*[:：]\s*(.*)/)?.[1] || '';
+    const imgName = content.match(/image\s*[:：]\s*(.*)/)?.[1] || '';
     const body = content.split('---').pop().trim();
+    
     return {
       id: file.replace('.md', ''),
       title: title,
       date: date,
-      // 画像は public/images/comicdiary/ の中にあるものを指すようにします
       thumbnail: `../images/comicdiary/${imgName}`,
       description: body.substring(0, 80) + '...',
       contentBlocks: [{ type: 'paragraph', paragraph: { rich_text: [{ plain_text: body }] } }]
