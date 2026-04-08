@@ -929,16 +929,15 @@ button {
 
 /* 全ページ共通：フッターの手書きロゴ(02) */
 .handwritten-footer {
-    width: 150px !important; /* フッターなので少し大きめに */
+    width: 220px !important; /* ここを150から220に大きくしました */
     height: auto;
     display: block;
-    margin: 60px auto 20px !important; /* 中央寄せ */
+    margin: 60px auto 40px !important;
+    color: transparent; /* 文字化け対策 */
 }
 
-/* フッターに勝手に出てしまうテキストを、CSSの力で完全に封じ込めます */
+/* フッターの不要なテキストを完全に消す */
 .page-footer p, 
-.page-footer span,
-.page-footer {
-    color: transparent !important; /* 万が一テキストがあっても見えなくする */
-    font-size: 0 !important;
+.page-footer span {
+    display: none !important;
 }
