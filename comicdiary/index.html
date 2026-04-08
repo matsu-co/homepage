@@ -6,8 +6,8 @@
   <title>comicdiary - matsushima CHIHIRO.</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    /* 【修正】ヘッダーの赤いロゴ(01)：存在感を出すために180pxに拡大 */
-    .header-logo { width: 180px; height: auto; margin-bottom: 15px; display: block; }
+    /* 【修正】ヘッダーの赤いロゴ(01)：前回のサイズを維持 (180px) */
+    .header-logo { width: 200px; height: auto; margin-bottom: 15px; display: block; }
     
     /* 一覧：2列デザイン */
     .comic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px 0; }
@@ -16,11 +16,15 @@
     .comic-info { margin-top: 8px; font-size: 0.85rem; line-height: 1.4; }
     .serial-no { font-weight: bold; margin-right: 4px; color: #a08a6e; }
 
-    /* タグのスタイル（詳細表示でも使用） */
+    /* 【修正】タグのスタイル：リンクとしても使えるようにtext-decoration等を調整 */
     .tag-label { 
       background: #f0ede9; color: #888; padding: 2px 10px; border-radius: 15px; 
       font-size: 0.75rem; margin-right: 5px; display: inline-block;
+      text-decoration: none; /* リンクの線を消す */
+      cursor: pointer; /* マウスオーバーで指マークに */
+      transition: background 0.2s; /* ホバー時のアニメーション */
     }
+    .tag-label:hover { background: #e0ddd5; color: #5c5446; } /* ホバー時の色 */
 
     /* タグフィルター（上部） */
     .tag-filter-container { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 20px; border-bottom: 1px solid #f0ede9; margin-bottom: 10px; }
@@ -35,10 +39,11 @@
     .article-images img { width: 100%; height: auto; border-radius: 2px; }
     .article-body { line-height: 2; color: #444; white-space: pre-wrap; padding: 0 10px; font-size: 1rem; }
     
-    /* 【修正】フッター：手書き名(02)を「さりげなく」130pxに縮小 */
-    .handwritten-footer { width: 130px; height: auto; margin: 80px auto 40px; display: block; }
+    /* 【修正】フッター：手書き名(02)を少し大きく調整 (130px -> 180px) */
+    .handwritten-footer { width: 180px; height: auto; margin: 80px auto 40px; display: block; }
     
-    .post-nav { display: flex; justify-content: space-between; padding: 40px 0; border-top: 1px dotted #e0ddd5; margin-top: 40px; }
+    /* 【修正】薄い罫線(border-top)を消去、茶色罫線のみに */
+    .post-nav { display: flex; justify-content: space-between; padding: 40px 0; margin-top: 40px; }
     .nav-arrow { text-decoration: none; color: #a08a6e; font-size: 0.95rem; font-weight: bold; }
   </style>
 </head>
@@ -67,7 +72,7 @@
           
           <div id="detailText" class="article-body"></div>
           
-          <div id="detailTags" style="margin-top: 30px; padding: 0 10px; display: flex; justify-content: center;"></div>
+          <div id="detailTags" style="margin-top: 30px; padding: 0 10px; display: flex;"></div>
           
           <nav class="post-nav">
             <a id="prevPost" class="nav-arrow" href="#">← 前の投稿</a>
@@ -117,9 +122,10 @@
           document.getElementById('detailImages').innerHTML = entry.images.map(src => `<img src="${src}" loading="lazy">`).join('');
           document.getElementById('detailText').innerText = entry.description;
           
-          // 【修正】タグを表示（テキストの下）
+          // 【修正】タグを表示（テキストの下・クリック可能に）
           if (entry.tags && entry.tags.length > 0) {
-            document.getElementById('detailTags').innerHTML = entry.tags.map(t => `<span class="tag-label">${t}</span>`).join('');
+            // 単なるspanではなく、リンク(<a>)に変更し、一覧と同じフィルタが効くようにしました
+            document.getElementById('detailTags').innerHTML = entry.tags.map(t => `<a href="./?tag=${encodeURIComponent(t)}" class="tag-label">${t}</a>`).join('');
           } else {
             document.getElementById('detailTags').innerHTML = '';
           }
