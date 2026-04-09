@@ -97,8 +97,7 @@
 
           // 本文を表示（すでに焼き付けてあるデータを使うので爆速！）
           const articleBody = document.getElementById('articleBody');
-          const contentHtml = NotionHelper.blocksToHtml(entry.contentBlocks);
-          articleBody.innerHTML = `<h2>${entry.title}</h2><p style="color:#b0a898;">${entry.date}</p>` + contentHtml;
+          articleBody.innerHTML = `<h2>${entry.title}</h2><p style="color:#b0a898;">${entry.date}</p>` + (entry.htmlContent || '');
         }
       } else {
         entries.forEach(entry => {
