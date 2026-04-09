@@ -78,22 +78,30 @@ function fetchLocalComics() {
     const tagsMatch = header.match(/tags\s*[:：]\s*\[(.*)\]/);
     const tags = tagsMatch ? tagsMatch[1].split(',').map(t => t.trim()).filter(Boolean) : [];
     
-    // 画像の抽出（images: [a.jpg, b.jpg] または image: a.jpg 両方対応）
-    const imgsMatch = header.match(/images\s*[:：]\s*\[(.*)\]/);
-    let imageList = [];
-    if (imgsMatch) {
-      imageList = imgsMatch[1].split(',').map(i => i.trim()).filter(Boolean);
-    } else {
-      const singleImg = header.match(/image\s*[:：]\s*(.*)/)?.[1]?.trim();
-      if (singleImg) imageList = [singleImg];
-    }
+    // 画像の取得：frontmatterに書いていれば優先、なければ日付名で自動検出
+const imgsMatch = header.match(/images\s*[:：]\s*\[(.*)\]/);
+const singleImg = header.match(/image\s*[:：]\s*(.*)/)?.[1]?.trim();
+let imageList = [];
+if (imgsMatch) {
+  // frontmatterに images: [...] が書いてある場合はそちらを使う
+  imageList = imgsMatch[1].split(',').map(i => i.trim()).filter(Boolean);
+} else if (singleImg) {
+  // frontmatterに image: xxx が書いてある場合
+  imageList = [singleImg];
+} else {
+  // 何も書いていない → mdのファイル名（日付）で始まる画像を自動検出
+  const datePrefix = file.replace('.md', ''); // 例: "2026-04-20"
+  imageList = imgFiles
+    .filter(f => f.startsWith(datePrefix))
+    .sort(); // 2026-04-20-01.jpg, 2026-04-20-02.jpg の順に並ぶ
+}
 
-    // 実際のファイル名と照合してパスを作る
-    const fullPaths = imageList.map(img => {
-      const base = img.split('.').shift().toLowerCase();
-      const match = imgFiles.find(f => f.split('.').shift().toLowerCase() === base);
-      return `../images/comicdiary/${match || img}`;
-    });
+// 実際のファイル名と照合してパスを作る
+const fullPaths = imageList.map(img => {
+  const base = img.split('.').shift().toLowerCase();
+  const match = imgFiles.find(f => f.split('.').shift().toLowerCase() === base);
+  return `../images/comicdiary/${match || img}`;
+});
 
     return {
       id: file.replace('.md', ''),
