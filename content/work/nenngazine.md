@@ -1,6 +1,6 @@
 ---
 title: 年賀zine2026
-category:Life　work
+category:　Life　work
 tags: [ZINE]
 description: 年賀ZINEをつくりました。
 ---
