@@ -116,9 +116,66 @@ const fullPaths = imageList.map(img => {
 
 async function main() {
   const token = process.env.NOTION_API_KEY;
-  await fetchNotionData(process.env.NOTION_WORK_DB_ID, token, 'work-data.json');
+  // Work → ローカルファイルから読み込む
+  const works = fetchLocalWork();
+  fs.writeFileSync('work-data.json', JSON.stringify({ entries: works }));
+  
   await fetchNotionData(process.env.NOTION_PHOTO_DB_ID, token, 'photo-data.json');
   await fetchNotionData(process.env.NOTION_DIARY_DB_ID, token, 'diary-data.json');
+
+// --- 【Local】Workをローカルファイルから読み込む ---
+function fetchLocalWork() {
+  const mdDir = './content/work';
+  const imgDir = './images/work';
+
+  if (!fs.existsSync(mdDir)) return [];
+  const mdFiles = fs.readdirSync(mdDir).filter(f => f.endsWith('.md'));
+
+  let imgFiles = [];
+  if (fs.existsSync(imgDir)) {
+    imgFiles = fs.readdirSync(imgDir);
+  }
+
+  return mdFiles.map(file => {
+    const content = fs.readFileSync(path.join(mdDir, file), 'utf8');
+    const parts = content.split('---');
+    const header = parts[1] || '';
+    const body = parts.slice(2).join('---').trim();
+
+    const title = header.match(/title\s*[:：]\s*(.*)/)?.[1]?.trim() || '無題';
+    const category = header.match(/category\s*[:：]\s*(.*)/)?.[1]?.trim() || 'work';
+    const tagsMatch = header.match(/tags\s*[:：]\s*\[(.*)\]/);
+    const tags = tagsMatch ? tagsMatch[1].split(',').map(t => t.trim()).filter(Boolean) : [];
+    const description = header.match(/description\s*[:：]\s*(.*)/)?.[1]?.trim() || body;
+
+    // 画像：frontmatterに書いてあれば優先、なければファイル名で自動検出
+    const imgsMatch = header.match(/images\s*[:：]\s*\[(.*)\]/);
+    const singleImg = header.match(/image\s*[:：]\s*(.*)/)?.[1]?.trim();
+    let imageList = [];
+    if (imgsMatch) {
+      imageList = imgsMatch[1].split(',').map(i => i.trim()).filter(Boolean);
+    } else if (singleImg) {
+      imageList = [singleImg];
+    } else {
+      // mdファイル名で始まる画像を自動検出・連番順に並べる
+      const prefix = file.replace('.md', '');
+      imageList = imgFiles.filter(f => f.startsWith(prefix)).sort();
+    }
+
+    const fullPaths = imageList.map(img => {
+      const base = img.split('.').shift().toLowerCase();
+      const match = imgFiles.find(f => f.split('.').shift().toLowerCase() === base);
+      return `../images/work/${match || img}`;
+    });
+
+    return {
+      id: file.replace('.md', ''),
+      title, category, tags, description,
+      thumbnail: fullPaths[0] || '',
+      images: fullPaths,
+    };
+  });
+}
   
   const comics = fetchLocalComics();
   fs.writeFileSync('comic-data.json', JSON.stringify({ entries: comics }));
