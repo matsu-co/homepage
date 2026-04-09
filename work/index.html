@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        /* 3時間前のスタイルをすべて維持 */
+        /* スライダー */
         .slider-outer { position: relative; width: 100%; overflow: hidden; margin-bottom: 20px; border-radius: 4px; }
         .slider-track { display: flex; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
         .slider-item { flex: 0 0 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.02); }
@@ -18,8 +18,38 @@
         .nav-btn { background: #eee; border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; color: #555; }
         .nav-btn:disabled { opacity: 0.3; cursor: default; }
         .dots { display: flex; gap: 8px; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; border: none; padding: 0; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; border: none; padding: 0; cursor: pointer; }
         .dot.active { background: #a08a6e; }
+
+        /* タグ共通 */
+        .tag-label {
+            background: #f0ede9; color: #888; padding: 2px 10px; border-radius: 15px;
+            font-size: 0.75rem; margin-right: 5px; display: inline-block;
+            cursor: pointer; transition: background 0.2s; border: 1px solid transparent;
+        }
+        .tag-label:hover { background: #e0ddd5; color: #5c5446; }
+        .tag-label.active { border-color: #a08a6e; color: #a08a6e; background: #faf7f3; }
+
+        /* タグフィルターバー */
+        .tag-filter-container {
+            display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 20px;
+            border-bottom: 1px solid #f0ede9; margin-bottom: 24px;
+            scrollbar-width: none;
+        }
+        .tag-filter-container::-webkit-scrollbar { display: none; }
+        .filter-btn {
+            border: 1px solid #e0ddd5; background: white; padding: 4px 14px;
+            border-radius: 15px; cursor: pointer; font-size: 0.8rem; color: #888;
+            white-space: nowrap; font-family: inherit; transition: all 0.2s;
+        }
+        .filter-btn:hover { border-color: #c0b09e; color: #5c5446; }
+        .filter-btn.active { border-color: #a08a6e; color: #a08a6e; background: #faf7f3; }
+
+        /* カードのタグ表示 */
+        .card-tags { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+
+        /* モーダルのタグ（左寄せ） */
+        .modal-tags-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; justify-content: flex-start; }
     </style>
 </head>
 <body class="bg-paper">
@@ -32,18 +62,24 @@
         </header>
 
         <main>
-            <section class="work-section">
-                <h2 class="section-title">work（お仕事）</h2>
-                <div id="work-list" class="work-grid">読み込み中...</div>
+            <!-- タグフィルターバー -->
+            <div id="filterArea" class="tag-filter-container"></div>
+
+            <section class="work-section" id="workSection">
+                <h2 class="work-section-title">work（お仕事）</h2>
+                <div id="work-list" class="work-grid"></div>
             </section>
-            <section class="work-section">
-                <h2 class="section-title">Life work（くらしのデザイン）</h2>
-                <div id="lifework-list" class="work-grid">読み込み中...</div>
+
+            <section class="work-section" id="lifeSection">
+                <h2 class="work-section-title">Life work（くらしのデザイン）</h2>
+                <div id="lifework-list" class="work-grid"></div>
             </section>
         </main>
-        <footer class="page-footer">&copy; matsushima CHIHIRO.</footer>
+
+        <footer class="page-footer"></footer>
     </div>
 
+    <!-- モーダル -->
     <div id="modal" class="modal" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <button onclick="closeModal()" class="close-btn">&times;</button>
@@ -57,8 +93,9 @@
             </div>
             <div class="modal-info">
                 <h2 id="modal-title" style="margin-top:20px;"></h2>
-                <p id="modal-description" style="white-space: pre-wrap;"></p>
-                <div id="modal-tags" class="work-modal-tags" style="justify-content:center;"></div>
+                <p id="modal-description" style="white-space: pre-wrap; margin-top: 12px;"></p>
+                <!-- タグ：コメントの下・左寄せ -->
+                <div id="modal-tags" class="modal-tags-row"></div>
             </div>
         </div>
     </div>
@@ -66,55 +103,152 @@
     <script>
         let currentIdx = 0;
         let imageCount = 0;
+        let allEntries = [];
+        let activeTag = null;
 
         async function loadWork() {
             try {
-                // 爆速JSONを読み込みます
                 const res = await fetch('../work-data.json');
                 const data = await res.json();
-                const wList = document.getElementById('work-list');
-                const lList = document.getElementById('lifework-list');
-                wList.innerHTML = ''; lList.innerHTML = '';
+                allEntries = data.entries || [];
 
-                data.entries.forEach(e => {
-                    const div = document.createElement('div');
-                    div.className = 'work-card';
-                    div.onclick = () => openModal(e);
-                    div.innerHTML = `<div class="work-thumbnail-container"><img src="${e.thumbnail}" loading="lazy"></div><p>${e.title}</p>`;
-                    
-                    // カテゴリ名（work/life work）の判定。Notionの書き方に合わせます
-                    if (e.category && e.category.toLowerCase().includes('life')) { 
-                        lList.appendChild(div); 
-                    } else { 
-                        wList.appendChild(div); 
-                    }
-                });
+                // タグフィルターバーを構築
+                buildFilterBar();
+                // カードを描画
+                renderCards();
             } catch (err) {
                 console.error("読み込みエラー:", err);
             }
+        }
+
+        function buildFilterBar() {
+            const allTags = [...new Set(allEntries.flatMap(e => e.tags || []))].filter(Boolean);
+            const filterArea = document.getElementById('filterArea');
+
+            if (allTags.length === 0) {
+                filterArea.style.display = 'none';
+                return;
+            }
+
+            filterArea.innerHTML =
+                `<button class="filter-btn active" onclick="setTag(null, this)">すべて</button>` +
+                allTags.map(tag =>
+                    `<button class="filter-btn" onclick="setTag('${tag}', this)">${tag}</button>`
+                ).join('');
+        }
+
+        function setTag(tag, btn) {
+            activeTag = tag;
+            // ボタンのactiveクラスを切り替え
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderCards();
+        }
+
+        function renderCards() {
+            const filtered = activeTag
+                ? allEntries.filter(e => (e.tags || []).includes(activeTag))
+                : allEntries;
+
+            const wList = document.getElementById('work-list');
+            const lList = document.getElementById('lifework-list');
+            wList.innerHTML = '';
+            lList.innerHTML = '';
+
+            let wCount = 0, lCount = 0;
+
+            filtered.forEach(e => {
+                const div = document.createElement('div');
+                div.className = 'work-card';
+                div.onclick = () => openModal(e);
+
+                const tagsHtml = (e.tags && e.tags.length)
+                    ? `<div class="card-tags">${e.tags.map(t =>
+                        `<span class="tag-label${t === activeTag ? ' active' : ''}"
+                               onclick="event.stopPropagation(); setTagFromCard('${t}')">${t}</span>`
+                      ).join('')}</div>`
+                    : '';
+
+                div.innerHTML = `
+                    <div class="work-card-thumb">
+                        ${e.thumbnail ? `<img src="${e.thumbnail}" loading="lazy">` : ''}
+                    </div>
+                    <div class="work-card-body">
+                        <p style="font-size:0.95rem; color:#4a4235;">${e.title}</p>
+                        ${tagsHtml}
+                    </div>
+                `;
+
+                if (e.category && e.category.toLowerCase().includes('life')) {
+                    lList.appendChild(div);
+                    lCount++;
+                } else {
+                    wList.appendChild(div);
+                    wCount++;
+                }
+            });
+
+            // 空セクションは非表示
+            document.getElementById('workSection').style.display = wCount === 0 ? 'none' : '';
+            document.getElementById('lifeSection').style.display = lCount === 0 ? 'none' : '';
+        }
+
+        // カード内タグクリック → フィルターバーも連動して更新
+        function setTagFromCard(tag) {
+            activeTag = (activeTag === tag) ? null : tag; // 同じタグなら解除
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                const isAll = b.textContent === 'すべて';
+                const isTarget = b.textContent === tag;
+                b.classList.toggle('active', activeTag === null ? isAll : isTarget);
+            });
+            renderCards();
         }
 
         function openModal(e) {
             const track = document.getElementById('modal-track');
             const dots = document.getElementById('modal-dots');
             currentIdx = 0;
-            
-            // スライダーに表示する画像配列（images）が空でないか確認
-            const images = e.images && e.images.length > 0 ? e.images : [e.thumbnail];
+
+            const images = e.images && e.images.length > 0 ? e.images : (e.thumbnail ? [e.thumbnail] : []);
             imageCount = images.length;
 
             track.innerHTML = images.map(url => `<div class="slider-item"><img src="${url}"></div>`).join('');
-            dots.innerHTML = images.map((_, i) => `<button class="dot ${i===0?'active':''}" onclick="goToSlide(${i})"></button>`).join('');
-            
+            dots.innerHTML = images.map((_, i) =>
+                `<button class="dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></button>`
+            ).join('');
+
             document.getElementById('modal-title').innerText = e.title;
-            document.getElementById('modal-description').innerText = e.description;
-            document.getElementById('modal-tags').innerHTML = (e.tags || []).map(t => `<span class="work-tag">${t}</span>`).join('');
-            
-            document.getElementById('slider-controls').style.display = (imageCount > 1) ? 'flex' : 'none';
-            
+            document.getElementById('modal-description').innerText = e.description || '';
+
+            // タグ：左寄せ・クリックで絞り込み＋モーダルを閉じる
+            const tagsEl = document.getElementById('modal-tags');
+            if (e.tags && e.tags.length) {
+                tagsEl.innerHTML = e.tags.map(t =>
+                    `<span class="tag-label${t === activeTag ? ' active' : ''}"
+                           onclick="filterFromModal('${t}')">${t}</span>`
+                ).join('');
+            } else {
+                tagsEl.innerHTML = '';
+            }
+
+            document.getElementById('slider-controls').style.display = imageCount > 1 ? 'flex' : 'none';
             updateSlider();
             document.getElementById('modal').style.display = 'block';
             document.body.style.overflow = 'hidden';
+        }
+
+        // モーダル内タグクリック → モーダルを閉じてフィルター適用
+        function filterFromModal(tag) {
+            closeModal();
+            activeTag = (activeTag === tag) ? null : tag;
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                const isAll = b.textContent === 'すべて';
+                const isTarget = b.textContent === tag;
+                b.classList.toggle('active', activeTag === null ? isAll : isTarget);
+            });
+            renderCards();
+            // フィルターバーまでスクロール
+            document.getElementById('filterArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function moveSlider(step) {
@@ -128,12 +262,10 @@
         }
 
         function updateSlider() {
-            const track = document.getElementById('modal-track');
-            track.style.transform = `translateX(-${currentIdx * 100}%)`;
+            document.getElementById('modal-track').style.transform = `translateX(-${currentIdx * 100}%)`;
             document.getElementById('prev-btn').disabled = (currentIdx === 0);
             document.getElementById('next-btn').disabled = (currentIdx === imageCount - 1);
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIdx));
+            document.querySelectorAll('.dot').forEach((dot, i) => dot.classList.toggle('active', i === currentIdx));
         }
 
         function closeModal() {
@@ -141,7 +273,11 @@
             document.body.style.overflow = '';
         }
 
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
         loadWork();
     </script>
+
+    <script src="../js/layout.js"></script>
 </body>
 </html>
