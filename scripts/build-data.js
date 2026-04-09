@@ -121,7 +121,9 @@ async function main() {
   fs.writeFileSync('work-data.json', JSON.stringify({ entries: works }));
   
   await fetchNotionData(process.env.NOTION_PHOTO_DB_ID, token, 'photo-data.json');
-  await fetchNotionData(process.env.NOTION_DIARY_DB_ID, token, 'diary-data.json');
+  
+  const diaryEntries = await fetchLocalDiary();
+fs.writeFileSync('./diary-data.json', JSON.stringify(diaryEntries, null, 2));
 
 // --- 【Local】Workをローカルファイルから読み込む ---
 function fetchLocalWork() {
@@ -173,6 +175,46 @@ function fetchLocalWork() {
       title, category, tags, description,
       thumbnail: fullPaths[0] || '',
       images: fullPaths,
+    };
+  });
+}
+
+  async function fetchLocalDiary() {
+  const contentDir = './content/diary';
+  const imageDir = './images/diary';
+  const files = fs.readdirSync(contentDir).filter(f => f.endsWith('.md')).sort().reverse();
+  const imgFiles = fs.existsSync(imageDir) ? fs.readdirSync(imageDir) : [];
+
+  return files.map(file => {
+    const raw = fs.readFileSync(path.join(contentDir, file), 'utf8');
+    const fmMatch = raw.match(/^---\n([\s\S]*?)\n---/);
+    const body = raw.replace(/^---\n[\s\S]*?\n---\n?/, '').trim();
+    const fm = {};
+    if (fmMatch) {
+      fmMatch[1].split('\n').forEach(line => {
+        const [k, ...v] = line.split(':');
+        if (k) fm[k.trim()] = v.join(':').trim();
+      });
+    }
+    const prefix = file.replace('.md', '');
+    const images = imgFiles.filter(f => f.startsWith(prefix)).sort()
+      .map(f => `../images/diary/${f}`);
+
+    // markdown→シンプルHTML変換
+    const htmlContent = body
+      .split('\n\n')
+      .map(p => `<p>${p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}</p>`)
+      .join('\n');
+
+    return {
+      id: prefix,
+      title: fm.title || prefix,
+      date: fm.date || prefix,
+      description: fm.description || '',
+      excerpt: fm.description || '',
+      cover: images[0] || '',
+      images,
+      htmlContent,
     };
   });
 }
