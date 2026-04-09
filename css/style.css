@@ -687,9 +687,8 @@ button {
   font-weight: 400;
   color: #5a5040;
   letter-spacing: 0.1em;
-  margin-bottom: 24px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #e0d8cc;
+  margin-bottom: 40px;
+ 
 }
 
 /* 一覧のグリッド：スマホで2列、PCでバランスよく */
