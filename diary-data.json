@@ -1,15 +1,18 @@
-[
-  {
-    "id": "2026-04-01",
-    "title": "ここにタイトル",
-    "date": "2026-04-01",
-    "description": "一覧に表示される短い説明",
-    "excerpt": "一覧に表示される短い説明",
-    "cover": "../images/diary/2026-04-01-01.jpg",
-    "images": [
-      "../images/diary/2026-04-01-01.jpg",
-      "../images/diary/2026-04-01-02.jpg"
-    ],
-    "htmlContent": "<p>本文をここに書きます。</p>\n<p>空行で段落を分けます。</p>\n<p><strong>太字</strong>にしたいときはアスタリスク2つで囲みます。</p>\n<p>2026-04-01-01.jpg</p>\n<p>空行で段落を分けます。<br>2026-04-01-01.jpg</p>\n<p>おわり</p>"
-  }
-]
+{
+  "entries": [
+    {
+      "id": "2026-04-01",
+      "title": "ここにタイトル",
+      "date": "2026-04-01",
+      "description": "一覧に表示される短い説明",
+      "excerpt": "一覧に表示される短い説明",
+      "cover": "../images/diary/2026-04-01-01.jpg",
+      "thumbnail": "../images/diary/2026-04-01-01.jpg",
+      "images": [
+        "../images/diary/2026-04-01-01.jpg",
+        "../images/diary/2026-04-01-02.jpg"
+      ],
+      "htmlContent": "<p>本文をここに書きます。</p>\n<p>空行で段落を分けます。</p>\n<p><strong>太字</strong>にしたいときはアスタリスク2つで囲みます。</p>\n<p>2026-04-01-01.jpg</p>\n<p>空行で段落を分けます。<br>2026-04-01-01.jpg</p>\n<p>おわり</p>"
+    }
+  ]
+}
