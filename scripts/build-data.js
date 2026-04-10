@@ -123,7 +123,7 @@ async function main() {
   await fetchNotionData(process.env.NOTION_PHOTO_DB_ID, token, 'photo-data.json');
   
   const diaryEntries = await fetchLocalDiary();
-fs.writeFileSync('./diary-data.json', JSON.stringify(diaryEntries, null, 2));
+fs.writeFileSync('./diary-data.json', JSON.stringify({ entries: diaryEntries }, null, 2));
 
 // --- 【Local】Workをローカルファイルから読み込む ---
 function fetchLocalWork() {
@@ -213,6 +213,7 @@ function fetchLocalWork() {
       description: fm.description || '',
       excerpt: fm.description || '',
       cover: images[0] || '',
+      thumbnail: images[0] || '', 
       images,
       htmlContent,
     };
