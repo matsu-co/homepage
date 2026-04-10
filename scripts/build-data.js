@@ -202,9 +202,18 @@ function fetchLocalWork() {
 
     // markdown→シンプルHTML変換
     const htmlContent = body
-      .split('\n\n')
-      .map(p => `<p>${p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}</p>`)
-      .join('\n');
+  .split('\n\n')
+  .map(p => {
+    // 行全体が画像ファイル名だけの場合 → <img>タグに変換
+    p = p.replace(/^([\w\-]+\.(jpg|jpeg|png|gif|webp))$/gm,
+      (_, fn) => `<img src="../images/diary/${fn}" style="max-width:100%;border-radius:6px;margin:12px 0;">`
+    );
+    p = p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // imgタグだけの段落はpで囲まない
+    if (p.trim().startsWith('<img')) return p;
+    return `<p>${p.replace(/\n/g, '<br>')}</p>`;
+  })
+  .join('\n');
 
     return {
       id: prefix,
