@@ -11,7 +11,7 @@
     * { box-sizing: border-box; }
 
     /* 一覧のレイアウト */
-    .diary-card { display: flex; gap: 20px; padding: 25px 0; border-bottom: 1px solid #e0ddd5; text-decoration: none; color: inherit; }
+    .diary-card { display: flex; gap: 20px; padding: 25px 0; text-decoration: none; color: inherit; }
     .diary-card-img { width: 120px; height: 90px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
     .diary-card-body { flex: 1; min-width: 0; }
     .diary-card-title { font-size: 1.1rem; margin: 5px 0; }
@@ -41,7 +41,7 @@
 <body>
   <div class="paper-bg"><img src="../paper.png" alt="" class="paper-texture"></div>
   <div class="page-wrapper">
-    <header class="page-header" style="padding: 20px;">
+    <header class="page-header">
       <h1>diary</h1>
       <a href="../" class="back-link" id="backLink">← もどる</a>
     </header>
@@ -58,7 +58,7 @@
     <footer class="page-footer">&copy; matsushima CHIHIRO.</footer>
   </div>
 
-  <script src="../js/main.js"></script>
+  <script src="../js/layout.js"></script>
   <script>
     (async () => {
       const params = new URLSearchParams(window.location.search);
