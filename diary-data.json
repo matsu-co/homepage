@@ -1,6 +1,17 @@
 {
   "entries": [
     {
+      "id": "2026-04-02",
+      "title": "ここにタイトル",
+      "date": "二〇二六.四.廿一 ☀︎☔︎",
+      "description": "一覧に表示される短い説明",
+      "excerpt": "一覧に表示される短い説明",
+      "cover": "",
+      "thumbnail": "",
+      "images": [],
+      "htmlContent": "<img src=\"../images/diary/2026-04-02.png\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">\n<img src=\"../images/diary/2026-04-02-2.png\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">"
+    },
+    {
       "id": "2026-04-01",
       "title": "ここにタイトル",
       "date": "2026-04-01",
