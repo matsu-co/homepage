@@ -120,7 +120,8 @@ async function main() {
   const works = fetchLocalWork();
   fs.writeFileSync('work-data.json', JSON.stringify({ entries: works }));
   
-  await fetchNotionData(process.env.NOTION_PHOTO_DB_ID, token, 'photo-data.json');
+  const photos = fetchLocalPhoto();
+fs.writeFileSync('photo-data.json', JSON.stringify({ entries: photos }, null, 2));
   
   const diaryEntries = await fetchLocalDiary();
 fs.writeFileSync('./diary-data.json', JSON.stringify({ entries: diaryEntries }, null, 2));
@@ -175,6 +176,44 @@ function fetchLocalWork() {
       title, category, tags, description,
       thumbnail: fullPaths[0] || '',
       images: fullPaths,
+    };
+  });
+}
+
+  function fetchLocalPhoto() {
+  const mdDir = './content/photo';
+  const imgDir = './images/photo';
+
+  if (!fs.existsSync(mdDir)) return [];
+  const mdFiles = fs.readdirSync(mdDir).filter(f => f.endsWith('.md'));
+
+  let imgFiles = [];
+  if (fs.existsSync(imgDir)) imgFiles = fs.readdirSync(imgDir);
+
+  return mdFiles.map(file => {
+    const content = fs.readFileSync(path.join(mdDir, file), 'utf8');
+    const parts = content.split('---');
+    const header = parts[1] || '';
+
+    const title = header.match(/title\s*[:：]\s*(.*)/)?.[1]?.trim() || '';
+    const description = header.match(/description\s*[:：]\s*(.*)/)?.[1]?.trim() || '';
+    const prefix = file.replace('.md', '');
+
+    const images = imgFiles
+      .filter(f => f.startsWith(prefix + '-'))
+      .sort((a, b) => {
+        const na = parseInt(a.match(/-(\d+)\.\w+$/)?.[1] || 0);
+        const nb = parseInt(b.match(/-(\d+)\.\w+$/)?.[1] || 0);
+        return na - nb;
+      })
+      .map(f => `../images/photo/${f}`);
+
+    return {
+      id: prefix,
+      title,
+      description,
+      thumbnail: images[0] || '',
+      images,
     };
   });
 }
