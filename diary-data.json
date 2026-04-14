@@ -4,15 +4,14 @@
       "id": "2026-04-02",
       "title": "ここにタイトル",
       "date": "二〇二六年/四月廿一日/晴れのち雨",
-      "description": "一覧に表示される短い説明",
-      "excerpt": "一覧に表示される短い説明",
+      "description": "",
+      "excerpt": "",
       "cover": "../images/diary/2026-04-02-2.png",
       "thumbnail": "../images/diary/2026-04-02-2.png",
       "images": [
         "../images/diary/2026-04-02-2.png",
         "../images/diary/2026-04-02-4.PNG",
-        "../images/diary/2026-04-02-4.png",
-        "../images/diary/2026-04-02.png"
+        "../images/diary/2026-04-02-4.png"
       ],
       "htmlContent": "<img src=\"../images/diary/2026-04-02-2.png\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">\n<img src=\"../images/diary/2026-04-02-4.png\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">"
     },
@@ -20,8 +19,8 @@
       "id": "2026-04-01",
       "title": "ここにタイトル",
       "date": "2026-04-01",
-      "description": "一覧に表示される短い説明",
-      "excerpt": "一覧に表示される短い説明",
+      "description": "本文をここに書きます。 空行で段落を分けます。…",
+      "excerpt": "本文をここに書きます。 空行で段落を分けます。…",
       "cover": "../images/diary/2026-04-01-01.jpg",
       "thumbnail": "../images/diary/2026-04-01-01.jpg",
       "images": [
