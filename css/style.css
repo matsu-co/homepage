@@ -262,7 +262,7 @@ button {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(245, 240, 232, 0.96);
+  background: #f5f0e8;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -283,18 +283,16 @@ button {
 
 .menu-close {
   position: fixed;
-  top: 24px;
-  right: 32px;
-  font-size: 2.2rem;
-  color: #5a5040;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  padding: 0;
   cursor: pointer;
-  transition: transform 0.3s ease;
-  line-height: 1;
+  width: 60px;
+  animation: katakata-star 0.4s steps(3) infinite;
 }
-
-.menu-close:hover {
-  transform: rotate(90deg);
-}
+.menu-close img { width: 100%; height: auto; display: block; }
 
 .menu-nav {
   display: flex;
