@@ -197,35 +197,49 @@ function fetchLocalWork() {
       });
     }
     const prefix = file.replace('.md', '');
-    const images = imgFiles.filter(f => f.startsWith(prefix)).sort()
-      .map(f => `../images/diary/${f}`);
 
-    // markdown→シンプルHTML変換
-    const htmlContent = body
+// 画像：prefix + '-' で始まるものだけ対象にし、数字順でソート
+const images = imgFiles
+  .filter(f => f.startsWith(prefix + '-'))
+  .sort((a, b) => {
+    const na = parseInt(a.match(/-(\d+)\.\w+$/)?.[1] || 0);
+    const nb = parseInt(b.match(/-(\d+)\.\w+$/)?.[1] || 0);
+    return na - nb;
+  })
+  .map(f => `../images/diary/${f}`);
+
+// markdown→シンプルHTML変換
+const htmlContent = body
   .split('\n\n')
   .map(p => {
-    // 行全体が画像ファイル名だけの場合 → <img>タグに変換
     p = p.replace(/^([\w\-]+\.(jpg|jpeg|png|gif|webp))$/gm,
       (_, fn) => `<img src="../images/diary/${fn}" style="max-width:100%;border-radius:6px;margin:12px 0;">`
     );
     p = p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    // imgタグだけの段落はpで囲まない
     if (p.trim().startsWith('<img')) return p;
     return `<p>${p.replace(/\n/g, '<br>')}</p>`;
   })
   .join('\n');
 
-    return {
-      id: prefix,
-      title: fm.title || prefix,
-      date: fm.date || prefix,
-      description: fm.description || '',
-      excerpt: fm.description || '',
-      cover: images[0] || '',
-      thumbnail: images[0] || '', 
-      images,
-      htmlContent,
-    };
+// 本文から自動でexcerptを生成（画像ファイル名・空行は除く）
+const imageLineRe = /^[\w\-]+\.(jpg|jpeg|png|gif|webp)$/i;
+const textLines = body.split('\n').filter(l => l.trim() && !imageLineRe.test(l.trim()));
+const rawExcerpt = textLines.slice(0, 2).join(' ').replace(/\*\*(.*?)\*\*/g, '$1');
+const description = rawExcerpt.length > 80
+  ? rawExcerpt.slice(0, 80) + '…'
+  : (rawExcerpt ? rawExcerpt + '…' : '');
+
+return {
+  id: prefix,
+  title: fm.title || prefix,
+  date: fm.date || prefix,
+  description,
+  excerpt: description,
+  cover: images[0] || '',
+  thumbnail: images[0] || '',
+  images,
+  htmlContent,
+};
   });
 }
   
