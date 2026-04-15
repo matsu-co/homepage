@@ -92,7 +92,7 @@ if (imgsMatch) {
   // 何も書いていない → mdのファイル名（日付）で始まる画像を自動検出
   const datePrefix = file.replace('.md', ''); // 例: "2026-04-20"
   imageList = imgFiles
-    .filter(f => f.startsWith(datePrefix))
+  .filter(f => f.startsWith(prefix + '-') || /\.(jpg|jpeg|png|gif|webp)$/i.test(f) && f.startsWith(prefix + '.'))
     .sort(); // 2026-04-20-01.jpg, 2026-04-20-02.jpg の順に並ぶ
 }
 
