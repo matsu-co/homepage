@@ -283,14 +283,24 @@ button {
 
 .menu-close {
   position: fixed;
-  top: 16px;
-  right: 16px;
+  top: 2.7%;
+  right: 1.6%;
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
-  width: 60px;
+  width: 11.9%;
   animation: katakata-star 0.4s steps(3) infinite;
+  z-index: 101;
+}
+
+@media (max-width: 768px) {
+  .menu-close {
+    top: 2.7%;
+    left: 76.5%;
+    right: auto;
+    width: 19.6%;
+  }
 }
 .menu-close img { width: 100%; height: auto; display: block; }
 
