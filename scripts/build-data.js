@@ -91,8 +91,8 @@ if (imgsMatch) {
 } else {
   // 何も書いていない → mdのファイル名（日付）で始まる画像を自動検出
   const datePrefix = file.replace('.md', ''); // 例: "2026-04-20"
-  imageList = imgFiles
-  .filter(f => f.startsWith(prefix + '-') || /\.(jpg|jpeg|png|gif|webp)$/i.test(f) && f.startsWith(prefix + '.'))
+imageList = imgFiles
+  .filter(f => f.startsWith(datePrefix + '-') || /\.(jpg|jpeg|png|gif|webp)$/i.test(f) && f.startsWith(datePrefix + '.'))
     .sort(); // 2026-04-20-01.jpg, 2026-04-20-02.jpg の順に並ぶ
 }
 
@@ -162,7 +162,7 @@ function fetchLocalWork() {
     } else {
       // mdファイル名で始まる画像を自動検出・連番順に並べる
       const prefix = file.replace('.md', '');
-      imageList = imgFiles.filter(f => f.startsWith(prefix)).sort();
+      imageList = imgFiles.filter(f => f.startsWith(prefix + '-') || /\.(jpg|jpeg|png|gif|webp)$/i.test(f) && f.startsWith(prefix + '.')).sort();
     }
 
     const fullPaths = imageList.map(img => {
