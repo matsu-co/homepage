@@ -1,1 +1,32 @@
-{"entries":[{"id":"chihhon","title":"chihhonすきですかanniversary","category":"work","tags":["イラスト","シフォン"],"description":"シフォン好きですかさんのanniversaryシールです","thumbnail":"","images":[]},{"id":"nenngazine","title":"年賀zine2026","category":"Life work","tags":["ZINE"],"description":"年賀ZINEをつくりました。","thumbnail":"../images/work/nenngazine.jpg","images":["../images/work/nenngazine.jpg"]}]}
+{
+  "entries": [
+    {
+      "id": "chihhon",
+      "title": "chihhonすきですかanniversary",
+      "category": "work",
+      "tags": [
+        "イラスト",
+        "シフォン"
+      ],
+      "description": "シフォン好きですかさんのanniversaryシールです",
+      "thumbnail": "../images/work/chihhon03.png",
+      "images": [
+        "../images/work/chihhon03.png",
+        "../images/work/chihhon04.jpg"
+      ]
+    },
+    {
+      "id": "nenngazine",
+      "title": "年賀zine2026",
+      "category": "Life work",
+      "tags": [
+        "ZINE"
+      ],
+      "description": "年賀ZINEをつくりました。",
+      "thumbnail": "../images/work/nenngazine.jpg",
+      "images": [
+        "../images/work/nenngazine.jpg"
+      ]
+    }
+  ]
+}

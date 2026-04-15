@@ -1,1 +1,53 @@
-{"entries":[{"id":"2026-04-07","title":"宇宙の子","serial":"\"#01\"","tags":["Diary","Illustration","と会社"],"images":["../images/comicdiary/IMG_3061.jpg","../images/comicdiary/test01.png"],"thumbnail":"../images/comicdiary/IMG_3061.jpg","description":"ここにお話を書きます。"},{"id":"2026-4-10","title":"ときくんのきもち","serial":"\"#03\"","tags":["Diary","Illustration","toki"],"images":["../images/comicdiary/2026-4-10-01.jpg","../images/comicdiary/2026-4-10-02.jpg","../images/comicdiary/2026-4-10-03.jpg"],"thumbnail":"../images/comicdiary/2026-4-10-01.jpg","description":"ときくんのきもち。こんなこと言ってたなあ。\n絵文字も表示されるのかな？🍂"},{"id":"2026.4.9","title":"Coworkのテスト","serial":"\"#02\"","tags":["Diary","Comic","と会社"],"images":["../images/comicdiary/IMG_4763.jpg","../images/comicdiary/test01.png"],"thumbnail":"../images/comicdiary/IMG_4763.jpg","description":"ここにお話を書きます。どれくらい長くかけるのかな？どれくらい長く書いても表示されるのかな？？\n改行するとどうなるのかな？\nもっかい改行。"}]}
+{
+  "entries": [
+    {
+      "id": "2026-04-07",
+      "title": "宇宙の子",
+      "serial": "\"#01\"",
+      "tags": [
+        "Diary",
+        "Illustration",
+        "と会社"
+      ],
+      "images": [
+        "../images/comicdiary/IMG_3061.jpg",
+        "../images/comicdiary/test01.png"
+      ],
+      "thumbnail": "../images/comicdiary/IMG_3061.jpg",
+      "description": "ここにお話を書きます。"
+    },
+    {
+      "id": "2026-4-10",
+      "title": "ときくんのきもち",
+      "serial": "\"#03\"",
+      "tags": [
+        "Diary",
+        "Illustration",
+        "toki"
+      ],
+      "images": [
+        "../images/comicdiary/2026-4-10-01.jpg",
+        "../images/comicdiary/2026-4-10-02.jpg",
+        "../images/comicdiary/2026-4-10-03.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2026-4-10-01.jpg",
+      "description": "ときくんのきもち。こんなこと言ってたなあ。\n絵文字も表示されるのかな？🍂"
+    },
+    {
+      "id": "2026.4.9",
+      "title": "Coworkのテスト",
+      "serial": "\"#02\"",
+      "tags": [
+        "Diary",
+        "Comic",
+        "と会社"
+      ],
+      "images": [
+        "../images/comicdiary/IMG_4763.jpg",
+        "../images/comicdiary/test01.png"
+      ],
+      "thumbnail": "../images/comicdiary/IMG_4763.jpg",
+      "description": "ここにお話を書きます。どれくらい長くかけるのかな？どれくらい長く書いても表示されるのかな？？\n改行するとどうなるのかな？\nもっかい改行。"
+    }
+  ]
+}
