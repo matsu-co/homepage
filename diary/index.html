@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>diary - matsushima CHIHIRO.</title>
   <link rel="stylesheet" href="../css/style.css">
- <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;200;300&display=swap" rel="stylesheet">
+ 
   <style>
     /* 全体の横揺れを防ぐ設定 */
     html, body { overflow-x: hidden; width: 100%; margin: 0; padding: 0; }
@@ -37,14 +37,19 @@
     .article-nav { display: flex; justify-content: space-between; margin-top: 40px; padding: 20px; border-top: 1px solid #eee; }
     .nav-link { text-decoration: none; color: #333; font-weight: bold; font-size: 0.9rem; max-width: 45%; }
     .nav-label { display: block; font-size: 0.7rem; color: #b0a898; margin-bottom: 5px; }
-   /* タイトル・本文：細いNoto Sans JP */
+  /* タイトル：游ゴシック 太字 */
 .diary-card-title,
-#articleBody h2,
+#articleBody h2 {
+  font-family: "游ゴシック体", "Yu Gothic", YuGothic, sans-serif;
+  font-weight: bold;
+}
+
+/* 本文・日付：游ゴシック 細め */
 .diary-card-excerpt,
 #articleBody p,
 .diary-card-body > div {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-weight: 200;
+  font-family: "游ゴシック体", "Yu Gothic", YuGothic, sans-serif;
+  font-weight: 300;
   line-height: 2;
 }
 
