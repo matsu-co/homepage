@@ -348,7 +348,7 @@ button {
   .menu-siri {
     position: absolute;
     left: -20px;        /* ← 左への距離、数値で調整 */
-    height: 220px;
+    height: 280px;
     width: auto;
     transform: translateX(-100%);  /* siriをnavの左外に出す */
   }
