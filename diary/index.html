@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>diary - matsushima CHIHIRO.</title>
   <link rel="stylesheet" href="../css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap" rel="stylesheet">
   <style>
     /* 全体の横揺れを防ぐ設定 */
     html, body { overflow-x: hidden; width: 100%; margin: 0; padding: 0; }
@@ -36,6 +37,20 @@
     .article-nav { display: flex; justify-content: space-between; margin-top: 40px; padding: 20px; border-top: 1px solid #eee; }
     .nav-link { text-decoration: none; color: #333; font-weight: bold; font-size: 0.9rem; max-width: 45%; }
     .nav-label { display: block; font-size: 0.7rem; color: #b0a898; margin-bottom: 5px; }
+    /* タイトル：Zen Maru Gothic */
+    .diary-card-title,
+    #articleBody h2 {
+      font-family: 'Zen Maru Gothic', sans-serif;
+    }
+
+    /* 日付・本文：游ゴシック */
+    .diary-card-excerpt,
+    #articleBody p,
+    .diary-card-body > div {
+      font-family: "游ゴシック体", "Yu Gothic", YuGothic, sans-serif;
+      font-weight: 500;
+    }
+
   </style>
 </head>
 <body>
