@@ -311,7 +311,7 @@ button {
 }
 
 .menu-siri {
-  height: 300px;
+  height: 350px;
   width: auto;
   opacity: 0.85;
 }
@@ -333,14 +333,18 @@ button {
 }
 
 .menu-nav a img {
-  height: 40px;
+  height: 45px;
   width: auto;
   display: block;
 }
 
 @media (max-width: 768px) {
-  .menu-nav a img { height: 30px; }
-  .menu-siri { height: 220px; }
+   .menu-nav-wrapper {
+    justify-content: center;
+    gap: 16px;
+  }
+  .menu-nav a img { height: 40px; }
+  .menu-siri { height: 250px; }
 }
 
 /* ============================
