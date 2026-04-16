@@ -17,18 +17,15 @@
       "htmlContent": "<img src=\"../images/diary/2026-04-02-2.png\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">\n<img src=\"../images/diary/2026-04-02-4.png\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">"
     },
     {
-      "id": "2026-04-01",
-      "title": "ここにタイトル",
-      "date": "2026-04-01",
-      "description": "本文をここに書きます。 空行で段落を分けます。…",
-      "excerpt": "本文をここに書きます。 空行で段落を分けます。…",
-      "cover": "../images/diary/2026-04-01-01.jpg",
-      "thumbnail": "../images/diary/2026-04-01-01.jpg",
-      "images": [
-        "../images/diary/2026-04-01-01.jpg",
-        "../images/diary/2026-04-01-02.jpg"
-      ],
-      "htmlContent": "<p>本文をここに書きます。</p>\n<p>空行で段落を分けます。</p>\n<p><strong>太字</strong>にしたいときはアスタリスク2つで囲みます。</p>\n<img src=\"../images/diary/2026-04-01-01.jpg\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">\n<p>空行で段落を分けます。<br><img src=\"../images/diary/2026-04-01-01.jpg\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\"></p>\n<p>おわり</p>"
+      "id": "2026-03-24",
+      "title": "にんぷに浴衣",
+      "date": "2026-03-24",
+      "description": "さいきんあたたかい日には浴衣で過ごすことがある。 もともと夏のお風呂あがりに着ていたものだけど…",
+      "excerpt": "さいきんあたたかい日には浴衣で過ごすことがある。 もともと夏のお風呂あがりに着ていたものだけど…",
+      "cover": "",
+      "thumbnail": "",
+      "images": [],
+      "htmlContent": "<img src=\"../images/diary/2026-03-24.jpg\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">\nさいきんあたたかい日には浴衣で過ごすことがある。\nもともと夏のお風呂あがりに着ていたものだけど\n鼠蹊部が締め付けられなくて、おなか周りの調整がきいてとてもラク。\n生まれてからも授乳しやすいと聞いて、たしかに。\n対丈の浴衣を数枚用意しておきたい。\n<p>このことをインスタグラムにあげようとして、なんだかあげられなかった。</p>\n<p>以前からずっと考えていたことだけど、より今がここちよいほうへ、と<br>この日からWebsiteづくりがはじまった。</p>"
     }
   ]
 }
