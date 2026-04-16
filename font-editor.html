@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>フォントエディター — matsushima CHIHIRO.</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; background: #f5f0eb; color: #3a3028; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ===== 左パネル ===== */
+    .panel {
+      background: #fff;
+      padding: 24px;
+      border-right: 1px solid #e0d8cc;
+      overflow-y: auto;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .panel-title {
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      color: #5a5040;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e0d8cc;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      color: #a08a6e;
+      text-transform: uppercase;
+      margin: 18px 0 10px;
+    }
+
+    .ctrl { margin-bottom: 14px; }
+
+    .ctrl label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: #5a5040;
+      margin-bottom: 5px;
+    }
+
+    .ctrl label span { color: #a08a6e; }
+
+    select {
+      width: 100%;
+      padding: 7px 8px;
+      border: 1px solid #d4cbbf;
+      border-radius: 6px;
+      background: #faf8f5;
+      color: #3a3028;
+      font-size: 0.82rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: #a08a6e;
+      cursor: pointer;
+    }
+
+    hr { border: none; border-top: 1px solid #e8e0d8; margin: 18px 0; }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+      transition: opacity 0.2s;
+      font-family: inherit;
+    }
+    .btn:hover { opacity: 0.8; }
+    .btn-save { background: #5a5040; color: #fff; }
+    .btn-css  { background: #e8e0d5; color: #5a5040; }
+    .btn-reset { background: #f0ede9; color: #a08a6e; font-size: 0.75rem; }
+
+    .save-msg {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #a08a6e;
+      margin-top: 6px;
+      height: 16px;
+    }
+
+    .css-box {
+      display: none;
+      margin-top: 12px;
+      background: #2a2420;
+      color: #c8bfb0;
+      border-radius: 8px;
+      padding: 14px;
+      font-family: monospace;
+      font-size: 0.72rem;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    /* ===== 右パネル ===== */
+    .preview-area {
+      padding: 40px;
+    }
+
+    .preview-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      color: #a08a6e;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .preview-box {
+      background: rgba(255,255,252,0.85);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 28px;
+      max-width: 600px;
+      box-shadow: 0 2px 12px rgba(80,60,40,0.06);
+    }
+
+    .p-heading { margin-bottom: 12px; color: #3a3028; }
+    .p-date { font-size: 0.8rem; color: #b0a898; margin-bottom: 10px; }
+    .p-body { color: #4a4235; }
+
+    .card-mock {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .card-img {
+      width: 110px;
+      height: 80px;
+      background: #e8e0d5;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 700px) {
+      .layout { grid-template-columns: 1fr; }
+      .panel { position: static; height: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ===== 左：コントロール ===== -->
+  <div class="panel">
+    <div class="panel-title">フォントエディター</div>
+
+    <!-- 見出し -->
+    <div class="section-label">見出し・タイトル</div>
+
+    <div class="ctrl">
+      <label>フォント</label>
+      <select id="hFont" onchange="apply()">
+        <option value='"游ゴシック体","Yu Gothic",YuGothic,sans-serif'>游ゴシック体</option>
+        <option value='"Noto Sans JP",sans-serif'>Noto Sans JP</option>
+        <option value='"Noto Serif JP",serif'>Noto Serif JP</option>
+        <option value='"Shippori Mincho",serif'>しっぽり明朝</option>
+        <option value='"Zen Maru Gothic",sans-serif'>Zen Maru Gothic</option>
+      </select>
+    </div>
+
+    <div class="ctrl">
+      <label>太さ <span id="hWv">500</span></label>
+      <input type="range" id="hW" min="100" max="900" step="100" value="500"
+             oninput="document.getElementById('hWv').textContent=this.value; apply()">
+    </div>
+
+    <div class="ctrl">
+      <label>サイズ <span id="hSv">1.2</span>rem</label>
+      <input type="range" id="hS" min="0.8" max="2.5" step="0.05" value="1.2"
+             oninput="document.getElementById('hSv').textContent=parseFloat(this.value).toFixed(2); apply()">
+    </div>
+
+    <hr>
+
+    <!-- 本文 -->
+    <div class="section-label">本文・日付</div>
+
+    <div class="ctrl">
+      <label>フォント</label>
+      <select id="bFont" onchange="apply()">
+        <option value='"游ゴシック体","Yu Gothic",YuGothic,sans-serif'>游ゴシック体</option>
+        <option value='"Noto Sans JP",sans-serif'>Noto Sans JP</option>
+        <option value='"Noto Serif JP",serif'>Noto Serif JP</option>
+        <option value='"Shippori Mincho",serif'>しっぽり明朝</option>
+        <option value='"Zen Maru Gothic",sans-serif'>Zen Maru Gothic</option>
+      </select>
+    </div>
+
+    <div class="ctrl">
+      <label>太さ <span id="bWv">300</span></label>
+      <input type="range" id="bW" min="100" max="700" step="100" value="300"
+             oninput="document.getElementById('bWv').textContent=this.value; apply()">
+    </div>
+
+    <div class="ctrl">
+      <label>サイズ <span id="bSv">1.00</span>rem</label>
+      <input type="range" id="bS" min="0.7" max="1.5" step="0.05" value="1.0"
+             oninput="document.getElementById('bSv').textContent=parseFloat(this.value).toFixed(2); apply()">
+    </div>
+
+    <div class="ctrl">
+      <label>行間 <span id="lHv">2.0</span></label>
+      <input type="range" id="lH" min="1.2" max="3.0" step="0.1" value="2.0"
+             oninput="document.getElementById('lHv').textContent=parseFloat(this.value).toFixed(1); apply()">
+    </div>
+
+    <hr>
+
+    <button class="btn btn-save" onclick="save()">保存して全ページに適用</button>
+    <button class="btn btn-css"  onclick="toggleCSS()">CSSを出力（コピー用）</button>
+    <button class="btn btn-reset" onclick="reset()">リセット</button>
+    <div class="save-msg" id="saveMsg"></div>
+    <pre class="css-box" id="cssBox"></pre>
+  </div>
+
+  <!-- ===== 右：プレビュー ===== -->
+  <div class="preview-area">
+
+    <div class="preview-label">記事詳細</div>
+    <div class="preview-box">
+      <div class="p-heading" id="ph1">おかず日記</div>
+      <div class="p-date"   id="pd1">2026-04-16</div>
+      <div class="p-body"   id="pb1">
+        今日は冷蔵庫にあるものだけで夕ごはんをつくった。<br>
+        玉ねぎと卵と、残っていたじゃがいも。<br>
+        それだけでなんとかなるものだなと思いながら、ゆっくり炒める。<br><br>
+        窓の外は少し暗くなっていて、台所がいちばん明るい時間だった。
+      </div>
+    </div>
+
+    <div class="preview-label">一覧カード</div>
+    <div class="preview-box">
+      <div class="card-mock">
+        <div class="card-img"></div>
+        <div>
+          <div class="p-date" id="pd2">2026-04-10</div>
+          <div class="p-heading" id="ph2" style="margin-bottom:8px;">今日のおやつ</div>
+          <div class="p-body"   id="pb2">近所のパン屋で買ったシュークリームを、帰り道に食べた。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-label">ページタイトル</div>
+    <div class="preview-box">
+      <div class="p-heading" id="ph3" style="font-size:1.5em;">diary</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const GOOGLE_FONTS = {
+  'Noto Sans JP':   'Noto+Sans+JP:wght@100;200;300;400;500;700',
+  'Noto Serif JP':  'Noto+Serif+JP:wght@300;400;500;700',
+  'Shippori Mincho':'Shippori+Mincho:wght@400;500;600;700',
+  'Zen Maru Gothic':'Zen+Maru+Gothic:wght@300;400;500;700',
+};
+const loaded = new Set();
+
+function loadFont(family) {
+  const name = family.match(/"([^"]+)"/)?.[1];
+  if (!name || !GOOGLE_FONTS[name] || loaded.has(name)) return;
+  loaded.add(name);
+  const l = document.createElement('link');
+  l.rel = 'stylesheet';
+  l.href = `https://fonts.googleapis.com/css2?family=${GOOGLE_FONTS[name]}&display=swap`;
+  document.head.appendChild(l);
+}
+
+function get() {
+  return {
+    hFont: document.getElementById('hFont').value,
+    hW:    document.getElementById('hW').value,
+    hS:    document.getElementById('hS').value,
+    bFont: document.getElementById('bFont').value,
+    bW:    document.getElementById('bW').value,
+    bS:    document.getElementById('bS').value,
+    lH:    document.getElementById('lH').value,
+  };
+}
+
+function apply() {
+  const s = get();
+  loadFont(s.hFont);
+  loadFont(s.bFont);
+
+  ['ph1','ph2','ph3'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.fontFamily  = s.hFont;
+    el.style.fontWeight  = s.hW;
+    el.style.fontSize    = s.hS + 'rem';
+  });
+
+  ['pb1','pb2'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.fontFamily  = s.bFont;
+    el.style.fontWeight  = s.bW;
+    el.style.fontSize    = s.bS + 'rem';
+    el.style.lineHeight  = s.lH;
+  });
+
+  ['pd1','pd2'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.fontFamily  = s.bFont;
+    el.style.fontWeight  = s.bW;
+  });
+}
+
+function save() {
+  localStorage.setItem('fontSettings', JSON.stringify(get()));
+  const msg = document.getElementById('saveMsg');
+  msg.textContent = '保存しました！全ページに反映されます';
+  setTimeout(() => msg.textContent = '', 2500);
+}
+
+function makeCSS(s) {
+  const fonts = [...new Set(
+    [s.hFont, s.bFont].map(f => {
+      const n = f.match(/"([^"]+)"/)?.[1];
+      return n && GOOGLE_FONTS[n] ? GOOGLE_FONTS[n] : null;
+    }).filter(Boolean)
+  )];
+
+  let css = '';
+  if (fonts.length) {
+    css += `@import url('https://fonts.googleapis.com/css2?family=${fonts.join('&family=')}&display=swap');\n\n`;
+  }
+  css +=
+`/* 見出し・タイトル */
+h1, h2, h3,
+.diary-card-title,
+.work-card-title,
+.work-section-title,
+.page-header h1,
+#articleBody h2 {
+  font-family: ${s.hFont};
+  font-weight: ${s.hW};
+  font-size: ${parseFloat(s.hS).toFixed(2)}rem;
+}
+
+/* 本文・日付 */
+p, .diary-card-excerpt,
+.diary-card-body > div,
+#articleBody p {
+  font-family: ${s.bFont};
+  font-weight: ${s.bW};
+  font-size: ${parseFloat(s.bS).toFixed(2)}rem;
+  line-height: ${parseFloat(s.lH).toFixed(1)};
+}`;
+  return css;
+}
+
+function toggleCSS() {
+  const box = document.getElementById('cssBox');
+  if (box.style.display === 'block') { box.style.display = 'none'; return; }
+  box.textContent = makeCSS(get());
+  box.style.display = 'block';
+}
+
+function reset() {
+  if (!confirm('設定をリセットしますか？')) return;
+  localStorage.removeItem('fontSettings');
+  location.reload();
+}
+
+// 起動時：保存済み設定を復元
+const saved = localStorage.getItem('fontSettings');
+if (saved) {
+  try {
+    const s = JSON.parse(saved);
+    document.getElementById('hFont').value = s.hFont;
+    document.getElementById('hW').value    = s.hW;   document.getElementById('hWv').textContent = s.hW;
+    document.getElementById('hS').value    = s.hS;   document.getElementById('hSv').textContent = parseFloat(s.hS).toFixed(2);
+    document.getElementById('bFont').value = s.bFont;
+    document.getElementById('bW').value    = s.bW;   document.getElementById('bWv').textContent = s.bW;
+    document.getElementById('bS').value    = s.bS;   document.getElementById('bSv').textContent = parseFloat(s.bS).toFixed(2);
+    document.getElementById('lH').value    = s.lH;   document.getElementById('lHv').textContent = parseFloat(s.lH).toFixed(1);
+  } catch(e) {}
+}
+apply();
+</script>
+</body>
+</html>
