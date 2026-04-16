@@ -28,3 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         footer.innerHTML = `<img src="${pathPrefix}matsushimachihiro02.png" class="handwritten-footer" style="width:260px; height:auto; display:block; margin:60px auto;">`;
     }
 });
+// フォント設定を全ページに適用
+var fs = document.createElement('script');
+fs.src = pathPrefix + 'js/font-settings.js';
+document.head.appendChild(fs);
