@@ -340,11 +340,26 @@ button {
 
 @media (max-width: 768px) {
    .menu-nav-wrapper {
+     position: relative;
+    display: flex;
     justify-content: center;
-    gap: 16px;
+    align-items: center;
   }
-  .menu-nav a img { height: 40px; }
-  .menu-siri { height: 250px; }
+  .menu-siri {
+    position: absolute;
+    left: -20px;        /* ← 左への距離、数値で調整 */
+    height: 220px;
+    width: auto;
+    transform: translateX(-100%);  /* siriをnavの左外に出す */
+  }
+
+  .menu-nav {
+    align-items: center;
+  }
+
+  .menu-nav a img {
+    height: 35px !important;
+  }
 }
 
 /* ============================
