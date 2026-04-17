@@ -182,6 +182,9 @@ function fetchLocalDiary() {
       ? rawExcerpt.slice(0, 80) + '…'
       : (rawExcerpt ? rawExcerpt + '…' : '');
 
+    diaryEntries.sort((a, b) => b.date.localeCompare(a.date));
+return diaryEntries;
+
     return {
       id: prefix,
       title: fm.title || prefix,
