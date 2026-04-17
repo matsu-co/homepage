@@ -96,6 +96,7 @@
       const response = await fetch('../diary-data.json');
       const data = await response.json();
       const entries = data.entries || [];
+      entries.sort((a, b) => b.date.localeCompare(a.date));
 
       if (pageId) {
         entriesEl.style.display = 'none';
