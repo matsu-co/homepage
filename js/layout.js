@@ -5,7 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
                   !window.location.pathname.includes('/comicdiary/') && 
                   !window.location.pathname.includes('/diary/') && 
                   !window.location.pathname.includes('/about/') && 
-                  !window.location.pathname.includes('/photo/');
+                  !window.location.pathname.includes('/photo/');&&
+                  !window.location.pathname.includes('/contact/');
     const pathPrefix = isTop ? "./" : "../";
 
     // 2. ヘッダーの処理
@@ -45,8 +46,9 @@ if (h1 && !isTop) {
     if (footer) {
         footer.innerHTML = `<img src="${pathPrefix}matsushimachihiro02.png" class="handwritten-footer" style="width:260px; height:auto; display:block; margin:60px auto;">`;
     }
-});
 // フォント設定を全ページに適用
 var fs = document.createElement('script');
 fs.src = pathPrefix + 'js/font-settings.js';
 document.head.appendChild(fs);
+
+});
