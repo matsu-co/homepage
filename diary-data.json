@@ -15,8 +15,8 @@
       "id": "2026-4-16",
       "title": "天気",
       "date": "2026-4-16　/　雨のち晴れ",
-      "description": "１枚目と２枚目でテンションがちがいすぎるけれど、お日様のちからはすごい。 とても軽くなった。湿っぽいの、一区切り。…",
-      "excerpt": "１枚目と２枚目でテンションがちがいすぎるけれど、お日様のちからはすごい。 とても軽くなった。湿っぽいの、一区切り。…",
+      "description": "１枚目と２枚目でテンションがちがいすぎるけれど、お日様のちからはすごい。とても軽くなった。湿っぽいの、一区切り。…",
+      "excerpt": "１枚目と２枚目でテンションがちがいすぎるけれど、お日様のちからはすごい。とても軽くなった。湿っぽいの、一区切り。…",
       "cover": "../images/diary/2026-4-16-01.png",
       "thumbnail": "../images/diary/2026-4-16-01.png",
       "images": [
@@ -25,7 +25,7 @@
         "../images/diary/2026-4-16-03.png",
         "../images/diary/2026-4-16-04.png"
       ],
-      "htmlContent": "<p>１枚目と２枚目でテンションがちがいすぎるけれど、お日様のちからはすごい。<br>とても軽くなった。湿っぽいの、一区切り。</p>\n<img src=\"../images/diary/2026-4-16-01.png\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">\n<img src=\"../images/diary/2026-4-16-01.png\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">\n<img src=\"../images/diary/2026-4-16-03.png\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">\n<img src=\"../images/diary/2026-4-16-04.png\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">"
+      "htmlContent": "<p>１枚目と２枚目でテンションがちがいすぎるけれど、お日様のちからはすごい。とても軽くなった。湿っぽいの、一区切り。</p>\n<img src=\"../images/diary/2026-4-16-01.png\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">\n<img src=\"../images/diary/2026-4-16-02.png\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">\n<img src=\"../images/diary/2026-4-16-04.png\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">\n<img src=\"../images/diary/2026-4-16-03.png\" style=\"max-width:100%;border-radius:6px;margin:12px 0;\">"
     },
     {
       "id": "2026-4-13",
