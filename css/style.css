@@ -576,7 +576,10 @@ button {
   margin: 2em 0 0.8em;
   color: #5a5040;
 }
-
+.article-content h2:first-child,
+.article-container > h2:first-child {
+  margin-top: 0;
+}
 /* ローディング */
 .loading {
   text-align: center;
