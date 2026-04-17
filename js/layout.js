@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   !window.location.pathname.includes('/comicdiary/') && 
                   !window.location.pathname.includes('/diary/') && 
                   !window.location.pathname.includes('/about/') && 
-                  !window.location.pathname.includes('/photo/');&&
+                  !window.location.pathname.includes('/photo/') &&
                   !window.location.pathname.includes('/contact/');
     const pathPrefix = isTop ? "./" : "../";
 
