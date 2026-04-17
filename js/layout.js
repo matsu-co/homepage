@@ -21,6 +21,23 @@ document.addEventListener("DOMContentLoaded", () => {
             header.prepend(logoLink);
         }
     }
+    // ページタイトルを手書き画像に置き換え
+const pageImages = {
+  '/diary/':      'diary.png',
+  '/work/':       'work.png',
+  '/photo/':      'photo.png',
+  '/comicdiary/': 'comic.png',
+  '/about/':      'about.png',
+};
+const h1 = header ? header.querySelector('h1') : null;
+if (h1 && !isTop) {
+  for (const [seg, img] of Object.entries(pageImages)) {
+    if (window.location.pathname.includes(seg)) {
+      h1.innerHTML = '<img src="' + pathPrefix + img + '" alt="" style="height:28px;width:auto;display:block;">';
+      break;
+    }
+  }
+}
 
     // 3. フッターの処理
     const footer = document.querySelector(".page-footer");
