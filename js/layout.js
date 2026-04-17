@@ -33,7 +33,7 @@ const h1 = header ? header.querySelector('h1') : null;
 if (h1 && !isTop) {
   for (const [seg, img] of Object.entries(pageImages)) {
     if (window.location.pathname.includes(seg)) {
-      h1.innerHTML = '<img src="' + pathPrefix + img + '" alt="" style="height:28px;width:auto;display:block;">';
+      h1.innerHTML = '<img src="' + pathPrefix + img + '" alt="" style="height:50px;width:auto;display:block;">';
       break;
     }
   }
