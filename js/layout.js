@@ -28,6 +28,7 @@ const pageImages = {
   '/photo/':      'photo.png',
   '/comicdiary/': 'comic.png',
   '/about/':      'about.png',
+  '/contact/':    'contact.png', 
 };
 const h1 = header ? header.querySelector('h1') : null;
 if (h1 && !isTop) {
