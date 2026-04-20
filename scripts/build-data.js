@@ -170,6 +170,7 @@ function fetchLocalDiary() {
           (_, fn) => `<img src="../images/diary/${fn}" style="max-width:100%;border-radius:6px;margin:12px 0;">`
         );
         p = p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        p = p.replace(/(https?:\/\/[^\s<>"]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
         if (p.trim().startsWith('<img')) return p;
         return `<p>${p.replace(/\n/g, '<br>')}</p>`;
       })
