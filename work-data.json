@@ -72,8 +72,15 @@
         "handcraft"
       ],
       "description": "水彩/アクリル　原画や原画をもとにしたgoods制作,2023年",
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/uchuunoko01.png",
+      "images": [
+        "../images/work/uchuunoko01.png",
+        "../images/work/uchuunoko02.jpg",
+        "../images/work/uchuunoko03.png",
+        "../images/work/uchuunoko04.png",
+        "../images/work/uchuunoko05.jpg",
+        "../images/work/uchuunoko06.jpg"
+      ]
     }
   ]
 }
