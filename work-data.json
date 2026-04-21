@@ -71,8 +71,16 @@
         "handcraft"
       ],
       "description": "たのしさいろいろ詰め込んで,2024年",
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/letter.png",
+      "images": [
+        "../images/work/letter.png",
+        "../images/work/letter01.mp4",
+        "../images/work/letter02.jpg",
+        "../images/work/letter03.jpg",
+        "../images/work/letter04.jpg",
+        "../images/work/letter05.jpg",
+        "../images/work/letter06.jpg"
+      ]
     },
     {
       "id": "nenngazine",
