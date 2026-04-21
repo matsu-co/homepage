@@ -71,8 +71,31 @@
         "illust"
       ],
       "description": "じぶんの内面を整理するためのワークブック,2024年",
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/tanemakizine01.jpg",
+      "images": [
+        "../images/work/tanemakizine01.jpg",
+        "../images/work/tanemakizine02.jpg",
+        "../images/work/tanemakizine03.jpg",
+        "../images/work/tanemakizine04.jpg",
+        "../images/work/tanemakizine05.jpg",
+        "../images/work/tanemakizine06.jpg",
+        "../images/work/tanemakizine07.jpg",
+        "../images/work/tanemakizine08.jpg",
+        "../images/work/tanemakizine09.jpg",
+        "../images/work/tanemakizine10.jpg",
+        "../images/work/tanemakizine11.jpg",
+        "../images/work/tanemakizine12.jpg",
+        "../images/work/tanemakizine13.jpg",
+        "../images/work/tanemakizine14.jpg",
+        "../images/work/tanemakizine15.jpg",
+        "../images/work/tanemakizine16.jpg",
+        "../images/work/tanemakizine17.jpg",
+        "../images/work/tanemakizine18.jpg",
+        "../images/work/tanemakizine19.jpg",
+        "../images/work/tanemakizine20.jpg",
+        "../images/work/tanemakizine21.jpg",
+        "../images/work/tanemakizine22.jpg"
+      ]
     },
     {
       "id": "uchuunoko",
