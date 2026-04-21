@@ -121,8 +121,14 @@
         "handcraft"
       ],
       "description": "夏の芽。エネルギッシュな植物たちの成長、夏の始まりの新鮮な瑞々しさ,silkscreen手刷り,2024年",
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/summersprout.jpg",
+      "images": [
+        "../images/work/summersprout.jpg",
+        "../images/work/summersprout01.jpg",
+        "../images/work/summersprout02.jpg",
+        "../images/work/summersprout03.jpg",
+        "../images/work/summersprout04.jpg"
+      ]
     },
     {
       "id": "tanemakizine",
