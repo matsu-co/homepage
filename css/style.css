@@ -728,7 +728,7 @@ button {
 .work-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 32px;
+  gap: 16px;
 }
 
 /* カード：背景・枠線を消してイラストを際立たせる */
@@ -827,6 +827,27 @@ button {
   cursor: pointer;
   background: none;
   border: none;
+  padding: 12px;    
+  margin: -12px;    
+}
+
+.modal-back-btn {
+  display: block;
+  margin: 32px auto 8px;
+  background: none;
+  border: 1px solid #a08a6e;
+  border-radius: 24px;
+  padding: 10px 32px;
+  font-family: 'Shippori Mincho', serif;
+  font-size: 0.9rem;
+  color: #5a5040;
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.modal-back-btn:hover {
+  background: #a08a6e;
+  color: #f5f0e8;
 }
 
 @media (max-width: 768px) {
