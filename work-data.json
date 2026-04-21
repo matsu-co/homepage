@@ -174,8 +174,13 @@
         "goods"
       ],
       "description": "永遠には刻めませんが、気軽に楽しむタトゥーシールです,2024年",
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/tatoo.jpg",
+      "images": [
+        "../images/work/tatoo.jpg",
+        "../images/work/tatoo01.jpg",
+        "../images/work/tatoo03.mp4",
+        "../images/work/tatoo04.jpg"
+      ]
     },
     {
       "id": "uchuunoko",
