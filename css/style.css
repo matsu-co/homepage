@@ -616,7 +616,7 @@ button {
 .work-card {
   background: rgba(255, 255, 252, 0.7);
   border: 1px solid #e0d8cc;
-  border-radius: 10px;
+  border-radius: 0px;
   overflow: hidden;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
