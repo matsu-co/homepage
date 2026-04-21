@@ -356,27 +356,6 @@
       ]
     },
     {
-      "id": "uchuunoko",
-      "title": "宇宙の子/宇宙の絵",
-      "category": "work",
-      "tags": [
-        "illust",
-        "goods",
-        "handcraft"
-      ],
-      "description": "水彩/アクリル　原画や原画をもとにしたgoods制作,2023年",
-      "order": 9999,
-      "thumbnail": "../images/work/uchuunoko01.png",
-      "images": [
-        "../images/work/uchuunoko01.png",
-        "../images/work/uchuunoko02.jpg",
-        "../images/work/uchuunoko03.png",
-        "../images/work/uchuunoko04.png",
-        "../images/work/uchuunoko05.jpg",
-        "../images/work/uchuunoko06.jpg"
-      ]
-    },
-    {
       "id": "wanchan",
       "title": "wanchan　linestamp",
       "category": "work",
@@ -390,6 +369,27 @@
         "../images/work/wanchan.jpg",
         "../images/work/wanchan01.jpg",
         "../images/work/wanchan02.jpg"
+      ]
+    },
+    {
+      "id": "uchuunoko",
+      "title": "宇宙の子/宇宙の絵",
+      "category": "work",
+      "tags": [
+        "illust",
+        "goods",
+        "handcraft"
+      ],
+      "description": "水彩/アクリル　原画や原画をもとにしたgoods制作,2023年",
+      "order": 2,
+      "thumbnail": "../images/work/uchuunoko01.png",
+      "images": [
+        "../images/work/uchuunoko01.png",
+        "../images/work/uchuunoko02.jpg",
+        "../images/work/uchuunoko03.png",
+        "../images/work/uchuunoko04.png",
+        "../images/work/uchuunoko05.jpg",
+        "../images/work/uchuunoko06.jpg"
       ]
     },
     {
