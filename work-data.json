@@ -37,8 +37,13 @@
         "illust"
       ],
       "description": "ぼんじんまんのワンシーンレターカード。表裏プリント,2026年",
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/bonjinmanletter.jpg",
+      "images": [
+        "../images/work/bonjinmanletter.jpg",
+        "../images/work/bonjinmanletter01.png",
+        "../images/work/bonjinmanletter02.png",
+        "../images/work/bonjinmanletter03.png"
+      ]
     },
     {
       "id": "bonmikuji",
