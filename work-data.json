@@ -51,8 +51,15 @@
         "handcraft"
       ],
       "description": "こどもが描いた絵などを簡単に入れ替えできるポケットタイプの額縁、廃材アップサイクル制作、オーダー可能,2024年",
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/gakubuchi.png",
+      "images": [
+        "../images/work/gakubuchi.png",
+        "../images/work/gakubuchi01.jpg",
+        "../images/work/gakubuchi02.jpg",
+        "../images/work/gakubuchi03.jpg",
+        "../images/work/gakubuchi04.jpg",
+        "../images/work/gakubuchi05.jpg"
+      ]
     },
     {
       "id": "nenngazine",
