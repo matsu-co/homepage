@@ -213,7 +213,12 @@
             const images = e.images && e.images.length > 0 ? e.images : (e.thumbnail ? [e.thumbnail] : []);
             imageCount = images.length;
 
-            track.innerHTML = images.map(url => `<div class="slider-item"><img src="${url}"></div>`).join('');
+            track.innerHTML = images.map(url => {
+    if (/\.mp4$/i.test(url)) {
+        return `<div class="slider-item"><video src="${url}" controls playsinline style="max-width:100%;max-height:65vh;object-fit:contain;"></video></div>`;
+    }
+    return `<div class="slider-item"><img src="${url}" loading="lazy"></div>`;
+}).join('');
             dots.innerHTML = images.map((_, i) =>
                 `<button class="dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></button>`
             ).join('');
