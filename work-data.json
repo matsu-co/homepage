@@ -73,8 +73,12 @@
         "handcraft"
       ],
       "description": "Each'hoho'to love deeply,reflecting its distinct individuality.silkscreen手刷り,2024年",
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/hoho.jpg",
+      "images": [
+        "../images/work/hoho.jpg",
+        "../images/work/hoho01.jpg",
+        "../images/work/hoho02.jpg"
+      ]
     },
     {
       "id": "letter",
