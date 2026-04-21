@@ -152,6 +152,23 @@
       ]
     },
     {
+      "id": "shokubutsu",
+      "title": "植物似顔絵",
+      "category": "work",
+      "tags": [
+        "illust",
+        "handcraft"
+      ],
+      "description": "観察を通して感じ取った植物に重ね、天然藍インクとガラスペンで描いた似顔絵,2024年",
+      "thumbnail": "../images/work/shokubutsu.jpg",
+      "images": [
+        "../images/work/shokubutsu.jpg",
+        "../images/work/shokubutsu01.jpg",
+        "../images/work/shokubutsu03.jpg",
+        "../images/work/shokubutsu04.jpg"
+      ]
+    },
+    {
       "id": "summersprout",
       "title": "Summer Sprout",
       "category": "work",
