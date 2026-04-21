@@ -258,6 +258,17 @@
         "../images/work/uchuunoko05.jpg",
         "../images/work/uchuunoko06.jpg"
       ]
+    },
+    {
+      "id": "wanchan",
+      "title": "wanchan　linestamp",
+      "category": "work",
+      "tags": [
+        "illust"
+      ],
+      "description": "ちわわのlinestamp,order,2025年",
+      "thumbnail": "",
+      "images": []
     }
   ]
 }
