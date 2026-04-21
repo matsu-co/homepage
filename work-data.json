@@ -166,6 +166,17 @@
       ]
     },
     {
+      "id": "quest",
+      "title": "ときくんクエスト",
+      "category": "Life work",
+      "tags": [
+        "illust"
+      ],
+      "description": "ほしいものがあるとき、どうしたらそれが手に入る？をお金を介してではなく、行動で考える。なにかを得るための仕組みはとてもシンプルで、なによりもまず行動したい。",
+      "thumbnail": "",
+      "images": []
+    },
+    {
       "id": "shokubutsu",
       "title": "植物似顔絵",
       "category": "work",
