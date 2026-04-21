@@ -110,8 +110,12 @@
         "website"
       ],
       "description": "コンセプトワークから、illust/Website/名刺.経営層の方々のお名前に「山」「川」「谷」が含まれていることから、そのままメインヴィジュアルに。,2025年",
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/macpr.jpg",
+      "images": [
+        "../images/work/macpr.jpg",
+        "../images/work/macpr01.jpg",
+        "../images/work/macpr02.mp4"
+      ]
     },
     {
       "id": "nenngazine",
