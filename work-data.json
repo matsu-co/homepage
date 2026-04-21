@@ -62,6 +62,19 @@
       ]
     },
     {
+      "id": "letter",
+      "title": "letter set",
+      "category": "work",
+      "tags": [
+        "illust",
+        "goods",
+        "handcraft"
+      ],
+      "description": "たのしさいろいろ詰め込んで,2024年",
+      "thumbnail": "",
+      "images": []
+    },
+    {
       "id": "nenngazine",
       "title": "年賀zine",
       "category": "Life work",
