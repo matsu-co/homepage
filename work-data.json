@@ -152,6 +152,20 @@
       ]
     },
     {
+      "id": "otsubone",
+      "title": "挿絵[お局図鑑/さか田へか]",
+      "category": "work",
+      "tags": [
+        "illust"
+      ],
+      "description": "挿絵illust20点収録,[お局図鑑/さか田へか],order,2025年",
+      "thumbnail": "../images/work/otsubone.jpg",
+      "images": [
+        "../images/work/otsubone.jpg",
+        "../images/work/otsubone01.jpg"
+      ]
+    },
+    {
       "id": "shokubutsu",
       "title": "植物似顔絵",
       "category": "work",
