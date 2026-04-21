@@ -10,7 +10,7 @@ function fetchLocalWork() {
   let imgFiles = [];
   if (fs.existsSync(imgDir)) imgFiles = fs.readdirSync(imgDir);
 
-  return mdFiles.map(file => {
+  const entries = mdFiles.map(file => {
     const content = fs.readFileSync(path.join(mdDir, file), 'utf8');
     const parts = content.split('---');
     const header = parts[1] || '';
@@ -39,13 +39,16 @@ function fetchLocalWork() {
       return `../images/work/${match || img}`;
     });
 
+    const order = Number(header.match(/order\s*[:：]\s*(\d+)/)?.[1]) || 0;  
     return {
       id: file.replace('.md', ''),
-      title, category, tags, description,
+      title, category, tags, description, order,
       thumbnail: fullPaths[0] || '',
       images: fullPaths,
     };
   });
+  entries.sort((a, b) => b.order - a.order);  
+  return entries;  
 }
 
 // --- 【Local】Photo ---
@@ -57,7 +60,7 @@ function fetchLocalPhoto() {
   let imgFiles = [];
   if (fs.existsSync(imgDir)) imgFiles = fs.readdirSync(imgDir);
 
-  return mdFiles.map(file => {
+  (file => {
     const content = fs.readFileSync(path.join(mdDir, file), 'utf8');
     const parts = content.split('---');
     const header = parts[1] || '';
