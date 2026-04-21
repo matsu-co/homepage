@@ -66,7 +66,7 @@ function fetchLocalPhoto() {
     const prefix = file.replace('.md', '');
 
     const images = imgFiles
-      .filter(f => f.startsWith(prefix + '-') || (f.startsWith(prefix + '.') && /\.(jpg|jpeg|png|gif|webp)$/i.test(f)))
+      .filter(f => f.startsWith(prefix + '-') || (f.startsWith(prefix + '.') && /\.(jpg|jpeg|png|gif|webp|mp4)$/i.test(f)))
       .sort((a, b) => {
         const na = parseInt(a.match(/-(\d+)\.\w+$/)?.[1] || 0);
         const nb = parseInt(b.match(/-(\d+)\.\w+$/)?.[1] || 0);
@@ -113,7 +113,7 @@ function fetchLocalComics() {
     } else {
       const datePrefix = file.replace('.md', '');
       imageList = imgFiles
-        .filter(f => f.startsWith(datePrefix + '-') || (f.startsWith(datePrefix + '.') && /\.(jpg|jpeg|png|gif|webp)$/i.test(f)))
+        .filter(f => f.startsWith(datePrefix + '-') || (f.startsWith(datePrefix + '.') && /\.(jpg|jpeg|png|gif|webp|mp4)$/i.test(f)))
         .sort();
     }
 
@@ -155,7 +155,7 @@ function fetchLocalDiary() {
     const prefix = file.replace('.md', '');
 
     const images = imgFiles
-      .filter(f => f.startsWith(prefix + '-') || (f.startsWith(prefix + '.') && /\.(jpg|jpeg|png|gif|webp)$/i.test(f)))
+      .filter(f => f.startsWith(prefix + '-') || (f.startsWith(prefix + '.') && /\.(jpg|jpeg|png|gif|webp|mp4)$/i.test(f)))
       .sort((a, b) => {
         const na = parseInt(a.match(/-(\d+)\.\w+$/)?.[1] || 0);
         const nb = parseInt(b.match(/-(\d+)\.\w+$/)?.[1] || 0);
