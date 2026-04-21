@@ -8,6 +8,7 @@
         "handcraft"
       ],
       "description": "Busy Board/ビジーボード(アップサイクルの知育玩具),2020年",
+      "order": 0,
       "thumbnail": "../images/work/Busy Board.png",
       "images": [
         "../images/work/Busy Board.png",
@@ -37,6 +38,7 @@
         "illust"
       ],
       "description": "キャラクターの制作,バリエーション各種,order,2026年",
+      "order": 0,
       "thumbnail": "../images/work/bonjin.png",
       "images": [
         "../images/work/bonjin.png",
@@ -55,6 +57,7 @@
         "illust"
       ],
       "description": "ぼんじんまんのワンシーンレターカード。表裏プリント,2026年",
+      "order": 0,
       "thumbnail": "../images/work/bonjinmanletter.jpg",
       "images": [
         "../images/work/bonjinmanletter.jpg",
@@ -72,6 +75,7 @@
         "handcraft"
       ],
       "description": "盆踊り曲のお話とリンクした手づくりおみくじ全８種,きくち盆踊り,2025年",
+      "order": 0,
       "thumbnail": "../images/work/bonmikuji.jpg",
       "images": [
         "../images/work/bonmikuji.jpg",
@@ -88,6 +92,7 @@
         "logo"
       ],
       "description": "名古屋/緑区にある[シフォンすきですか]　ロゴ、看板、フレーバーシール、包装紙、ショップカードなど４０種類以上,2021年〜",
+      "order": 0,
       "thumbnail": "../images/work/chihhon.png",
       "images": [
         "../images/work/chihhon.png",
@@ -112,6 +117,7 @@
         "handcraft"
       ],
       "description": "こどもが描いた絵などを簡単に入れ替えできるポケットタイプの額縁、廃材アップサイクル制作、オーダー可能,2024年",
+      "order": 0,
       "thumbnail": "../images/work/gakubuchi.png",
       "images": [
         "../images/work/gakubuchi.png",
@@ -133,6 +139,7 @@
         "handcraft"
       ],
       "description": "Each'hoho'to love deeply,reflecting its distinct individuality.silkscreen手刷り,2024年",
+      "order": 0,
       "thumbnail": "../images/work/hoho.jpg",
       "images": [
         "../images/work/hoho.jpg",
@@ -150,6 +157,7 @@
         "handcraft"
       ],
       "description": "たのしさいろいろ詰め込んで,2024年",
+      "order": 0,
       "thumbnail": "../images/work/letter.png",
       "images": [
         "../images/work/letter.png",
@@ -170,6 +178,7 @@
         "website"
       ],
       "description": "コンセプトワークから、illust/Website/名刺.経営層の方々のお名前に「山」「川」「谷」が含まれていることから、そのままメインヴィジュアルに。,2025年",
+      "order": 0,
       "thumbnail": "../images/work/macpr.jpg",
       "images": [
         "../images/work/macpr.jpg",
@@ -185,6 +194,7 @@
         "ZINE"
       ],
       "description": "年賀状のかわりに、わたしたち家族の一年に起きた出来事や変化を記事として編集した小冊子です。久しぶりに会う方へ話したいことを詰め込んだような、とても日常の個人的な内容です。2023年〜",
+      "order": 0,
       "thumbnail": "../images/work/nenngazine01.jpg",
       "images": [
         "../images/work/nenngazine01.jpg",
@@ -206,6 +216,7 @@
         "ivent"
       ],
       "description": "東京おかっぱちゃんハウスで開催したIventの主催及びフライヤーデザイン、,2024年",
+      "order": 0,
       "thumbnail": "../images/work/otonakodomo01.png",
       "images": [
         "../images/work/otonakodomo01.png",
@@ -235,6 +246,7 @@
         "illust"
       ],
       "description": "挿絵illust20点収録,[お局図鑑/さか田へか],order,2025年",
+      "order": 0,
       "thumbnail": "../images/work/otsubone.jpg",
       "images": [
         "../images/work/otsubone.jpg",
@@ -249,6 +261,7 @@
         "illust"
       ],
       "description": "ほしいものがあるとき、どうしたらそれが手に入る？をお金を介してではなく、行動で考える。なにかを得るための仕組みはとてもシンプルで、なによりもまず行動したい。をつたえる、暮らしのデザイン。2025年",
+      "order": 0,
       "thumbnail": "../images/work/quest.jpg",
       "images": [
         "../images/work/quest.jpg",
@@ -265,6 +278,7 @@
         "handcraft"
       ],
       "description": "観察を通して感じ取った植物に重ね、天然藍インクとガラスペンで描いた似顔絵,2024年",
+      "order": 0,
       "thumbnail": "../images/work/shokubutsu.jpg",
       "images": [
         "../images/work/shokubutsu.jpg",
@@ -285,6 +299,7 @@
         "handcraft"
       ],
       "description": "夏の芽。エネルギッシュな植物たちの成長、夏の始まりの新鮮な瑞々しさ,silkscreen手刷り,2024年",
+      "order": 0,
       "thumbnail": "../images/work/summersprout.jpg",
       "images": [
         "../images/work/summersprout.jpg",
@@ -303,6 +318,7 @@
         "illust"
       ],
       "description": "じぶんの内面を整理するためのワークブック,2024年",
+      "order": 0,
       "thumbnail": "../images/work/tanemakizine01.jpg",
       "images": [
         "../images/work/tanemakizine01.jpg",
@@ -338,6 +354,7 @@
         "goods"
       ],
       "description": "永遠には刻めませんが、気軽に楽しむタトゥーシールです,2024年",
+      "order": 0,
       "thumbnail": "../images/work/tatoo.jpg",
       "images": [
         "../images/work/tatoo.jpg",
@@ -355,6 +372,7 @@
         "illust"
       ],
       "description": "バロックヴァイオリン奏者/時本さなえさんと、整体師/亀山先生による特別なコンサートのビジュアルイラスト/フライヤー/SNS告知の制作,2025年",
+      "order": 0,
       "thumbnail": "../images/work/tokimoto.jpg",
       "images": [
         "../images/work/tokimoto.jpg",
@@ -377,6 +395,7 @@
         "handcraft"
       ],
       "description": "水彩/アクリル　原画や原画をもとにしたgoods制作,2023年",
+      "order": 0,
       "thumbnail": "../images/work/uchuunoko01.png",
       "images": [
         "../images/work/uchuunoko01.png",
@@ -395,6 +414,7 @@
         "illust"
       ],
       "description": "ちわわのlinestamp,order,2025年",
+      "order": 0,
       "thumbnail": "../images/work/wanchan.jpg",
       "images": [
         "../images/work/wanchan.jpg",
