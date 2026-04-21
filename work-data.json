@@ -63,6 +63,37 @@
       ]
     },
     {
+      "id": "otonakodomo",
+      "title": "おとなとこどものプレイマーケット",
+      "category": "work",
+      "tags": [
+        "flyer",
+        "illust",
+        "ivent"
+      ],
+      "description": "東京おかっぱちゃんハウスで開催したIventの主催及びフライヤーデザイン、,2024年",
+      "thumbnail": "../images/work/otonakodomo01.png",
+      "images": [
+        "../images/work/otonakodomo01.png",
+        "../images/work/otonakodomo02.png",
+        "../images/work/otonakodomo03.jpg",
+        "../images/work/otonakodomo04.jpg",
+        "../images/work/otonakodomo05.jpg",
+        "../images/work/otonakodomo06.jpg",
+        "../images/work/otonakodomo07.jpg",
+        "../images/work/otonakodomo08.jpg",
+        "../images/work/otonakodomo09.jpg",
+        "../images/work/otonakodomo10.jpg",
+        "../images/work/otonakodomo11.jpg",
+        "../images/work/otonakodomo12.jpg",
+        "../images/work/otonakodomo13.jpg",
+        "../images/work/otonakodomo14.jpg",
+        "../images/work/otonakodomo15.jpg",
+        "../images/work/otonakodomo16.jpg",
+        "../images/work/otonakodomo17.jpg"
+      ]
+    },
+    {
       "id": "tanemakizine",
       "title": "書く、種蒔きZINE",
       "category": "work",
