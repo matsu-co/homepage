@@ -173,8 +173,12 @@
         "illust"
       ],
       "description": "ほしいものがあるとき、どうしたらそれが手に入る？をお金を介してではなく、行動で考える。なにかを得るための仕組みはとてもシンプルで、なによりもまず行動したい。",
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/quest.jpg",
+      "images": [
+        "../images/work/quest.jpg",
+        "../images/work/quest01.jpg",
+        "../images/work/quest02.jpg"
+      ]
     },
     {
       "id": "shokubutsu",
