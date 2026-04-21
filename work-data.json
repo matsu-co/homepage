@@ -157,26 +157,6 @@
       ]
     },
     {
-      "id": "nenngazine",
-      "title": "年賀zine",
-      "category": "Life work",
-      "tags": [
-        "ZINE"
-      ],
-      "description": "年賀状のかわりに、わたしたち家族の一年に起きた出来事や変化を記事として編集した小冊子です。久しぶりに会う方へ話したいことを詰め込んだような、とても日常の個人的な内容です。2023年〜",
-      "order": 9999,
-      "thumbnail": "../images/work/nenngazine01.jpg",
-      "images": [
-        "../images/work/nenngazine01.jpg",
-        "../images/work/nenngazine02.jpg",
-        "../images/work/nenngazine03.jpg",
-        "../images/work/nenngazine04.jpg",
-        "../images/work/nenngazine05.jpg",
-        "../images/work/nenngazine06.jpg",
-        "../images/work/nenngazine07.jpg"
-      ]
-    },
-    {
       "id": "otonakodomo",
       "title": "おとなとこどものプレイマーケット",
       "category": "work",
@@ -420,6 +400,26 @@
         "../images/work/Busy Board14.jpg",
         "../images/work/Busy Board15.jpg",
         "../images/work/Busy Board16.jpg"
+      ]
+    },
+    {
+      "id": "nenngazine",
+      "title": "年賀zine",
+      "category": "Life work",
+      "tags": [
+        "ZINE"
+      ],
+      "description": "年賀状のかわりに、わたしたち家族の一年に起きた出来事や変化を記事として編集した小冊子です。久しぶりに会う方へ話したいことを詰め込んだような、とても日常の個人的な内容です。2023年〜",
+      "order": 1,
+      "thumbnail": "../images/work/nenngazine01.jpg",
+      "images": [
+        "../images/work/nenngazine01.jpg",
+        "../images/work/nenngazine02.jpg",
+        "../images/work/nenngazine03.jpg",
+        "../images/work/nenngazine04.jpg",
+        "../images/work/nenngazine05.jpg",
+        "../images/work/nenngazine06.jpg",
+        "../images/work/nenngazine07.jpg"
       ]
     }
   ]
