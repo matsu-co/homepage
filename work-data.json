@@ -53,33 +53,6 @@
       ]
     },
     {
-      "id": "chihhon",
-      "title": "[シフォンすきですか]illust各種",
-      "category": "work",
-      "tags": [
-        "illust",
-        "goods",
-        "logo"
-      ],
-      "description": "名古屋/緑区にある[シフォンすきですか]　ロゴ、看板、フレーバーシール、包装紙、ショップカードなど４０種類以上,2021年〜",
-      "order": 9999,
-      "thumbnail": "../images/work/chihhon.png",
-      "images": [
-        "../images/work/chihhon.png",
-        "../images/work/chihhon01.png",
-        "../images/work/chihhon02.jpg",
-        "../images/work/chihhon03.jpg",
-        "../images/work/chihhon03.jpg",
-        "../images/work/chihhon04.jpg",
-        "../images/work/chihhon05.jpg",
-        "../images/work/chihhon06.png",
-        "../images/work/chihhon07.jpg",
-        "../images/work/chihhon08.jpg",
-        "../images/work/chihhon09.jpg",
-        "../images/work/chihhon10.jpg"
-      ]
-    },
-    {
       "id": "hoho",
       "title": "hohonomi",
       "category": "work",
@@ -201,6 +174,33 @@
         "../images/work/wanchan.jpg",
         "../images/work/wanchan01.jpg",
         "../images/work/wanchan02.jpg"
+      ]
+    },
+    {
+      "id": "chihhon",
+      "title": "[シフォンすきですか]illust各種",
+      "category": "work",
+      "tags": [
+        "illust",
+        "goods",
+        "logo"
+      ],
+      "description": "名古屋/緑区にある[シフォンすきですか]　ロゴ、看板、フレーバーシール、包装紙、ショップカードなど４０種類以上,2021年〜",
+      "order": 9,
+      "thumbnail": "../images/work/chihhon.png",
+      "images": [
+        "../images/work/chihhon.png",
+        "../images/work/chihhon01.png",
+        "../images/work/chihhon02.jpg",
+        "../images/work/chihhon03.jpg",
+        "../images/work/chihhon03.jpg",
+        "../images/work/chihhon04.jpg",
+        "../images/work/chihhon05.jpg",
+        "../images/work/chihhon06.png",
+        "../images/work/chihhon07.jpg",
+        "../images/work/chihhon08.jpg",
+        "../images/work/chihhon09.jpg",
+        "../images/work/chihhon10.jpg"
       ]
     },
     {
