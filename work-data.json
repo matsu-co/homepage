@@ -70,21 +70,6 @@
       ]
     },
     {
-      "id": "otsubone",
-      "title": "挿絵[お局図鑑/さか田へか]",
-      "category": "work",
-      "tags": [
-        "illust"
-      ],
-      "description": "挿絵illust20点収録,[お局図鑑/さか田へか],order,2025年",
-      "order": 9999,
-      "thumbnail": "../images/work/otsubone.jpg",
-      "images": [
-        "../images/work/otsubone.jpg",
-        "../images/work/otsubone01.jpg"
-      ]
-    },
-    {
       "id": "quest",
       "title": "ときくんクエスト",
       "category": "Life work",
@@ -120,6 +105,21 @@
         "../images/work/tokimoto05.jpg",
         "../images/work/tokimoto06.jpg",
         "../images/work/tokimoto07.jpg"
+      ]
+    },
+    {
+      "id": "otsubone",
+      "title": "挿絵[お局図鑑/さか田へか]",
+      "category": "work",
+      "tags": [
+        "illust"
+      ],
+      "description": "挿絵illust20点収録,[お局図鑑/さか田へか],order,2025年",
+      "order": 13,
+      "thumbnail": "../images/work/otsubone.jpg",
+      "images": [
+        "../images/work/otsubone.jpg",
+        "../images/work/otsubone01.jpg"
       ]
     },
     {
