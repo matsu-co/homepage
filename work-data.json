@@ -439,6 +439,23 @@
       ]
     },
     {
+      "id": "teamk",
+      "title": "teamK",
+      "category": "work",
+      "tags": [
+        "illust"
+      ],
+      "description": "バトントワリングチーム\"teamK\"さんの文化祭記念イラスト。四角バージョン、丸バージョン(6色),2022年",
+      "order": 1.1,
+      "thumbnail": "../images/work/teamk01.jpg",
+      "images": [
+        "../images/work/teamk01.jpg",
+        "../images/work/teamk02.jpg",
+        "../images/work/teamk03.jpg",
+        "../images/work/teamk04.jpg"
+      ]
+    },
+    {
       "id": "Busy Board",
       "title": "Busy Board",
       "category": "work",
@@ -486,23 +503,6 @@
         "../images/work/nenngazine05.jpg",
         "../images/work/nenngazine06.jpg",
         "../images/work/nenngazine07.jpg"
-      ]
-    },
-    {
-      "id": "teamk",
-      "title": "teamK",
-      "category": "work",
-      "tags": [
-        "illust"
-      ],
-      "description": "バトントワリングチーム\"teamK\"さんの文化祭記念イラスト。四角バージョン、丸バージョン(6色),2022年",
-      "order": 1,
-      "thumbnail": "../images/work/teamk01.jpg",
-      "images": [
-        "../images/work/teamk01.jpg",
-        "../images/work/teamk02.jpg",
-        "../images/work/teamk03.jpg",
-        "../images/work/teamk04.jpg"
       ]
     }
   ]
