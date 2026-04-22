@@ -270,6 +270,18 @@
       ]
     },
     {
+      "id": "feedcheck",
+      "title": "feedcheckmatsuco",
+      "category": "Life work",
+      "tags": [
+        "Application"
+      ],
+      "description": "自分用のキュレーションアプリケーション,https://feedcheckmatsuco-lukq.onrender.com/,2026年",
+      "order": 5,
+      "thumbnail": "",
+      "images": []
+    },
+    {
       "id": "gakubuchi",
       "title": "廃材額縁",
       "category": "work",
