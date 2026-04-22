@@ -208,24 +208,6 @@
       ]
     },
     {
-      "id": "tatoo",
-      "title": "あそび心を刻む　タトゥーシール",
-      "category": "work",
-      "tags": [
-        "illust",
-        "goods"
-      ],
-      "description": "永遠には刻めませんが、気軽に楽しむタトゥーシールです,2024年",
-      "order": 9999,
-      "thumbnail": "../images/work/tatoo.jpg",
-      "images": [
-        "../images/work/tatoo.jpg",
-        "../images/work/tatoo01.jpg",
-        "../images/work/tatoo03.mp4",
-        "../images/work/tatoo04.jpg"
-      ]
-    },
-    {
       "id": "tokimoto",
       "title": "[からだの余白に響く音Breeze Begin Blowing]",
       "category": "work",
@@ -261,6 +243,24 @@
         "../images/work/wanchan.jpg",
         "../images/work/wanchan01.jpg",
         "../images/work/wanchan02.jpg"
+      ]
+    },
+    {
+      "id": "tatoo",
+      "title": "あそび心を刻む　タトゥーシール",
+      "category": "work",
+      "tags": [
+        "illust",
+        "goods"
+      ],
+      "description": "永遠には刻めませんが、気軽に楽しむタトゥーシールです,2024年",
+      "order": 6,
+      "thumbnail": "../images/work/tatoo.jpg",
+      "images": [
+        "../images/work/tatoo.jpg",
+        "../images/work/tatoo01.jpg",
+        "../images/work/tatoo03.mp4",
+        "../images/work/tatoo04.jpg"
       ]
     },
     {
