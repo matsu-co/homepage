@@ -7,8 +7,13 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2023-03-23-01.jpg",
+        "../images/comicdiary/2023-03-23-02.jpg",
+        "../images/comicdiary/2023-03-23-03.jpg",
+        "../images/comicdiary/2023-03-23-04.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2023-03-23-01.jpg",
       "description": "ツンデレの言い逃げ。"
     },
     {
@@ -18,8 +23,13 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2023-03-22-01.jpg",
+        "../images/comicdiary/2023-03-22-02.jpg",
+        "../images/comicdiary/2023-03-22-03.jpg",
+        "../images/comicdiary/2023-03-22-04.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2023-03-22-01.jpg",
       "description": "あたまは坊主。おともだちのちよちゃん。性格は真反対だけど、なかよし。"
     },
     {
@@ -29,8 +39,17 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2023-03-21-01.jpg",
+        "../images/comicdiary/2023-03-21-02.jpg",
+        "../images/comicdiary/2023-03-21-03.jpg",
+        "../images/comicdiary/2023-03-21-04.jpg",
+        "../images/comicdiary/2023-03-21-05.jpg",
+        "../images/comicdiary/2023-03-21-06.jpg",
+        "../images/comicdiary/2023-03-21-07.jpg",
+        "../images/comicdiary/2023-03-21-08.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2023-03-21-01.jpg",
       "description": "４さいになるのがたのしみでしかたない。急にだいこんって？"
     },
     {
