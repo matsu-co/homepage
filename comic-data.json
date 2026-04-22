@@ -7,8 +7,18 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2019-08-01.jpg",
+        "../images/comicdiary/2019-08-02.jpg",
+        "../images/comicdiary/2019-08-03.jpg",
+        "../images/comicdiary/2019-08-04.jpg",
+        "../images/comicdiary/2019-08-05.jpg",
+        "../images/comicdiary/2019-08-06.jpg",
+        "../images/comicdiary/2019-08-07.jpg",
+        "../images/comicdiary/2019-08-08.jpg",
+        "../images/comicdiary/2019-08-09.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2019-08-01.jpg",
       "description": "へー、ほー、とおはなしできる。"
     },
     {
