@@ -7,8 +7,24 @@
       "tags": [
         "こどもとの日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2019-03-01.jpg",
+        "../images/comicdiary/2019-03-02.jpg",
+        "../images/comicdiary/2019-03-03.jpg",
+        "../images/comicdiary/2019-03-04.jpg",
+        "../images/comicdiary/2019-03-05.jpg",
+        "../images/comicdiary/2019-03-06.jpg",
+        "../images/comicdiary/2019-03-07.jpg",
+        "../images/comicdiary/2019-03-08.jpg",
+        "../images/comicdiary/2019-03-09.jpg",
+        "../images/comicdiary/2019-03-10.jpg",
+        "../images/comicdiary/2019-03-11.jpg",
+        "../images/comicdiary/2019-03-12.jpg",
+        "../images/comicdiary/2019-03-13.jpg",
+        "../images/comicdiary/2019-03-14.jpg",
+        "../images/comicdiary/2019-03-15.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2019-03-01.jpg",
       "description": "長男ときくんが赤ちゃんの頃の記録。自分のおならでモロー反射したり、おっぱいサイン「ぶんぶん丸」、4020gで生まれて大きかったので1ヶ月なのに3ヶ月？と言われたり、新生児のあかちゃんという時期がなかった頃。"
     },
     {
