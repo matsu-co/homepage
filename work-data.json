@@ -497,8 +497,13 @@
       ],
       "description": "バトントワリングチーム\"teamK\"さんの文化祭記念イラスト。四角バージョン、丸バージョン(6色),2022年",
       "order": 1,
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/teamk01.jpg",
+      "images": [
+        "../images/work/teamk01.jpg",
+        "../images/work/teamk02.jpg",
+        "../images/work/teamk03.jpg",
+        "../images/work/teamk04.jpg"
+      ]
     }
   ]
 }
