@@ -39,7 +39,7 @@ function fetchLocalWork() {
       return `../images/work/${match || img}`;
     });
 
-    const order = Number(header.match(/order\s*[:：]\s*(\d+)/)?.[1]) || 9999;  
+    const order = Number(header.match(/order\s*[:：]\s*([\d.]+)/)?.[1]) || 9999;  
     return {
       id: file.replace('.md', ''),
       title, category, tags, description, order,
