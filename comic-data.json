@@ -7,8 +7,24 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2019-07-01.jpg",
+        "../images/comicdiary/2019-07-02.jpg",
+        "../images/comicdiary/2019-07-03.jpg",
+        "../images/comicdiary/2019-07-04.jpg",
+        "../images/comicdiary/2019-07-05.jpg",
+        "../images/comicdiary/2019-07-06.jpg",
+        "../images/comicdiary/2019-07-07.jpg",
+        "../images/comicdiary/2019-07-08.jpg",
+        "../images/comicdiary/2019-07-09.jpg",
+        "../images/comicdiary/2019-07-10.jpg",
+        "../images/comicdiary/2019-07-11.jpg",
+        "../images/comicdiary/2019-07-12.jpg",
+        "../images/comicdiary/2019-07-13.jpg",
+        "../images/comicdiary/2019-07-14.jpg",
+        "../images/comicdiary/2019-07-15.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2019-07-01.jpg",
       "description": "夫にそっくりすぎる息子。"
     },
     {
