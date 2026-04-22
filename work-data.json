@@ -101,26 +101,6 @@
       ]
     },
     {
-      "id": "shokubutsu",
-      "title": "植物似顔絵",
-      "category": "work",
-      "tags": [
-        "illust",
-        "handcraft"
-      ],
-      "description": "観察を通して感じ取った植物に重ね、天然藍インクとガラスペンで描いた似顔絵,2024年",
-      "order": 9999,
-      "thumbnail": "../images/work/shokubutsu.jpg",
-      "images": [
-        "../images/work/shokubutsu.jpg",
-        "../images/work/shokubutsu01.jpg",
-        "../images/work/shokubutsu03.jpg",
-        "../images/work/shokubutsu04.jpg",
-        "../images/work/shokubutsu05.jpg",
-        "../images/work/shokubutsu06.jpg"
-      ]
-    },
-    {
       "id": "tokimoto",
       "title": "[からだの余白に響く音Breeze Begin Blowing]",
       "category": "work",
@@ -156,6 +136,26 @@
         "../images/work/wanchan.jpg",
         "../images/work/wanchan01.jpg",
         "../images/work/wanchan02.jpg"
+      ]
+    },
+    {
+      "id": "shokubutsu",
+      "title": "植物似顔絵",
+      "category": "work",
+      "tags": [
+        "illust",
+        "handcraft"
+      ],
+      "description": "観察を通して感じ取った植物に重ね、天然藍インクとガラスペンで描いた似顔絵,2024年",
+      "order": 11,
+      "thumbnail": "../images/work/shokubutsu.jpg",
+      "images": [
+        "../images/work/shokubutsu.jpg",
+        "../images/work/shokubutsu01.jpg",
+        "../images/work/shokubutsu03.jpg",
+        "../images/work/shokubutsu04.jpg",
+        "../images/work/shokubutsu05.jpg",
+        "../images/work/shokubutsu06.jpg"
       ]
     },
     {
