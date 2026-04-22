@@ -7,8 +7,25 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2019-05-01.jpg",
+        "../images/comicdiary/2019-05-02.jpg",
+        "../images/comicdiary/2019-05-03.jpg",
+        "../images/comicdiary/2019-05-04.jpg",
+        "../images/comicdiary/2019-05-05.jpg",
+        "../images/comicdiary/2019-05-06.jpg",
+        "../images/comicdiary/2019-05-07.jpg",
+        "../images/comicdiary/2019-05-08.jpg",
+        "../images/comicdiary/2019-05-09.jpg",
+        "../images/comicdiary/2019-05-10.jpg",
+        "../images/comicdiary/2019-05-11.jpg",
+        "../images/comicdiary/2019-05-12.jpg",
+        "../images/comicdiary/2019-05-13.jpg",
+        "../images/comicdiary/2019-05-14.jpg",
+        "../images/comicdiary/2019-05-15.jpg",
+        "../images/comicdiary/2019-05-16.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2019-05-01.jpg",
       "description": "生後3ヶ月頃までぜんぜん寝なくて、体力があってお腹が空いて、一日中おっぱいあげてた。睡眠不足で辛かった頃。"
     },
     {
