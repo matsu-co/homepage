@@ -7,8 +7,15 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2020-05-01.jpg",
+        "../images/comicdiary/2020-05-02.jpg",
+        "../images/comicdiary/2020-05-03.jpg",
+        "../images/comicdiary/2020-05-04.jpg",
+        "../images/comicdiary/2020-05-05.jpg",
+        "../images/comicdiary/2020-05-06.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2020-05-01.jpg",
       "description": "はじめてのことばは『コッコ！』。夜泣きした翌日は、なにかことばを習得している気がした。"
     },
     {
