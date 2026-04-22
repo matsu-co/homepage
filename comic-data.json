@@ -7,8 +7,12 @@
       "tags": [
         "ワンシーン漫画"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2022-09-28-01.jpg",
+        "../images/comicdiary/2022-09-28-02.jpg",
+        "../images/comicdiary/2022-09-28-03.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2022-09-28-01.jpg",
       "description": "キンモクセイ、きんもく精、きんもく星。"
     },
     {
@@ -18,8 +22,17 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2022-09-09-01.jpg",
+        "../images/comicdiary/2022-09-09-02.jpg",
+        "../images/comicdiary/2022-09-09-03.jpg",
+        "../images/comicdiary/2022-09-09-04.jpg",
+        "../images/comicdiary/2022-09-09-05.jpg",
+        "../images/comicdiary/2022-09-09-06.jpg",
+        "../images/comicdiary/2022-09-09-07.jpg",
+        "../images/comicdiary/2022-09-09-08.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2022-09-09-01.jpg",
       "description": "夏の風物詩。毎年たくさんのカブトムシやクワガタ、カナブンがあそびにくるので、虫かごに餌といれて、蓋を外していつでも飛び立てるようにしている。虫ホテル営業中。記念Tシャツもつくった。"
     },
     {
