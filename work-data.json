@@ -1,25 +1,6 @@
 {
   "entries": [
     {
-      "id": "bonjin",
-      "title": "ぼんじんまん",
-      "category": "work",
-      "tags": [
-        "illust"
-      ],
-      "description": "キャラクターの制作,バリエーション各種,order,2026年",
-      "order": 9999,
-      "thumbnail": "../images/work/bonjin.png",
-      "images": [
-        "../images/work/bonjin.png",
-        "../images/work/bonjin01.png",
-        "../images/work/bonjinmanletter.jpg",
-        "../images/work/bonjinmanletter01.png",
-        "../images/work/bonjinmanletter02.png",
-        "../images/work/bonjinmanletter03.png"
-      ]
-    },
-    {
       "id": "bonjinmanletter",
       "title": "ぼんじんまんワンシーンレター[yae/しゅくふく便]",
       "category": "work",
@@ -30,6 +11,25 @@
       "order": 9999,
       "thumbnail": "../images/work/bonjinmanletter.jpg",
       "images": [
+        "../images/work/bonjinmanletter.jpg",
+        "../images/work/bonjinmanletter01.png",
+        "../images/work/bonjinmanletter02.png",
+        "../images/work/bonjinmanletter03.png"
+      ]
+    },
+    {
+      "id": "bonjin",
+      "title": "ぼんじんまん",
+      "category": "work",
+      "tags": [
+        "illust"
+      ],
+      "description": "キャラクターの制作,バリエーション各種,order,2026年",
+      "order": 18,
+      "thumbnail": "../images/work/bonjin.png",
+      "images": [
+        "../images/work/bonjin.png",
+        "../images/work/bonjin01.png",
         "../images/work/bonjinmanletter.jpg",
         "../images/work/bonjinmanletter01.png",
         "../images/work/bonjinmanletter02.png",
