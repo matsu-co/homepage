@@ -53,24 +53,6 @@
       ]
     },
     {
-      "id": "hoho",
-      "title": "hohonomi",
-      "category": "work",
-      "tags": [
-        "illust",
-        "goods",
-        "handcraft"
-      ],
-      "description": "Each'hoho'to love deeply,reflecting its distinct individuality.silkscreen手刷り,2024年",
-      "order": 9999,
-      "thumbnail": "../images/work/hoho.jpg",
-      "images": [
-        "../images/work/hoho.jpg",
-        "../images/work/hoho01.jpg",
-        "../images/work/hoho02.jpg"
-      ]
-    },
-    {
       "id": "macpr",
       "title": "website[株式会社MACPR]",
       "category": "work",
@@ -174,6 +156,24 @@
         "../images/work/wanchan.jpg",
         "../images/work/wanchan01.jpg",
         "../images/work/wanchan02.jpg"
+      ]
+    },
+    {
+      "id": "hoho",
+      "title": "hohonomi",
+      "category": "work",
+      "tags": [
+        "illust",
+        "goods",
+        "handcraft"
+      ],
+      "description": "Each'hoho'to love deeply,reflecting its distinct individuality.silkscreen手刷り,2024年",
+      "order": 10,
+      "thumbnail": "../images/work/hoho.jpg",
+      "images": [
+        "../images/work/hoho.jpg",
+        "../images/work/hoho01.jpg",
+        "../images/work/hoho02.jpg"
       ]
     },
     {
