@@ -157,38 +157,6 @@
       ]
     },
     {
-      "id": "otonakodomo",
-      "title": "おとなとこどものプレイマーケット",
-      "category": "work",
-      "tags": [
-        "flyer",
-        "illust",
-        "ivent"
-      ],
-      "description": "東京おかっぱちゃんハウスで開催したIventの主催及びフライヤーデザイン、,2024年",
-      "order": 9999,
-      "thumbnail": "../images/work/otonakodomo01.png",
-      "images": [
-        "../images/work/otonakodomo01.png",
-        "../images/work/otonakodomo02.png",
-        "../images/work/otonakodomo03.jpg",
-        "../images/work/otonakodomo04.jpg",
-        "../images/work/otonakodomo05.jpg",
-        "../images/work/otonakodomo06.jpg",
-        "../images/work/otonakodomo07.jpg",
-        "../images/work/otonakodomo08.jpg",
-        "../images/work/otonakodomo09.jpg",
-        "../images/work/otonakodomo10.jpg",
-        "../images/work/otonakodomo11.jpg",
-        "../images/work/otonakodomo12.jpg",
-        "../images/work/otonakodomo13.jpg",
-        "../images/work/otonakodomo14.jpg",
-        "../images/work/otonakodomo15.jpg",
-        "../images/work/otonakodomo16.jpg",
-        "../images/work/otonakodomo17.jpg"
-      ]
-    },
-    {
       "id": "otsubone",
       "title": "挿絵[お局図鑑/さか田へか]",
       "category": "work",
@@ -313,6 +281,38 @@
         "../images/work/wanchan.jpg",
         "../images/work/wanchan01.jpg",
         "../images/work/wanchan02.jpg"
+      ]
+    },
+    {
+      "id": "otonakodomo",
+      "title": "おとなとこどものプレイマーケット",
+      "category": "work",
+      "tags": [
+        "flyer",
+        "illust",
+        "ivent"
+      ],
+      "description": "東京おかっぱちゃんハウスで開催したIventの主催及びフライヤーデザイン、,2024年",
+      "order": 4,
+      "thumbnail": "../images/work/otonakodomo01.png",
+      "images": [
+        "../images/work/otonakodomo01.png",
+        "../images/work/otonakodomo02.png",
+        "../images/work/otonakodomo03.jpg",
+        "../images/work/otonakodomo04.jpg",
+        "../images/work/otonakodomo05.jpg",
+        "../images/work/otonakodomo06.jpg",
+        "../images/work/otonakodomo07.jpg",
+        "../images/work/otonakodomo08.jpg",
+        "../images/work/otonakodomo09.jpg",
+        "../images/work/otonakodomo10.jpg",
+        "../images/work/otonakodomo11.jpg",
+        "../images/work/otonakodomo12.jpg",
+        "../images/work/otonakodomo13.jpg",
+        "../images/work/otonakodomo14.jpg",
+        "../images/work/otonakodomo15.jpg",
+        "../images/work/otonakodomo16.jpg",
+        "../images/work/otonakodomo17.jpg"
       ]
     },
     {
