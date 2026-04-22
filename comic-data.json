@@ -7,8 +7,23 @@
       "tags": [
         "ワンシーン漫画"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2020-01-15-01.jpg",
+        "../images/comicdiary/2020-01-15-02.jpg",
+        "../images/comicdiary/2020-01-15-03.jpg",
+        "../images/comicdiary/2020-01-15-04.jpg",
+        "../images/comicdiary/2020-01-15-05.jpg",
+        "../images/comicdiary/2020-01-15-06.jpg",
+        "../images/comicdiary/2020-01-15-07.jpg",
+        "../images/comicdiary/2020-01-15-08.jpg",
+        "../images/comicdiary/2020-01-15-09.jpg",
+        "../images/comicdiary/2020-01-15-10.jpg",
+        "../images/comicdiary/2020-01-15-11.jpg",
+        "../images/comicdiary/2020-01-15-12.jpg",
+        "../images/comicdiary/2020-01-15-13.jpg",
+        "../images/comicdiary/2020-01-15-14.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2020-01-15-01.jpg",
       "description": "ワンオペの頃、女ともだちの存在にとっても助けられた。もちろん今でも。"
     },
     {
@@ -18,8 +33,18 @@
       "tags": [
         "ワンシーン漫画"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2020-01-05-01.jpg",
+        "../images/comicdiary/2020-01-05-02.jpg",
+        "../images/comicdiary/2020-01-05-03.jpg",
+        "../images/comicdiary/2020-01-05-04.jpg",
+        "../images/comicdiary/2020-01-05-05.jpg",
+        "../images/comicdiary/2020-01-05-06.jpg",
+        "../images/comicdiary/2020-01-05-07.jpg",
+        "../images/comicdiary/2020-01-05-08.jpg",
+        "../images/comicdiary/2020-01-05-09.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2020-01-05-01.jpg",
       "description": "ワンオペの頃、女ともだちの存在にとっても助けられた。もちろん今でも。"
     },
     {
