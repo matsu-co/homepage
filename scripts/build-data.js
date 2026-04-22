@@ -92,7 +92,7 @@ function fetchLocalComics() {
   const mdDir = './content/comicdiary';
   const imgDir = './images/comicdiary';
   if (!fs.existsSync(mdDir)) return [];
-  const mdFiles = fs.readdirSync(mdDir).filter(f => f.endsWith('.md'));
+  const mdFiles = fs.readdirSync(mdDir).filter(f => f.endsWith('.md')).sort().reverse();
   let imgFiles = [];
   if (fs.existsSync(imgDir)) imgFiles = fs.readdirSync(imgDir);
 
