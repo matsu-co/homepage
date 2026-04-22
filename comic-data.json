@@ -1,18 +1,15 @@
 {
   "entries": [
     {
-      "id": "2019-3",
+      "id": "2019-03",
       "title": "あかちゃん期",
       "serial": "2019.3-4月",
       "tags": [
         "こどもとの日々記録"
       ],
-      "images": [
-        "../images/comicdiary/IMG_3061.jpg",
-        "../images/comicdiary/test01.png"
-      ],
-      "thumbnail": "../images/comicdiary/IMG_3061.jpg",
-      "description": "ここにお話を書きます。"
+      "images": [],
+      "thumbnail": "",
+      "description": "長男ときくんが赤ちゃんの頃の記録。自分のおならでモロー反射したり、おっぱいサイン「ぶんぶん丸」、4020gで生まれて大きかったので1ヶ月なのに3ヶ月？と言われたり、新生児のあかちゃんという時期がなかった頃。"
     },
     {
       "id": "2026-4-10",
