@@ -7,8 +7,16 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2023-06-14-01.png",
+        "../images/comicdiary/2023-06-14-02.png",
+        "../images/comicdiary/2023-06-14-03.png",
+        "../images/comicdiary/2023-06-14-04.png",
+        "../images/comicdiary/2023-06-14-05.png",
+        "../images/comicdiary/2023-06-14-06.png",
+        "../images/comicdiary/2023-06-14-07.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2023-06-14-01.png",
       "description": "なみだのお茶は、絵本『ふくろうくん』にでてくるおはなし。ふくろうくんの純粋さに、すごくいいなぁとおもう。泣きたくなることあるよね。"
     },
     {
@@ -18,8 +26,11 @@
       "tags": [
         "ワンシーン漫画"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2023-06-09-01.jpg",
+        "../images/comicdiary/2023-06-09-02.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2023-06-09-01.jpg",
       "description": "バムとケロのキッチン、ファブリック、細かなアイテム、どれもかわいい。隅々までお気に入りをあつめて大事につかうバムたちの暮らしが想像できる。"
     },
     {
@@ -29,8 +40,15 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2023-06-01-01.png",
+        "../images/comicdiary/2023-06-01-02.png",
+        "../images/comicdiary/2023-06-01-03.png",
+        "../images/comicdiary/2023-06-01-04.png",
+        "../images/comicdiary/2023-06-01-05.png",
+        "../images/comicdiary/2023-06-01-06.png"
+      ],
+      "thumbnail": "../images/comicdiary/2023-06-01-01.png",
       "description": "爪になにがつまっててもモンシロチョウだと思えばいいかあ。"
     },
     {
