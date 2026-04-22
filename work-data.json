@@ -278,8 +278,10 @@
       ],
       "description": "自分用のキュレーションアプリケーション,https://feedcheckmatsuco-lukq.onrender.com/,2026年",
       "order": 5,
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/feedcheck.jpg",
+      "images": [
+        "../images/work/feedcheck.jpg"
+      ]
     },
     {
       "id": "gakubuchi",
