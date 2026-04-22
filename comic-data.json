@@ -7,8 +7,13 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2023-05-26-01.png",
+        "../images/comicdiary/2023-05-26-02.png",
+        "../images/comicdiary/2023-05-26-03.png",
+        "../images/comicdiary/2023-05-26-04.png"
+      ],
+      "thumbnail": "../images/comicdiary/2023-05-26-01.png",
       "description": "ときくんの、悲しい日。大丈夫、赤いキウイからは守れるし、天井は突き破っていいからね。赤いキウイが出てくる絵本は、たしか『くだものさがしもの』。"
     },
     {
@@ -18,8 +23,13 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2023-05-23-01.png",
+        "../images/comicdiary/2023-05-23-02.png",
+        "../images/comicdiary/2023-05-23-03.png",
+        "../images/comicdiary/2023-05-23-04.png"
+      ],
+      "thumbnail": "../images/comicdiary/2023-05-23-01.png",
       "description": "台湾から直輸入、直送されている『yuukifruit』さんを紹介してもらったら金萱茶とドライフルーツ美味しすぎた。台南生まれの義姉に話したら、なんと同じお店で買ってた！義姉おすすめは青マンゴー！"
     },
     {
@@ -29,8 +39,15 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2023-05-19-01.jpg",
+        "../images/comicdiary/2023-05-19-02.jpg",
+        "../images/comicdiary/2023-05-19-03.jpg",
+        "../images/comicdiary/2023-05-19-04.jpg",
+        "../images/comicdiary/2023-05-19-05.jpg",
+        "../images/comicdiary/2023-05-19-06.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2023-05-19-01.jpg",
       "description": "ときくんも、月や星がすき。"
     },
     {
