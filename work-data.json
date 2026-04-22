@@ -188,26 +188,6 @@
       ]
     },
     {
-      "id": "summersprout",
-      "title": "Summer Sprout",
-      "category": "work",
-      "tags": [
-        "illust",
-        "goods",
-        "handcraft"
-      ],
-      "description": "夏の芽。エネルギッシュな植物たちの成長、夏の始まりの新鮮な瑞々しさ,silkscreen手刷り,2024年",
-      "order": 9999,
-      "thumbnail": "../images/work/summersprout.jpg",
-      "images": [
-        "../images/work/summersprout.jpg",
-        "../images/work/summersprout01.jpg",
-        "../images/work/summersprout02.jpg",
-        "../images/work/summersprout03.jpg",
-        "../images/work/summersprout04.jpg"
-      ]
-    },
-    {
       "id": "tokimoto",
       "title": "[からだの余白に響く音Breeze Begin Blowing]",
       "category": "work",
@@ -243,6 +223,26 @@
         "../images/work/wanchan.jpg",
         "../images/work/wanchan01.jpg",
         "../images/work/wanchan02.jpg"
+      ]
+    },
+    {
+      "id": "summersprout",
+      "title": "Summer Sprout",
+      "category": "work",
+      "tags": [
+        "illust",
+        "goods",
+        "handcraft"
+      ],
+      "description": "夏の芽。エネルギッシュな植物たちの成長、夏の始まりの新鮮な瑞々しさ,silkscreen手刷り,2024年",
+      "order": 7,
+      "thumbnail": "../images/work/summersprout.jpg",
+      "images": [
+        "../images/work/summersprout.jpg",
+        "../images/work/summersprout01.jpg",
+        "../images/work/summersprout02.jpg",
+        "../images/work/summersprout03.jpg",
+        "../images/work/summersprout04.jpg"
       ]
     },
     {
