@@ -12,8 +12,15 @@
       ],
       "description": "妊娠中のおなかの中を感じて描いた紙芝居,朗読,おはなし会,執筆はnoteにて https://note.com/matsuco/n/n726cb89ddb13,2026年",
       "order": 20,
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/nagare.jpg",
+      "images": [
+        "../images/work/nagare.jpg",
+        "../images/work/nagare01.webp",
+        "../images/work/nagare02.webp",
+        "../images/work/nagare03.webp",
+        "../images/work/nagare04.webp",
+        "../images/work/nagare05.mp4"
+      ]
     },
     {
       "id": "bonjinmanletter",
