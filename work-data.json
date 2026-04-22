@@ -53,23 +53,6 @@
       ]
     },
     {
-      "id": "macpr",
-      "title": "website[株式会社MACPR]",
-      "category": "work",
-      "tags": [
-        "illust",
-        "website"
-      ],
-      "description": "コンセプトワークから、illust/Website/名刺.経営層の方々のお名前に「山」「川」「谷」が含まれていることから、そのままメインヴィジュアルに。,2025年",
-      "order": 9999,
-      "thumbnail": "../images/work/macpr.jpg",
-      "images": [
-        "../images/work/macpr.jpg",
-        "../images/work/macpr01.jpg",
-        "../images/work/macpr02.mp4"
-      ]
-    },
-    {
       "id": "quest",
       "title": "ときくんクエスト",
       "category": "Life work",
@@ -83,6 +66,23 @@
         "../images/work/quest.jpg",
         "../images/work/quest01.jpg",
         "../images/work/quest02.jpg"
+      ]
+    },
+    {
+      "id": "macpr",
+      "title": "website[株式会社MACPR]",
+      "category": "work",
+      "tags": [
+        "illust",
+        "website"
+      ],
+      "description": "コンセプトワークから、illust/Website/名刺.経営層の方々のお名前に「山」「川」「谷」が含まれていることから、そのままメインヴィジュアルに。,2025年",
+      "order": 15,
+      "thumbnail": "../images/work/macpr.jpg",
+      "images": [
+        "../images/work/macpr.jpg",
+        "../images/work/macpr01.jpg",
+        "../images/work/macpr02.mp4"
       ]
     },
     {
