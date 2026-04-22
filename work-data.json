@@ -53,22 +53,6 @@
       ]
     },
     {
-      "id": "quest",
-      "title": "ときくんクエスト",
-      "category": "Life work",
-      "tags": [
-        "illust"
-      ],
-      "description": "ほしいものがあるとき、どうしたらそれが手に入る？をお金を介してではなく、行動で考える。なにかを得るための仕組みはとてもシンプルで、なによりもまず行動したい。をつたえる、暮らしのデザイン。2025年",
-      "order": 9999,
-      "thumbnail": "../images/work/quest.jpg",
-      "images": [
-        "../images/work/quest.jpg",
-        "../images/work/quest01.jpg",
-        "../images/work/quest02.jpg"
-      ]
-    },
-    {
       "id": "macpr",
       "title": "website[株式会社MACPR]",
       "category": "work",
@@ -313,6 +297,22 @@
         "../images/work/otonakodomo15.jpg",
         "../images/work/otonakodomo16.jpg",
         "../images/work/otonakodomo17.jpg"
+      ]
+    },
+    {
+      "id": "quest",
+      "title": "ときくんクエスト",
+      "category": "Life work",
+      "tags": [
+        "illust"
+      ],
+      "description": "ほしいものがあるとき、どうしたらそれが手に入る？をお金を介してではなく、行動で考える。なにかを得るための仕組みはとてもシンプルで、なによりもまず行動したい。をつたえる、暮らしのデザイン。2025年",
+      "order": 3,
+      "thumbnail": "../images/work/quest.jpg",
+      "images": [
+        "../images/work/quest.jpg",
+        "../images/work/quest01.jpg",
+        "../images/work/quest02.jpg"
       ]
     },
     {
