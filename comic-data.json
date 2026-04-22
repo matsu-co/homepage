@@ -7,8 +7,14 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2019-09-01.jpg",
+        "../images/comicdiary/2019-09-02.jpg",
+        "../images/comicdiary/2019-09-03.jpg",
+        "../images/comicdiary/2019-09-04.jpg",
+        "../images/comicdiary/2019-09-05.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2019-09-01.jpg",
       "description": "まいにちお風呂あがりにマッサージ。ビッグベビーといわれてきたけど成長曲線がおちついてきた。甘えん坊。"
     },
     {
