@@ -7,8 +7,11 @@
       "tags": [
         "ワンシーン漫画"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2019-14-01.jpg",
+        "../images/comicdiary/2019-14-02.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2019-14-01.jpg",
       "description": "こういう夢を見た日。"
     },
     {
@@ -18,8 +21,11 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2019-13-02.jpg",
+        "../images/comicdiary/2019-13.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2019-13-02.jpg",
       "description": "東京にいた頃にだいすきだった「つるとんたん」。またいきたいな。"
     },
     {
