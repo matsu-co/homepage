@@ -7,8 +7,17 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2020-02-01.jpg",
+        "../images/comicdiary/2020-02-02.jpg",
+        "../images/comicdiary/2020-02-03.jpg",
+        "../images/comicdiary/2020-02-04.jpg",
+        "../images/comicdiary/2020-02-05.jpg",
+        "../images/comicdiary/2020-02-06.jpg",
+        "../images/comicdiary/2020-02-07.jpg",
+        "../images/comicdiary/2020-02-08.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2020-02-01.jpg",
       "description": "１歳になった。保育園の内定が決まり、仕事復帰することに。ずっといっしょの時間が、あとすこし。"
     },
     {
