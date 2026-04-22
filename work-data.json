@@ -80,26 +80,6 @@
       ]
     },
     {
-      "id": "gakubuchi",
-      "title": "廃材額縁",
-      "category": "work",
-      "tags": [
-        "handcraft"
-      ],
-      "description": "こどもが描いた絵などを簡単に入れ替えできるポケットタイプの額縁、廃材アップサイクル制作、オーダー可能,2024年",
-      "order": 9999,
-      "thumbnail": "../images/work/gakubuchi.png",
-      "images": [
-        "../images/work/gakubuchi.png",
-        "../images/work/gakubuchi01.jpg",
-        "../images/work/gakubuchi02.jpg",
-        "../images/work/gakubuchi03.jpg",
-        "../images/work/gakubuchi04.jpg",
-        "../images/work/gakubuchi05.jpg",
-        "../images/work/gakubuchi06.mp4"
-      ]
-    },
-    {
       "id": "hoho",
       "title": "hohonomi",
       "category": "work",
@@ -281,6 +261,26 @@
         "../images/work/wanchan.jpg",
         "../images/work/wanchan01.jpg",
         "../images/work/wanchan02.jpg"
+      ]
+    },
+    {
+      "id": "gakubuchi",
+      "title": "廃材額縁",
+      "category": "work",
+      "tags": [
+        "handcraft"
+      ],
+      "description": "こどもが描いた絵などを簡単に入れ替えできるポケットタイプの額縁、廃材アップサイクル制作、オーダー可能,2024年",
+      "order": 5,
+      "thumbnail": "../images/work/gakubuchi.png",
+      "images": [
+        "../images/work/gakubuchi.png",
+        "../images/work/gakubuchi01.jpg",
+        "../images/work/gakubuchi02.jpg",
+        "../images/work/gakubuchi03.jpg",
+        "../images/work/gakubuchi04.jpg",
+        "../images/work/gakubuchi05.jpg",
+        "../images/work/gakubuchi06.mp4"
       ]
     },
     {
