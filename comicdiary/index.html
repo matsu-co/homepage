@@ -4,153 +4,244 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>comicdiary - matsushima CHIHIRO.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    /* 【修正】ヘッダーの赤いロゴ(01)：前回のサイズを維持 (180px) */
-    .header-logo { width: 200px; height: auto; margin-bottom: 15px; display: block; }
-    
-    /* 一覧：2列デザイン */
-    .comic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px 0; }
-    .comic-card { text-decoration: none; color: #5c5446; display: block; }
-    .comic-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 2px; }
-    .comic-info { margin-top: 8px; font-size: 0.85rem; line-height: 1.4; }
-    .serial-no { font-weight: bold; margin-right: 4px; color: #a08a6e; }
+    /* スライダー */
+    .slider-outer { position: relative; width: 100%; overflow: hidden; margin-bottom: 20px; }
+    .slider-track { display: flex; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    .slider-item { flex: 0 0 100%; display: flex; align-items: center; justify-content: center; }
+    .slider-item img { max-width: 100%; max-height: 65vh; object-fit: contain; border-radius: 0; }
+    .slider-nav { display: flex; justify-content: center; gap: 15px; margin-top: 10px; align-items: center; }
+    .nav-btn { background: #eee; border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; color: #555; font-family: inherit; }
+    .dots { display: flex; gap: 8px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; border: none; padding: 0; cursor: pointer; }
+    .dot.active { background: #a08a6e; }
 
-    /* 【修正】タグのスタイル：リンクとしても使えるようにtext-decoration等を調整 */
-    .tag-label { 
-      background: #f0ede9; color: #888; padding: 2px 10px; border-radius: 15px; 
+    /* タグ */
+    .tag-label {
+      background: #f0ede9; color: #888; padding: 2px 10px; border-radius: 15px;
       font-size: 0.75rem; margin-right: 5px; display: inline-block;
-      text-decoration: none; /* リンクの線を消す */
-      cursor: pointer; /* マウスオーバーで指マークに */
-      transition: background 0.2s; /* ホバー時のアニメーション */
+      cursor: pointer; transition: background 0.2s; border: 1px solid transparent;
     }
-    .tag-label:hover { background: #e0ddd5; color: #5c5446; } /* ホバー時の色 */
+    .tag-label:hover { background: #e0ddd5; color: #5c5446; }
+    .tag-label.active { border-color: #a08a6e; color: #a08a6e; background: #faf7f3; }
 
-    /* タグフィルター（上部） */
-    .tag-filter-container { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 20px; border-bottom: 1px solid #f0ede9; margin-bottom: 10px; }
-    .filter-btn { border: 1px solid #e0ddd5; background: white; padding: 4px 12px; border-radius: 15px; cursor: pointer; font-size: 0.8rem; color: #888; white-space: nowrap; }
-    .filter-btn.active { border-color: #a08a6e; color: #a08a6e; }
+    /* タグフィルターバー */
+    .tag-filter-container {
+      display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 20px;
+      margin-bottom: 24px; scrollbar-width: none;
+    }
+    .tag-filter-container::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      border: 1px solid #e0ddd5; background: white; padding: 4px 14px;
+      border-radius: 15px; cursor: pointer; font-size: 0.8rem; color: #888;
+      white-space: nowrap; font-family: inherit; transition: all 0.2s;
+    }
+    .filter-btn:hover { border-color: #c0b09e; color: #5c5446; }
+    .filter-btn.active { border-color: #a08a6e; color: #a08a6e; background: #faf7f3; }
 
-    /* 詳細：シリアル・タイトル → 画像 → 本文 → タグ */
-    .detail-header { margin-bottom: 30px; text-align: center; }
-    .detail-title { font-size: 1.3rem; font-family: 'Shippori Mincho', serif; color: #5c5446; margin: 0; }
-    .detail-serial { display: block; font-size: 1rem; color: #a08a6e; font-weight: bold; margin-bottom: 8px; }
-    .article-images { display: flex; flex-direction: column; gap: 20px; margin: 30px 0; }
-    .article-images img { width: 100%; height: auto; border-radius: 2px; }
-    .article-body { line-height: 2; color: #444; white-space: pre-wrap; padding: 0 10px; font-size: 1rem; }
-    
-    /* 【修正】フッター：手書き名(02)を少し大きく調整 (130px -> 180px) */
-    .handwritten-footer { width: 180px; height: auto; margin: 80px auto 40px; display: block; }
-    
-    /* 【修正】薄い罫線(border-top)を消去、茶色罫線のみに */
-    .post-nav { display: flex; justify-content: space-between; padding: 40px 0; margin-top: 40px; }
-    .nav-arrow { text-decoration: none; color: #a08a6e; font-size: 0.95rem; font-weight: bold; }
+    /* カードタグ */
+    .card-tags { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+
+    /* モーダルタグ */
+    .modal-tags-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+
+    /* 一覧にもどるボタン */
+    .modal-back-btn {
+      display: block; margin: 32px auto 8px; background: none;
+      border: 1px solid #a08a6e; border-radius: 24px; padding: 10px 32px;
+      font-family: 'Shippori Mincho', serif; font-size: 0.9rem; color: #5a5040;
+      cursor: pointer; letter-spacing: 0.1em; transition: background 0.3s, color 0.3s;
+    }
+    .modal-back-btn:hover { background: #a08a6e; color: #f5f0e8; }
   </style>
 </head>
 <body>
-  <div class="page-wrapper" style="max-width: 800px; margin: 0 auto; padding: 20px;">
-   <header class="page-header">
-  <h1>comicdiary</h1>
-</header>
-<a href="./" class="back-link" id="backLink" style="text-decoration: none; color: #b0a898; font-size: 1rem; display: none; margin-bottom: 20px;">← 一覧にもどる</a>
+  <div class="paper-bg">
+    <img src="../paper.png" alt="" class="paper-texture">
+  </div>
 
+  <div class="page-wrapper" style="max-width: 960px; position: relative; z-index: 1;">
+    <header class="page-header">
+      <h1>comicdiary</h1>
+      <a href="../index.html" class="back-link">← もどる</a>
+    </header>
     <main>
       <div id="filterArea" class="tag-filter-container"></div>
-      <div id="comicGrid" class="comic-grid"></div>
-      
-      <div id="comicDetail" style="display:none;">
-        <article class="article-container">
-          <div class="detail-header">
-            <span id="detailSerial" class="detail-serial"></span>
-            <h2 id="detailTitle" class="detail-title"></h2>
-          </div>
-          <div id="detailImages" class="article-images"></div>
-          
-          <div id="detailText" class="article-body"></div>
-          
-          <div id="detailTags" style="margin-top: 30px; padding: 0 10px; display: flex;"></div>
-          
-          <nav class="post-nav">
-            <a id="prevPost" class="nav-arrow" href="#">← 前の投稿</a>
-            <a id="nextPost" class="nav-arrow" href="#">次の投稿 →</a>
-          </nav>
-        </article>
-      </div>
+      <div id="comic-list" class="work-grid"></div>
     </main>
-
     <footer class="page-footer"></footer>
   </div>
 
+  <!-- モーダル -->
+  <div id="modal" class="modal" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button onclick="closeModal()" class="close-btn" style="padding:12px; margin:-12px;">&times;</button>
+      <div class="slider-outer">
+        <div id="modal-track" class="slider-track"></div>
+      </div>
+      <div id="slider-controls" class="slider-nav">
+        <button id="prev-btn" class="nav-btn" onclick="moveSlider(-1)">←</button>
+        <div id="modal-dots" class="dots"></div>
+        <button id="next-btn" class="nav-btn" onclick="moveSlider(1)">→</button>
+      </div>
+      <div class="modal-info">
+        <p id="modal-serial" style="font-size:0.85rem; color:#a08a6e; margin-top:20px; margin-bottom:4px;"></p>
+        <h2 id="modal-title" style="font-size:1.2rem; color:#4a4235; margin-bottom:12px;"></h2>
+        <p id="modal-description" style="white-space:pre-wrap; font-size:0.95rem; color:#4a4235; line-height:1.9;"></p>
+        <div id="modal-tags" class="modal-tags-row"></div>
+        <button class="modal-back-btn" onclick="closeModal()">← 一覧にもどる</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    (async () => {
-      const params = new URLSearchParams(window.location.search);
-      const pageId = params.get('id');
-      const currentTag = params.get('tag');
-      
-      const response = await fetch('../comic-data.json');
-      const data = await response.json();
-      const entries = data.entries || [];
+    let currentIdx = 0;
+    let imageCount = 0;
+    let allEntries = [];
+    let activeTag = null;
 
-      const allTags = [...new Set(entries.flatMap(e => e.tags || []))].filter(Boolean);
+    async function loadComics() {
+      try {
+        const res = await fetch('../comic-data.json');
+        const data = await res.json();
+        allEntries = data.entries || [];
+        buildFilterBar();
+        renderCards();
+      } catch (err) {
+        console.error('読み込みエラー:', err);
+      }
+    }
+
+    function buildFilterBar() {
+      const allTags = [...new Set(allEntries.flatMap(e => e.tags || []))].filter(Boolean);
       const filterArea = document.getElementById('filterArea');
-      if (allTags.length > 0) {
-        filterArea.innerHTML = `<button class="filter-btn ${!currentTag?'active':''}" onclick="location.href='./'">すべて</button>` + 
-          allTags.map(tag => `<button class="filter-btn ${currentTag===tag?'active':''}" onclick="location.href='?tag=${tag}'">${tag}</button>`).join('');
-      } else {
-        filterArea.style.display = 'none';
-      }
+      if (allTags.length === 0) { filterArea.style.display = 'none'; return; }
+      filterArea.innerHTML =
+        `<button class="filter-btn active" onclick="setTag(null, this)">すべて</button>` +
+        allTags.map(tag =>
+          `<button class="filter-btn" onclick="setTag('${tag}', this)">${tag}</button>`
+        ).join('');
+    }
 
-      if (pageId) {
-        document.getElementById('comicGrid').style.display = 'none';
-        document.getElementById('filterArea').style.display = 'none';
-        document.getElementById('comicDetail').style.display = 'block';
-        document.getElementById('backLink').style.display = 'inline';
-        
-        const idx = entries.findIndex(e => e.id === pageId);
-        const entry = entries[idx];
-        
-        if (entry) {
-          document.getElementById('detailSerial').innerText = entry.serial;
-          document.getElementById('detailTitle').innerText = entry.title;
-          document.getElementById('detailImages').innerHTML = entry.images.map(src => `<img src="${src}" loading="lazy">`).join('');
-          document.getElementById('detailText').innerText = entry.description;
-          
-          // 【修正】タグを表示（テキストの下・クリック可能に）
-          if (entry.tags && entry.tags.length > 0) {
-            // 単なるspanではなく、リンク(<a>)に変更し、一覧と同じフィルタが効くようにしました
-            document.getElementById('detailTags').innerHTML = entry.tags.map(t => `<a href="./?tag=${encodeURIComponent(t)}" class="tag-label">${t}</a>`).join('');
-          } else {
-            document.getElementById('detailTags').innerHTML = '';
-          }
+    function setTag(tag, btn) {
+      activeTag = tag;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderCards();
+    }
 
-          const prev = entries[idx + 1];
-          const next = entries[idx - 1];
-          const prevBtn = document.getElementById('prevPost');
-          const nextBtn = document.getElementById('nextPost');
-          if (prev) { prevBtn.href = `?id=${prev.id}`; } else { prevBtn.style.visibility = 'hidden'; }
-          if (next) { nextBtn.href = `?id=${next.id}`; } else { nextBtn.style.visibility = 'hidden'; }
-        }
-      } else {
-        const filtered = currentTag ? entries.filter(e => e.tags.includes(currentTag)) : entries;
-        const grid = document.getElementById('comicGrid');
-        filtered.forEach(entry => {
-          const card = document.createElement('a');
-          card.href = `?id=${entry.id}`;
-          card.className = 'comic-card';
-          card.innerHTML = `
-            <img src="${entry.thumbnail}" loading="lazy">
-            <div class="comic-info">
-              <span class="serial-no">${entry.serial}</span>
-              <span class="comic-title">${entry.title}</span>
-            </div>
-          `;
-          grid.appendChild(card);
-        });
-      }
-    })();
- </script>
+    function renderCards() {
+      const filtered = activeTag
+        ? allEntries.filter(e => (e.tags || []).includes(activeTag))
+        : allEntries;
+      const list = document.getElementById('comic-list');
+      list.innerHTML = '';
+      filtered.forEach(e => {
+        const div = document.createElement('div');
+        div.className = 'work-card';
+        div.onclick = () => openModal(e);
+        const tagsHtml = (e.tags && e.tags.length)
+          ? `<div class="card-tags">${e.tags.map(t =>
+              `<span class="tag-label${t === activeTag ? ' active' : ''}"
+                     onclick="event.stopPropagation(); setTagFromCard('${t}')">${t}</span>`
+            ).join('')}</div>`
+          : '';
+        div.innerHTML = `
+          <div class="work-card-thumb">
+            ${e.thumbnail ? `<img src="${e.thumbnail}" loading="lazy">` : ''}
+          </div>
+          <div class="work-card-body">
+            <p style="font-size:0.8rem; color:#a08a6e; margin-bottom:4px;">${e.serial || ''}</p>
+            <p style="font-size:0.95rem; color:#4a4235;">${e.title || ''}</p>
+            ${tagsHtml}
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function setTagFromCard(tag) {
+      activeTag = (activeTag === tag) ? null : tag;
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.toggle('active', activeTag === null ? b.textContent === 'すべて' : b.textContent === tag);
+      });
+      renderCards();
+    }
+
+    function openModal(e) {
+      const track = document.getElementById('modal-track');
+      const dots = document.getElementById('modal-dots');
+      currentIdx = 0;
+      const images = e.images && e.images.length > 0 ? e.images : (e.thumbnail ? [e.thumbnail] : []);
+      imageCount = images.length;
+
+      track.innerHTML = images.map(url =>
+        `<div class="slider-item"><img src="${url}" loading="lazy"></div>`
+      ).join('');
+      dots.innerHTML = images.map((_, i) =>
+        `<button class="dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></button>`
+      ).join('');
+
+      document.getElementById('modal-serial').innerText = e.serial || '';
+      document.getElementById('modal-title').innerText = e.title || '';
+      document.getElementById('modal-description').innerText = e.description || '';
+
+      const tagsEl = document.getElementById('modal-tags');
+      tagsEl.innerHTML = (e.tags || []).map(t =>
+        `<span class="tag-label${t === activeTag ? ' active' : ''}"
+               onclick="filterFromModal('${t}')">${t}</span>`
+      ).join('');
+
+      document.getElementById('slider-controls').style.display = imageCount > 1 ? 'flex' : 'none';
+      updateSlider();
+      document.getElementById('modal').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function filterFromModal(tag) {
+      closeModal();
+      activeTag = (activeTag === tag) ? null : tag;
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.toggle('active', activeTag === null ? b.textContent === 'すべて' : b.textContent === tag);
+      });
+      renderCards();
+    }
+
+    // ループするスライダー（最後→最初、最初→最後）
+    function moveSlider(step) {
+      currentIdx = (currentIdx + step + imageCount) % imageCount;
+      updateSlider();
+    }
+
+    function goToSlide(i) {
+      currentIdx = i;
+      updateSlider();
+    }
+
+    function updateSlider() {
+      document.getElementById('modal-track').style.transform = `translateX(-${currentIdx * 100}%)`;
+      document.querySelectorAll('.dot').forEach((dot, i) => dot.classList.toggle('active', i === currentIdx));
+    }
+
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', ev => {
+      if (document.getElementById('modal').style.display !== 'block') return;
+      if (ev.key === 'Escape') closeModal();
+      if (ev.key === 'ArrowLeft') moveSlider(-1);
+      if (ev.key === 'ArrowRight') moveSlider(1);
+    });
+
+    loadComics();
+  </script>
 
   <script src="../js/layout.js"></script>
-
 </body>
 </html>
