@@ -67,8 +67,14 @@
       ],
       "description": "税理士法人の採用特設サイト。動線設計の提案からブランディング、Website/チラシ/名刺制作.,2025年",
       "order": 17,
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/macrecruit01.jpg",
+      "images": [
+        "../images/work/macrecruit01.jpg",
+        "../images/work/macrecruit02.jpg",
+        "../images/work/macrecruit03.jpg",
+        "../images/work/macrecruit04.jpg",
+        "../images/work/macrecruit05.jpg"
+      ]
     },
     {
       "id": "bonmikuji",
