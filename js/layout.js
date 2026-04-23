@@ -109,23 +109,24 @@ document.head.appendChild(fs);
 
       /* スマホ：固定ヘッダーバー */
       @media (max-width: 768px) {
-        .page-header {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          z-index: 80;
-          background: rgba(255, 255, 255, 0.97);
-          backdrop-filter: blur(4px);
-          margin-bottom: 0 !important;
-          padding: 8px 16px;
-          padding-right: 72px;
-          border-bottom: 1px solid rgba(212, 203, 191, 0.4);
-        }
-        .header-logo { width: 120px !important; }
-        .page-header h1, .page-header h1 img { display: none; }
-        .page-header .back-link { display: none; }
-        .page-wrapper { padding-top: 72px !important; }
+  .page-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 80;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(4px);
+    margin-bottom: 0 !important;
+    padding: 8px 16px;
+    padding-right: 72px;
+    border-bottom: 1px solid rgba(212, 203, 191, 0.4);
+  }
+  .header-logo { width: 120px !important; }
+  .page-header h1, .page-header h1 img { display: none; }
+  .page-header .back-link { display: none; }
+  .page-wrapper { padding-top: 56px !important; }
+  .page-header + * { margin-top: 16px !important; }
         .global-menu-btn {
           top: 10px;
           right: 12px;
