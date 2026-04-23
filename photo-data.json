@@ -7,6 +7,14 @@
       "year": "2026",
       "season": "春",
       "label": "2026｜春"
+    },
+    {
+      "id": "phototop",
+      "src": "../images/photo/phototop.png",
+      "date": "phototop.png",
+      "year": "",
+      "season": "",
+      "label": ""
     }
   ]
 }
