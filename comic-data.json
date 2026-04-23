@@ -8,8 +8,11 @@
         "こども日々記録",
         "ときくんの会社"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2025-12-02-01.jpg",
+        "../images/comicdiary/2025-12-02-02.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2025-12-02-01.jpg",
       "description": "しーしーの苗字は、結局わからなかったです。"
     },
     {
