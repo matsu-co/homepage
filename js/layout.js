@@ -126,7 +126,6 @@ document.head.appendChild(fs);
   .page-header h1, .page-header h1 img { display: none; }
   .page-header .back-link { display: none; }
   .page-wrapper { padding-top: 56px !important; }
-  .page-header + * { margin-top: 16px !important; }
         .global-menu-btn {
           top: 10px;
           right: 12px;
