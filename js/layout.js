@@ -118,14 +118,14 @@ document.head.appendChild(fs);
     background: rgba(255, 255, 255, 0.97);
     backdrop-filter: blur(4px);
     margin-bottom: 0 !important;
-    padding: 8px 16px;
+    padding: 6px 16px;
     padding-right: 72px;
     border-bottom: 1px solid rgba(212, 203, 191, 0.4);
   }
-  .header-logo { width: 120px !important; }
+  .header-logo { height: 30px !important; width: auto !important; }
   .page-header h1, .page-header h1 img { display: none; }
   .page-header .back-link { display: none; }
-  .page-wrapper { padding-top: 56px !important; }
+  .page-wrapper { padding-top: 54px !important; }
         .global-menu-btn {
           top: 10px;
           right: 12px;
