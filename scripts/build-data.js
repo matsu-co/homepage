@@ -53,36 +53,31 @@ function fetchLocalWork() {
 
 // --- 【Local】Photo ---
 function fetchLocalPhoto() {
-  const mdDir = './content/photo';
   const imgDir = './images/photo';
-  if (!fs.existsSync(mdDir)) return [];
-  const mdFiles = fs.readdirSync(mdDir).filter(f => f.endsWith('.md'));
-  let imgFiles = [];
-  if (fs.existsSync(imgDir)) imgFiles = fs.readdirSync(imgDir);
+  if (!fs.existsSync(imgDir)) return [];
 
-  (file => {
-    const content = fs.readFileSync(path.join(mdDir, file), 'utf8');
-    const parts = content.split('---');
-    const header = parts[1] || '';
-    const title = header.match(/title\s*[:：]\s*(.*)/)?.[1]?.trim() || '';
-    const description = header.match(/description\s*[:：]\s*(.*)/)?.[1]?.trim() || '';
-    const prefix = file.replace('.md', '');
+  const imgFiles = fs.readdirSync(imgDir)
+    .filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f))
+    .sort(); // ファイル名昇順＝古い順
 
-    const images = imgFiles
-      .filter(f => f.startsWith(prefix + '-') || (f.startsWith(prefix + '.') && /\.(jpg|jpeg|png|gif|webp|mp4)$/i.test(f)))
-      .sort((a, b) => {
-        const na = parseInt(a.match(/-(\d+)\.\w+$/)?.[1] || 0);
-        const nb = parseInt(b.match(/-(\d+)\.\w+$/)?.[1] || 0);
-        return na - nb;
-      })
-      .map(f => `../images/photo/${f}`);
+  return imgFiles.map(file => {
+    const m = file.match(/^(\d{4})-(\d{2})/);
+    const year = m ? m[1] : '';
+    const month = m ? parseInt(m[2]) : 0;
+
+    let season = '';
+    if (month >= 3 && month <= 5) season = '春';
+    else if (month >= 6 && month <= 8) season = '夏';
+    else if (month >= 9 && month <= 11) season = '秋';
+    else if (month === 12 || (month >= 1 && month <= 2)) season = '冬';
+
+    const label = year && season ? `${year}｜${season}` : '';
 
     return {
-      id: prefix,
-      title,
-      description,
-      thumbnail: images[0] || '',
-      images,
+      id: file.replace(/\.[^.]+$/, ''),
+      src: `../images/photo/${file}`,
+      date: m ? `${m[1]}-${m[2]}` : file,
+      year, season, label,
     };
   });
 }
@@ -209,7 +204,7 @@ async function main() {
   fs.writeFileSync('work-data.json', JSON.stringify({ entries: works }, null, 2));
 
   const photos = fetchLocalPhoto();
-  fs.writeFileSync('photo-data.json', JSON.stringify({ entries: photos }, null, 2));
+  fs.writeFileSync('photo-data.json', JSON.stringify({ photos: photos }, null, 2));
 
   const diaryEntries = fetchLocalDiary();
   fs.writeFileSync('diary-data.json', JSON.stringify({ entries: diaryEntries }, null, 2));
