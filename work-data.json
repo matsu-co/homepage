@@ -533,8 +533,12 @@
       ],
       "description": "友人たちに向けて、自由に発刊していた新聞。出産記録は臨場感満載で、いっしょにお産した気持ちになれる。2018年〜",
       "order": 0.9,
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/minpou01.jpg",
+      "images": [
+        "../images/work/minpou01.jpg",
+        "../images/work/minpou02.jpg",
+        "../images/work/minpou03.jpg"
+      ]
     }
   ]
 }
