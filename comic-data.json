@@ -7,8 +7,19 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2023-10-12-01.jpg",
+        "../images/comicdiary/2023-10-12-02.jpg",
+        "../images/comicdiary/2023-10-12-03.jpg",
+        "../images/comicdiary/2023-10-12-04.jpg",
+        "../images/comicdiary/2023-10-12-05.jpg",
+        "../images/comicdiary/2023-10-12-06.jpg",
+        "../images/comicdiary/2023-10-12-07.jpg",
+        "../images/comicdiary/2023-10-12-08.jpg",
+        "../images/comicdiary/2023-10-12-09.jpg",
+        "../images/comicdiary/2023-10-12-10.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2023-10-12-01.jpg",
       "description": "「ロボットさんは目に見える世界のことはだいたい知ってるけど、ときくんのやりたいことは見えない。君の中にある世界は、君にしか見えないんだよ。」"
     },
     {
@@ -18,8 +29,15 @@
       "tags": [
         "ワンシーン漫画"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2023-10-03-01.jpg",
+        "../images/comicdiary/2023-10-03-02.jpg",
+        "../images/comicdiary/2023-10-03-03.jpg",
+        "../images/comicdiary/2023-10-03-04.jpg",
+        "../images/comicdiary/2023-10-03-05.jpg",
+        "../images/comicdiary/2023-10-03-06.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2023-10-03-01.jpg",
       "description": "ぜんぜん危険物の持ち込みじゃないんだけど、すごい危険を感じた。"
     },
     {
