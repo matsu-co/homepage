@@ -17,36 +17,82 @@
       margin-bottom: 32px;
       cursor: zoom-in;
     }
-    .season-filter {
+/* 左サイドバー＋メインの横並びレイアウト */
+.photo-body {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-bottom: 32px;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+/* 左：フィルター縦並び */
+.season-filter {
+  width: 72px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding-top: 4px;
+}
+.year-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+.year-label {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 0.75rem;
+  color: #7a7060;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+  margin-top: 2px;
+}
+.year-divider {
+  width: 100%;
+  border: none;
+  border-top: 1px solid #d4cbbf;
+  margin: 10px 0 8px;
 }
 .season-btn {
   font-family: 'Shippori Mincho', serif;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   border: none;
   background: none;
   color: #b0a090;
   cursor: pointer;
   padding: 2px 0;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   transition: color 0.2s;
+  text-align: left;
 }
 .season-btn:hover { color: #5a5040; }
-.season-btn.active {
-  color: #4a4235;
-  border-bottom: 1px solid #4a4235;
+.season-btn.active { color: #4a4235; border-bottom: 1px solid #c0b090; }
+
+/* 右：グリッド（中央寄せ） */
+.photo-grid-wrap {
+  flex: 1;
+  display: flex;
+  justify-content: center;
 }
-    .photo-grid {
+.photo-grid {
+  width: 100%;
+  max-width: 480px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 420px; 
 }
 .photo-item { overflow: hidden; cursor: zoom-in; }
-.photo-item img { width: 100%; height: auto; object-fit: cover; display: block; transition: opacity 0.3s; }
+.photo-item img { width: 100%; height: auto; object-fit: cover; display: block; transition: opacity 0.3s; border-radius: 0; }
+.photo-item:hover img { opacity: 0.88; }
+
+/* モバイル：縦積みに */
+@media (max-width: 600px) {
+  .photo-body { flex-direction: column; gap: 20px; }
+  .season-filter { width: 100%; flex-direction: row; flex-wrap: wrap; gap: 8px; }
+  .year-group { flex-direction: row; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .year-divider { display: none; }
+}
 .photo-item:hover img { opacity: 0.85; }
     .lightbox {
       position: fixed;
@@ -92,8 +138,12 @@
     </header>
 
     <img id="heroImg" class="photo-hero" src="../images/phototop.png" alt="">
-    <div class="season-filter" id="seasonFilter"></div>
+    <div class="photo-body">
+  <aside class="season-filter" id="seasonFilter"></aside>
+  <div class="photo-grid-wrap">
     <div class="photo-grid" id="photoGrid"></div>
+  </div>
+</div>
 
     <footer class="page-footer"></footer>
   </div>
@@ -119,13 +169,32 @@
     }
 
     function buildFilter() {
-      const labels = [...new Set(allPhotos.map(p => p.label))].filter(Boolean);
-      const filter = document.getElementById('seasonFilter');
-      if (labels.length === 0) { filter.style.display = 'none'; return; }
-      filter.innerHTML =
-        `<button class="season-btn active" onclick="setFilter(null, this)">すべて</button>` +
-        labels.map(l => `<button class="season-btn" onclick="setFilter('${l}', this)">${l}</button>`).join('');
-    }
+  const labels = [...new Set(allPhotos.map(p => p.label))].filter(Boolean);
+  const filter = document.getElementById('seasonFilter');
+  if (labels.length === 0) { filter.style.display = 'none'; return; }
+
+  // 年ごとにグループ化
+  const byYear = {};
+  const yearOrder = [];
+  labels.forEach(l => {
+    const year = l.split('｜')[0];
+    if (!byYear[year]) { byYear[year] = []; yearOrder.push(year); }
+    byYear[year].push(l);
+  });
+
+  let html = `<button class="season-btn active" onclick="setFilter(null, this)">すべて</button>`;
+  yearOrder.forEach(year => {
+    html += `<hr class="year-divider">`;
+    html += `<div class="year-group"><div class="year-label">${year}</div>`;
+    byYear[year].forEach(l => {
+      const season = l.split('｜')[1];
+      html += `<button class="season-btn" onclick="setFilter('${l}', this)">${season}</button>`;
+    });
+    html += `</div>`;
+  });
+
+  filter.innerHTML = html;
+}
 
     function setFilter(label, btn) {
       document.querySelectorAll('.season-btn').forEach(b => b.classList.remove('active'));
