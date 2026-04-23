@@ -52,67 +52,80 @@ fs.src = pathPrefix + 'js/font-settings.js';
 document.head.appendChild(fs);
 
 // ---- サブページ共通メニュー（star01.png） ----
-  if (!isTop) {
-    // スターボタンのスタイル
+  // Diary詳細（?id= がある場合）は除外
+  const isDiaryDetail = window.location.pathname.includes('/diary/') &&
+                        !!new URLSearchParams(window.location.search).get('id');
+
+  if (!isTop && !isDiaryDetail) {
     const menuStyle = document.createElement('style');
     menuStyle.textContent = `
       .global-menu-btn {
         position: fixed;
-        top: 20px;
+        top: 24px;
         right: 24px;
-        z-index: 200;
+        z-index: 50;
         background: none;
         border: none;
         cursor: pointer;
         padding: 0;
-        width: 48px;
-        opacity: 0.85;
-        transition: opacity 0.2s, transform 0.3s ease;
+        width: 88px;
+        opacity: 0.9;
+        transition: filter 0.3s ease, transform 0.3s ease;
       }
-      .global-menu-btn:hover { opacity: 1; transform: rotate(20deg); }
+      .global-menu-btn:hover {
+        animation: katakata-star 0.3s steps(3) infinite;
+      }
       .global-menu-btn img { width: 100%; display: block; }
+      .menu-nav-img {
+        height: 36px;
+        width: auto;
+        display: block;
+        margin: 0 auto;
+        opacity: 0.85;
+        transition: opacity 0.3s ease;
+      }
+      .menu-nav a:hover .menu-nav-img { opacity: 1; }
     `;
     document.head.appendChild(menuStyle);
 
-    // スターボタン
     const menuBtn = document.createElement('button');
     menuBtn.className = 'global-menu-btn';
     menuBtn.setAttribute('aria-label', 'メニューを開く');
     menuBtn.innerHTML = `<img src="${pathPrefix}star01.png" alt="メニュー">`;
     document.body.appendChild(menuBtn);
 
-    // メニューオーバーレイ
     const menuOverlay = document.createElement('div');
     menuOverlay.className = 'menu-overlay';
     menuOverlay.innerHTML = `
       <div class="menu-inner">
         <button class="menu-close" id="globalMenuClose">&times;</button>
         <nav class="menu-nav">
-          <a href="${pathPrefix}work/">work</a>
-          <a href="${pathPrefix}about/">about</a>
-          <a href="${pathPrefix}comicdiary/">comic diary</a>
-          <a href="${pathPrefix}diary/">diary</a>
-          <a href="${pathPrefix}archive/">archive</a>
-          <a href="mailto:chihiro.matsushima.work@gmail.com">contact</a>
+          <a href="${pathPrefix}work/"><img class="menu-nav-img" src="${pathPrefix}work.png" alt="work"></a>
+          <a href="${pathPrefix}about/"><img class="menu-nav-img" src="${pathPrefix}about.png" alt="about"></a>
+          <a href="${pathPrefix}comicdiary/"><img class="menu-nav-img" src="${pathPrefix}comic.png" alt="comic diary"></a>
+          <a href="${pathPrefix}diary/"><img class="menu-nav-img" src="${pathPrefix}diary.png" alt="diary"></a>
+          <a href="${pathPrefix}photo/"><img class="menu-nav-img" src="${pathPrefix}photo.png" alt="photo"></a>
+          <a href="mailto:chihiro.matsushima.work@gmail.com"><img class="menu-nav-img" src="${pathPrefix}contact.png" alt="contact"></a>
         </nav>
       </div>
     `;
     document.body.appendChild(menuOverlay);
 
-    // 開閉
     menuBtn.onclick = () => {
       menuOverlay.classList.add('open');
+      menuBtn.style.visibility = 'hidden';
       document.body.style.overflow = 'hidden';
     };
     const closeGlobalMenu = () => {
       menuOverlay.classList.remove('open');
+      menuBtn.style.visibility = 'visible';
       document.body.style.overflow = '';
     };
     document.getElementById('globalMenuClose').onclick = closeGlobalMenu;
     menuOverlay.onclick = (e) => { if (e.target === menuOverlay) closeGlobalMenu(); };
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeGlobalMenu(); });
   }
-
+    
 });
 
 
