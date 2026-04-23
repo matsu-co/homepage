@@ -18,40 +18,35 @@
       cursor: zoom-in;
     }
     .season-filter {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 28px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .season-filter::-webkit-scrollbar { display: none; }
-    .season-btn {
-      font-family: 'Shippori Mincho', serif;
-      font-size: 0.8rem;
-      border: 1px solid #d4cbbf;
-      border-radius: 0px;
-      padding: 5px 16px;
-      background: none;
-      color: #a08a6e;
-      cursor: pointer;
-      white-space: nowrap;
-      letter-spacing: 0.06em;
-      transition: all 0.2s;
-    }
-    .season-btn:hover { background: #f0ede9; }
-    .season-btn.active { background: #5a5040; color: #f5f0e8; border-color: #5a5040; }
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.season-btn {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 0.85rem;
+  border: none;
+  background: none;
+  color: #b0a090;
+  cursor: pointer;
+  padding: 2px 0;
+  letter-spacing: 0.08em;
+  transition: color 0.2s;
+}
+.season-btn:hover { color: #5a5040; }
+.season-btn.active {
+  color: #4a4235;
+  border-bottom: 1px solid #4a4235;
+}
     .photo-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 4px;
-    }
-    @media (max-width: 600px) {
-      .photo-grid { grid-template-columns: repeat(2, 1fr); gap: 3px; }
-    }
-    .photo-item { aspect-ratio: 1; overflow: hidden; cursor: zoom-in; }
-    .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.3s; }
-    .photo-item:hover img { opacity: 0.85; }
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.photo-item { overflow: hidden; cursor: zoom-in; }
+.photo-item img { width: 100%; height: auto; object-fit: cover; display: block; transition: opacity 0.3s; }
+.photo-item:hover img { opacity: 0.85; }
     .lightbox {
       position: fixed;
       inset: 0;
