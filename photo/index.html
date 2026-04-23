@@ -11,7 +11,7 @@
   <style>
     .photo-hero {
       width: 100%;
-      max-height: 70vh;
+      max-height: 50vh;
       object-fit: cover;
       display: block;
       margin-bottom: 32px;
@@ -95,7 +95,7 @@
       <a href="../" class="back-link">← もどる</a>
     </header>
 
-    <img id="heroImg" class="photo-hero" src="" alt="" style="display:none;">
+    <img id="heroImg" class="photo-hero" src="../images/phototop.png" alt="">
     <div class="season-filter" id="seasonFilter"></div>
     <div class="photo-grid" id="photoGrid"></div>
 
@@ -117,12 +117,6 @@
         allPhotos = data.photos || [];
         buildFilter();
         renderGrid(allPhotos);
-        if (allPhotos.length > 0) {
-          const hero = document.getElementById('heroImg');
-          hero.src = allPhotos[allPhotos.length - 1].src;
-          hero.style.display = 'block';
-          hero.onclick = () => openLightbox(allPhotos[allPhotos.length - 1].src);
-        }
       } catch (err) {
         console.error('読み込みエラー:', err);
       }
