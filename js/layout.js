@@ -52,13 +52,13 @@ fs.src = pathPrefix + 'js/font-settings.js';
 document.head.appendChild(fs);
 
 // ---- サブページ共通メニュー（star01.png） ----
-  // Diary詳細（?id= がある場合）は除外
   const isDiaryDetail = window.location.pathname.includes('/diary/') &&
                         !!new URLSearchParams(window.location.search).get('id');
 
   if (!isTop && !isDiaryDetail) {
     const menuStyle = document.createElement('style');
     menuStyle.textContent = `
+      /* 星ボタン（PC） */
       .global-menu-btn {
         position: fixed;
         top: 24px;
@@ -70,35 +70,89 @@ document.head.appendChild(fs);
         padding: 0;
         width: 88px;
         opacity: 0.9;
-        transition: filter 0.3s ease, transform 0.3s ease;
+        transition: filter 0.3s ease;
       }
-      .global-menu-btn:hover {
-        animation: katakata-star 0.3s steps(3) infinite;
-      }
+      .global-menu-btn:hover { animation: katakata-star 0.3s steps(3) infinite; }
       .global-menu-btn img { width: 100%; display: block; }
+
+      /* 閉じる星ボタン */
+      #globalMenuClose {
+        position: fixed;
+        top: 20px;
+        right: 24px;
+        background: none;
+        border: none;
+        padding: 0;
+        width: 88px;
+        cursor: pointer;
+        z-index: 200;
+      }
+      #globalMenuClose img {
+        width: 100%;
+        display: block;
+        opacity: 0.9;
+        transition: filter 0.3s ease;
+      }
+      #globalMenuClose:hover img { animation: katakata-star 0.3s steps(3) infinite; }
+
+      /* メニュー画像センター揃え */
+      .menu-nav { align-items: center !important; }
       .menu-nav-img {
         height: 36px;
         width: auto;
         display: block;
-        margin: 0 auto;
         opacity: 0.85;
         transition: opacity 0.3s ease;
       }
       .menu-nav a:hover .menu-nav-img { opacity: 1; }
+
+      /* スマホ：固定ヘッダーバー */
+      @media (max-width: 768px) {
+        .page-header {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 80;
+          background: rgba(245, 240, 232, 0.95);
+          backdrop-filter: blur(4px);
+          margin-bottom: 0 !important;
+          padding: 8px 16px;
+          padding-right: 72px;
+          border-bottom: 1px solid rgba(212, 203, 191, 0.4);
+        }
+        .header-logo { width: 120px !important; }
+        .page-header h1, .page-header h1 img { display: none; }
+        .page-wrapper { padding-top: 72px !important; }
+        .global-menu-btn {
+          top: 10px;
+          right: 12px;
+          width: 52px;
+        }
+        #globalMenuClose {
+          top: 10px;
+          right: 12px;
+          width: 52px;
+        }
+      }
     `;
     document.head.appendChild(menuStyle);
 
+    // 星ボタン
     const menuBtn = document.createElement('button');
     menuBtn.className = 'global-menu-btn';
     menuBtn.setAttribute('aria-label', 'メニューを開く');
     menuBtn.innerHTML = `<img src="${pathPrefix}star01.png" alt="メニュー">`;
     document.body.appendChild(menuBtn);
 
+    // メニューオーバーレイ
     const menuOverlay = document.createElement('div');
     menuOverlay.className = 'menu-overlay';
     menuOverlay.innerHTML = `
       <div class="menu-inner">
-        <button class="menu-close" id="globalMenuClose">&times;</button>
+        <button id="globalMenuClose" aria-label="メニューを閉じる">
+          <img src="${pathPrefix}star01.png" alt="閉じる">
+        </button>
         <nav class="menu-nav">
           <a href="${pathPrefix}work/"><img class="menu-nav-img" src="${pathPrefix}work.png" alt="work"></a>
           <a href="${pathPrefix}about/"><img class="menu-nav-img" src="${pathPrefix}about.png" alt="about"></a>
@@ -111,6 +165,7 @@ document.head.appendChild(fs);
     `;
     document.body.appendChild(menuOverlay);
 
+    // 開閉
     menuBtn.onclick = () => {
       menuOverlay.classList.add('open');
       menuBtn.style.visibility = 'hidden';
