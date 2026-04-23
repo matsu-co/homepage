@@ -9,29 +9,79 @@
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    /* 矢印ボタンのスタイル */
-    .photo-nav-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
+    .photo-hero {
+      width: 100%;
+      max-height: 70vh;
+      object-fit: cover;
+      display: block;
+      margin-bottom: 32px;
+      cursor: zoom-in;
+    }
+    .season-filter {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .season-filter::-webkit-scrollbar { display: none; }
+    .season-btn {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 0.8rem;
+      border: 1px solid #d4cbbf;
+      border-radius: 20px;
+      padding: 5px 16px;
+      background: none;
+      color: #a08a6e;
+      cursor: pointer;
+      white-space: nowrap;
+      letter-spacing: 0.06em;
+      transition: all 0.2s;
+    }
+    .season-btn:hover { background: #f0ede9; }
+    .season-btn.active { background: #5a5040; color: #f5f0e8; border-color: #5a5040; }
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+    }
+    @media (max-width: 600px) {
+      .photo-grid { grid-template-columns: repeat(2, 1fr); gap: 3px; }
+    }
+    .photo-item { aspect-ratio: 1; overflow: hidden; cursor: zoom-in; }
+    .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.3s; }
+    .photo-item:hover img { opacity: 0.85; }
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(20, 18, 15, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+      cursor: zoom-out;
+    }
+    .lightbox.open { opacity: 1; visibility: visible; }
+    .lightbox img { max-width: 92vw; max-height: 92vh; object-fit: contain; }
+    .lightbox-close {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      font-size: 2rem;
+      color: #f0ece4;
+      cursor: pointer;
       background: none;
       border: none;
-      color: white;
-      font-size: 3rem;
-      cursor: pointer;
-      padding: 20px;
-      z-index: 1001;
+      line-height: 1;
       opacity: 0.7;
-      transition: opacity 0.3s;
+      transition: opacity 0.2s;
+      padding: 8px;
     }
-    .photo-nav-btn:hover { opacity: 1; }
-    .photo-nav-btn.prev { left: 10px; }
-    .photo-nav-btn.next { right: 10px; }
-    
-    /* スマホでは矢印を少し小さく */
-    @media (max-width: 600px) {
-      .photo-nav-btn { font-size: 2rem; padding: 10px; }
-    }
+    .lightbox-close:hover { opacity: 1; }
   </style>
 </head>
 <body>
@@ -39,111 +89,87 @@
     <img src="../paper.png" alt="" class="paper-texture">
   </div>
 
-  <div class="page-wrapper" style="max-width: 1000px;">
+  <div class="page-wrapper" style="max-width: 960px; position: relative; z-index: 1;">
     <header class="page-header">
       <h1>photo</h1>
       <a href="../" class="back-link">← もどる</a>
     </header>
 
-    <div class="photo-grid" id="photoGrid">
-      <div class="loading" id="photoLoading" style="grid-column: 1/-1;">読み込み中</div>
-    </div>
+    <img id="heroImg" class="photo-hero" src="" alt="" style="display:none;">
+    <div class="season-filter" id="seasonFilter"></div>
+    <div class="photo-grid" id="photoGrid"></div>
 
-    <div class="photo-lightbox" id="photoLightbox">
-      <button class="photo-lightbox-close" id="lightboxClose" aria-label="閉じる">&times;</button>
-      
-      <button class="photo-nav-btn prev" id="navPrev" aria-label="前へ">&#10094;</button>
-      <img src="" alt="" id="lightboxImg">
-      <button class="photo-nav-btn next" id="navNext" aria-label="次へ">&#10095;</button>
-      
-      <p class="photo-lightbox-caption" id="lightboxCaption"></p>
-    </div>
+    <footer class="page-footer"></footer>
+  </div>
 
-    <footer class="page-footer">
-      &copy; matsushima CHIHIRO.
-    </footer>
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">×</button>
+    <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()">
   </div>
 
   <script>
-    (async () => {
-      const grid = document.getElementById('photoGrid');
-      const loading = document.getElementById('photoLoading');
-      const lightbox = document.getElementById('photoLightbox');
-      const lightboxImg = document.getElementById('lightboxImg');
-      const lightboxCaption = document.getElementById('lightboxCaption');
-      const lightboxClose = document.getElementById('lightboxClose');
-      const navPrev = document.getElementById('navPrev');
-      const navNext = document.getElementById('navNext');
+    let allPhotos = [];
 
-      let currentEntries = [];
-      let currentIndex = 0;
-
-      // ライトボックスの中身を更新する関数
-      function updateLightbox(index) {
-        if (index < 0) index = currentEntries.length - 1;
-        if (index >= currentEntries.length) index = 0;
-        
-        currentIndex = index;
-        const entry = currentEntries[currentIndex];
-        const imgUrl = entry.thumbnail || (entry.images && entry.images[0]);
-        
-        lightboxImg.src = imgUrl;
-        lightboxCaption.textContent = entry.description || entry.title || '';
-      }
-
+    async function loadPhotos() {
       try {
-        const response = await fetch('../photo-data.json');
-        if (!response.ok) throw new Error('データが見つかりません');
-        const data = await response.json();
-        currentEntries = data.entries || [];
-        
-        loading.style.display = 'none';
-
-        if (currentEntries.length === 0) {
-          grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#b0a898; padding:40px;">写真がまだ登録されていないようです。</p>';
-          return;
+        const res = await fetch('../photo-data.json');
+        const data = await res.json();
+        allPhotos = data.photos || [];
+        buildFilter();
+        renderGrid(allPhotos);
+        if (allPhotos.length > 0) {
+          const hero = document.getElementById('heroImg');
+          hero.src = allPhotos[allPhotos.length - 1].src;
+          hero.style.display = 'block';
+          hero.onclick = () => openLightbox(allPhotos[allPhotos.length - 1].src);
         }
-
-        currentEntries.forEach((entry, index) => {
-          const imgUrl = entry.thumbnail || (entry.images && entry.images[0]);
-          if (!imgUrl) return;
-
-          const img = document.createElement('img');
-          img.src = imgUrl;
-          img.alt = entry.title || '';
-          img.loading = 'lazy';
-          img.onclick = () => {
-            updateLightbox(index);
-            lightbox.classList.add('open');
-            document.body.style.overflow = 'hidden';
-          };
-          grid.appendChild(img);
-        });
       } catch (err) {
         console.error('読み込みエラー:', err);
-        loading.innerText = '写真の読み込みに失敗しました。';
       }
+    }
 
-      // 前後のナビゲーションイベント
-      navPrev.onclick = (e) => { e.stopPropagation(); updateLightbox(currentIndex - 1); };
-      navNext.onclick = (e) => { e.stopPropagation(); updateLightbox(currentIndex + 1); };
+    function buildFilter() {
+      const labels = [...new Set(allPhotos.map(p => p.label))].filter(Boolean);
+      const filter = document.getElementById('seasonFilter');
+      if (labels.length === 0) { filter.style.display = 'none'; return; }
+      filter.innerHTML =
+        `<button class="season-btn active" onclick="setFilter(null, this)">すべて</button>` +
+        labels.map(l => `<button class="season-btn" onclick="setFilter('${l}', this)">${l}</button>`).join('');
+    }
 
-      // キーボード操作（左右の矢印キー）
-      document.addEventListener('keydown', (e) => {
-        if (!lightbox.classList.contains('open')) return;
-        if (e.key === 'ArrowLeft') updateLightbox(currentIndex - 1);
-        if (e.key === 'ArrowRight') updateLightbox(currentIndex + 1);
-        if (e.key === 'Escape') closeLightbox();
+    function setFilter(label, btn) {
+      document.querySelectorAll('.season-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderGrid(label ? allPhotos.filter(p => p.label === label) : allPhotos);
+    }
+
+    function renderGrid(photos) {
+      const grid = document.getElementById('photoGrid');
+      grid.innerHTML = '';
+      photos.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'photo-item';
+        div.innerHTML = `<img src="${p.src}" alt="" loading="lazy">`;
+        div.onclick = () => openLightbox(p.src);
+        grid.appendChild(div);
       });
+    }
 
-      function closeLightbox() {
-        lightbox.classList.remove('open');
-        document.body.style.overflow = '';
-      }
-      lightboxClose.onclick = closeLightbox;
-      lightbox.onclick = (e) => { if (e.target === lightbox) closeLightbox(); };
-    })();
+    function openLightbox(src) {
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+    loadPhotos();
   </script>
+
   <script src="../js/layout.js"></script>
 </body>
 </html>
