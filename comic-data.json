@@ -7,8 +7,10 @@
       "tags": [
         "こども日々記録"
       ],
-      "images": [],
-      "thumbnail": "",
+      "images": [
+        "../images/comicdiary/2024-07.jpg"
+      ],
+      "thumbnail": "../images/comicdiary/2024-07.jpg",
       "description": "夫がときくんに『慌てない慌てない、ひと休みひと休み』って言ってみてくれない？って言って、無視されてた。"
     },
     {
