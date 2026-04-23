@@ -103,6 +103,7 @@ document.head.appendChild(fs);
         display: block;
         opacity: 0.85;
         transition: opacity 0.3s ease;
+        margin-left: 24px;
       }
       .menu-nav a:hover .menu-nav-img { opacity: 1; }
 
@@ -114,7 +115,7 @@ document.head.appendChild(fs);
           left: 0;
           right: 0;
           z-index: 80;
-          background: rgba(245, 240, 232, 0.95);
+          background: rgba(255, 255, 255, 0.97);
           backdrop-filter: blur(4px);
           margin-bottom: 0 !important;
           padding: 8px 16px;
@@ -123,6 +124,7 @@ document.head.appendChild(fs);
         }
         .header-logo { width: 120px !important; }
         .page-header h1, .page-header h1 img { display: none; }
+        .page-header .back-link { display: none; }
         .page-wrapper { padding-top: 72px !important; }
         .global-menu-btn {
           top: 10px;
