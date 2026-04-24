@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
             logoLink.href = pathPrefix;
             logoLink.className = "logo-link";
             logoLink.style.border = "none";
-            logoLink.innerHTML = `<img src="${pathPrefix}matsushimachihiro01.png" class="header-logo" style="width:180px; height:auto; display:block;">`;
+            logoLink.innerHTML = `<img src="${pathPrefix}matsushimachihiro01.webp" class="header-logo" style="width:180px; height:auto; display:block;">`;
             header.prepend(logoLink);
         }
     }
@@ -159,7 +159,7 @@ document.head.appendChild(gaInline);
     const menuBtn = document.createElement('button');
     menuBtn.className = 'global-menu-btn';
     menuBtn.setAttribute('aria-label', 'メニューを開く');
-    menuBtn.innerHTML = `<img src="${pathPrefix}star01.png" alt="メニュー">`;
+    menuBtn.innerHTML = `<img src="${pathPrefix}star01.webp" alt="メニュー">`;
     document.body.appendChild(menuBtn);
 
     // メニューオーバーレイ
@@ -168,7 +168,7 @@ document.head.appendChild(gaInline);
     menuOverlay.innerHTML = `
       <div class="menu-inner">
         <button id="globalMenuClose" aria-label="メニューを閉じる">
-          <img src="${pathPrefix}star01.png" alt="閉じる">
+          <img src="${pathPrefix}star01.webp" alt="閉じる">
         </button>
         <nav class="menu-nav">
           <a href="${pathPrefix}work/"><img class="menu-nav-img" src="${pathPrefix}work.png" alt="work"></a>
