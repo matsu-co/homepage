@@ -7,7 +7,6 @@ on:
       - 'images/**'
       - '*.png'
       - '*.jpg'
-      - '*.jpeg'
       - '*.webp'
   workflow_dispatch:
 
@@ -22,14 +21,14 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install sharp
         run: npm install sharp
 
-      - name: Compress images
+      - name: Write compress script
         run: |
-          node -e "
+          cat > compress.js << 'EOF'
           const sharp = require('sharp');
           const fs = require('fs');
           const path = require('path');
@@ -82,7 +81,7 @@ jobs:
                   console.log('compressed: ' + file + ' (-' + saved + 'KB)');
                   count++;
                 } else {
-                  console.log('skip (already optimal): ' + file);
+                  console.log('skip: ' + file + ' (already optimal)');
                 }
               } catch (e) {
                 console.warn('error: ' + file + ' - ' + e.message);
@@ -90,9 +89,11 @@ jobs:
             }
             console.log('Done. ' + count + ' files compressed.');
           })();
-          "
+          EOF
+
+      - name: Run compress script
+        run: node compress.js
 
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: 'auto: compress images [skip ci]'
-          file_pattern: 'images/**/*.jpg images/**/*.jpeg images/**/*.png images/**/*.webp *.jpg *.jpeg *.png *.webp'
