@@ -122,19 +122,19 @@ document.head.appendChild(fs);
     padding-right: 72px;
     border-bottom: 1px solid rgba(212, 203, 191, 0.4);
   }
-  .header-logo { height: 38px !important; width: auto !important; }
+  .header-logo { height: 40px !important; width: auto !important; margin-bottom: -2px; }
   .page-header h1, .page-header h1 img { display: none; }
   .page-header .back-link { display: none; }
   .page-wrapper { padding-top: 72px !important; }
         .global-menu-btn {
-          top: 8px;
-          right: 12px;
-          width: 40px;
+          top: 4px;
+          right: 14px;
+          width: 55px;
         }
         #globalMenuClose {
-          top: 8px;
-          right: 12px;
-          width: 40px;
+          top: 4px;
+          right: 14px;
+          width: 55px;
         }
       }
     `;
