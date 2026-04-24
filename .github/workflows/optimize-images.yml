@@ -7,7 +7,7 @@ on:
       - 'images/**'
       - '*.png'
       - '*.jpg'
-      - '*.webp'
+      - '*.jpeg'
   workflow_dispatch:
 
 jobs:
@@ -23,77 +23,49 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install sharp
-        run: npm install sharp
+      - name: Install dependencies
+        run: npm install
 
-      - name: Write compress script
+      - name: Convert images/photo to WebP
         run: |
-          cat > compress.js << 'EOF'
+          cat > convert-webp.js << 'EOF'
           const sharp = require('sharp');
           const fs = require('fs');
           const path = require('path');
 
-          const EXTS = ['.jpg', '.jpeg', '.png', '.webp'];
+          const SUBDIRS = ['images/photo'];
           const QUALITY = 85;
 
-          function findImages(dir) {
-            let results = [];
-            if (!fs.existsSync(dir)) return results;
-            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-              const full = path.join(dir, entry.name);
-              if (entry.isDirectory()) {
-                results = results.concat(findImages(full));
-              } else if (EXTS.includes(path.extname(entry.name).toLowerCase())) {
-                results.push(full);
-              }
-            }
-            return results;
-          }
-
-          let files = findImages('images');
-          for (const entry of fs.readdirSync('.', { withFileTypes: true })) {
-            if (entry.isFile() && EXTS.includes(path.extname(entry.name).toLowerCase())) {
-              files.push(entry.name);
-            }
-          }
-
           (async () => {
-            let count = 0;
-            for (const file of files) {
-              try {
-                const original = fs.readFileSync(file);
+            let converted = 0;
+            for (const dir of SUBDIRS) {
+              if (!fs.existsSync(dir)) { console.log('skip:', dir); continue; }
+              for (const file of fs.readdirSync(dir)) {
                 const ext = path.extname(file).toLowerCase();
-                let pipeline = sharp(original);
-
-                if (ext === '.jpg' || ext === '.jpeg') {
-                  pipeline = pipeline.jpeg({ quality: QUALITY, progressive: true });
-                } else if (ext === '.png') {
-                  pipeline = pipeline.png({ quality: QUALITY, compressionLevel: 9 });
-                } else if (ext === '.webp') {
-                  pipeline = pipeline.webp({ quality: QUALITY });
+                if (!['.jpg', '.jpeg', '.png'].includes(ext)) continue;
+                const src = path.join(dir, file);
+                const dest = path.join(dir, file.replace(/\.[^.]+$/, '.webp'));
+                if (fs.existsSync(dest)) { console.log('skip (exists):', dest); continue; }
+                try {
+                  await sharp(src).webp({ quality: QUALITY }).toFile(dest);
+                  const o = fs.statSync(src).size;
+                  const n = fs.statSync(dest).size;
+                  console.log(src + ' → ' + dest + ' (' + (o/1024).toFixed(0) + 'KB → ' + (n/1024).toFixed(0) + 'KB)');
+                  fs.unlinkSync(src);
+                  converted++;
+                } catch (e) {
+                  console.warn('error:', src, e.message);
                 }
-
-                const compressed = await pipeline.toBuffer();
-
-                if (compressed.length < original.length) {
-                  fs.writeFileSync(file, compressed);
-                  const saved = ((original.length - compressed.length) / 1024).toFixed(1);
-                  console.log('compressed: ' + file + ' (-' + saved + 'KB)');
-                  count++;
-                } else {
-                  console.log('skip: ' + file + ' (already optimal)');
-                }
-              } catch (e) {
-                console.warn('error: ' + file + ' - ' + e.message);
               }
             }
-            console.log('Done. ' + count + ' files compressed.');
+            console.log('Done. converted=' + converted);
           })();
           EOF
+          node convert-webp.js
 
-      - name: Run compress script
-        run: node compress.js
+      - name: Rebuild JSON data
+        run: npm run build
 
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: 'auto: compress images [skip ci]'
+          commit_message: 'auto: convert photo images to webp [skip ci]'
