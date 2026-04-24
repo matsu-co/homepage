@@ -6,7 +6,8 @@
   <title>comicdiary - matsushima CHIHIRO.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap"></noscript>
   <link rel="stylesheet" href="../css/style.css">
   <style>
     /* スライダー */
@@ -49,6 +50,18 @@
     /* モーダルタグ */
     .modal-tags-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
 
+    /* サムネイル CLS対策 */
+    .work-card-thumb {
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      background: #f5f0e8;
+    }
+    .work-card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
     /* 一覧にもどるボタン */
     .modal-back-btn {
       display: block; margin: 32px auto 8px; background: none;
@@ -61,7 +74,7 @@
 </head>
 <body>
   <div class="paper-bg">
-    <img src="../paper.png" alt="" class="paper-texture">
+    <img src="../paper.webp" alt="" class="paper-texture">
   </div>
 
   <div class="page-wrapper" style="max-width: 960px; position: relative; z-index: 1;">
