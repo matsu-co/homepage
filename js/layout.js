@@ -63,7 +63,7 @@ gaScript.async = true;
 gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-EREVC7148E';
 document.head.appendChild(gaScript);
 const gaInline = document.createElement('script');
-gaInline.textContent = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');`;
+gaInline.textContent = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EREVC7148E');`;
 document.head.appendChild(gaInline);    
     
 // ---- サブページ共通メニュー（star01.png） ----
