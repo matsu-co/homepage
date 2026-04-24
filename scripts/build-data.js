@@ -165,8 +165,12 @@ function fetchLocalDiary() {
       .split('\n\n')
       .map(p => {
         p = p.replace(/^([\w\-]+\.(jpg|jpeg|png|gif|webp))$/gm,
-          (_, fn) => `<img src="../images/diary/${fn}" style="max-width:100%;border-radius:6px;margin:12px 0;">`
-        );
+  (_, fn) => {
+    const base = fn.replace(/\.[^.]+$/, '').toLowerCase();
+    const actual = imgFiles.find(f => f.replace(/\.[^.]+$/, '').toLowerCase() === base) || fn;
+    return `<img src="../images/diary/${actual}" style="max-width:100%;border-radius:6px;margin:12px 0;">`;
+  }
+);
         p = p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         p = p.replace(/(https?:\/\/[^\s<>"]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
         if (p.trim().startsWith('<img')) return p;
