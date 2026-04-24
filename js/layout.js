@@ -51,6 +51,21 @@ var fs = document.createElement('script');
 fs.src = pathPrefix + 'js/font-settings.js';
 document.head.appendChild(fs);
 
+// Vercel Analytics
+const va = document.createElement('script');
+va.defer = true;
+va.src = '/_vercel/insights/script.js';
+document.head.appendChild(va);
+
+// Google Analytics（GA4）
+const gaScript = document.createElement('script');
+gaScript.async = true;
+gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-EREVC7148E';
+document.head.appendChild(gaScript);
+const gaInline = document.createElement('script');
+gaInline.textContent = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');`;
+document.head.appendChild(gaInline);    
+    
 // ---- サブページ共通メニュー（star01.png） ----
   const isDiaryDetail = window.location.pathname.includes('/diary/') &&
                         !!new URLSearchParams(window.location.search).get('id');
