@@ -5,5 +5,8 @@
   "description": "matsushima CHIHIRO. portfolio website",
   "scripts": {
     "build": "node scripts/build-data.js"
+  },
+  "dependencies": {
+    "sharp": "^0.34.5"
   }
 }
