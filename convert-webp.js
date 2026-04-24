@@ -2,7 +2,7 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-const SUBDIRS = ['images/photo'];
+const SUBDIRS = ['images/photo', 'images/comicdiary', 'images/work', 'images/diary'];
 const QUALITY = 85;
 
 (async () => {
