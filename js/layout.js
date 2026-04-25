@@ -176,7 +176,7 @@ document.head.appendChild(gaInline);
           <a href="${pathPrefix}comicdiary/"><img class="menu-nav-img" src="${pathPrefix}comic.png" alt="comic diary"></a>
           <a href="${pathPrefix}diary/"><img class="menu-nav-img" src="${pathPrefix}diary.png" alt="diary"></a>
           <a href="${pathPrefix}photo/"><img class="menu-nav-img" src="${pathPrefix}photo.png" alt="photo"></a>
-          <a href="mailto:chihiro.matsushima.work@gmail.com"><img class="menu-nav-img" src="${pathPrefix}contact.png" alt="contact"></a>
+          <a href="${pathPrefix}contact/"><img class="menu-nav-img" src="${pathPrefix}contact.png" alt="contact"></a>
         </nav>
       </div>
     `;
