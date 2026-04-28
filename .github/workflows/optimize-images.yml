@@ -66,9 +66,11 @@ jobs:
       - name: Rebuild JSON data
         run: npm run build
 
-      - name: Pull latest changes
-        run: git pull --rebase origin main  
-
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: 'auto: convert photo images to webp [skip ci]'
+   - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet && echo "変更なし" || git commit -m "auto: convert images to webp [skip ci]"
+          git pull --rebase origin main
+          git push
