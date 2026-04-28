@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Convert images/photo to WebP
+      - name: Convert images to WebP
         run: |
           cat > convert-webp.js << 'EOF'
           const sharp = require('sharp');
@@ -39,18 +39,18 @@ jobs:
           (async () => {
             let converted = 0;
             for (const dir of SUBDIRS) {
-              if (!fs.existsSync(dir)) { console.log('skip:', dir); continue; }
+              if (!fs.existsSync(dir)) continue;
               for (const file of fs.readdirSync(dir)) {
                 const ext = path.extname(file).toLowerCase();
                 if (!['.jpg', '.jpeg', '.png'].includes(ext)) continue;
                 const src = path.join(dir, file);
                 const dest = path.join(dir, file.replace(/\.[^.]+$/, '.webp'));
-                if (fs.existsSync(dest)) { console.log('skip (exists):', dest); continue; }
+                if (fs.existsSync(dest)) { console.log('skip:', dest); continue; }
                 try {
                   await sharp(src).webp({ quality: QUALITY }).toFile(dest);
                   const o = fs.statSync(src).size;
                   const n = fs.statSync(dest).size;
-                  console.log(src + ' → ' + dest + ' (' + (o/1024).toFixed(0) + 'KB → ' + (n/1024).toFixed(0) + 'KB)');
+                  console.log(src + ' -> ' + dest + ' (' + (o/1024).toFixed(0) + 'KB -> ' + (n/1024).toFixed(0) + 'KB)');
                   fs.unlinkSync(src);
                   converted++;
                 } catch (e) {
@@ -66,11 +66,11 @@ jobs:
       - name: Rebuild JSON data
         run: npm run build
 
-   - name: Commit and push
+      - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git diff --staged --quiet && echo "変更なし" || git commit -m "auto: convert images to webp [skip ci]"
+          git diff --staged --quiet && echo "no changes" || git commit -m "auto: convert images to webp [skip ci]"
           git pull --rebase origin main
           git push
