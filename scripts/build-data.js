@@ -58,7 +58,7 @@ function fetchLocalPhoto() {
 
   const imgFiles = fs.readdirSync(imgDir)
     .filter(f => /\.(jpg|jpeg|png|gif|webp|mp4)$/i.test(f))
-    .sort(); // ファイル名昇順＝古い順
+    .sort().reverse(); // ファイル名降順＝新しい順
 
   return imgFiles.map(file => {
     const m = file.match(/^(\d{4})-(\d{2})/);
