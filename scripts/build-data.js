@@ -136,7 +136,12 @@ function fetchLocalDiary() {
   const contentDir = './content/diary';
   const imageDir = './images/diary';
   if (!fs.existsSync(contentDir)) return [];
-  const files = fs.readdirSync(contentDir).filter(f => f.endsWith('.md')).sort().reverse();
+  const files = fs.readdirSync(contentDir)
+  .filter(f => f.endsWith('.md'))
+  .sort((a, b) => {
+    const toDate = s => { const p = s.replace('.md','').split('-'); return new Date(+p[0], +p[1]-1, +p[2]); };
+    return toDate(b) - toDate(a);
+  });
   const imgFiles = fs.existsSync(imageDir) ? fs.readdirSync(imageDir) : [];
 
   return files.map(file => {
