@@ -217,18 +217,45 @@ async function gh(path,opt={}){
     }
   });
 }
-async function putFile(path,base64,message,sha){
-  for(let attempt=0;attempt<3;attempt++){
-    const res=await gh(`contents/${path}`,{
-      method:'PUT',
-      body:JSON.stringify({message,content:base64,branch:BRANCH,...(sha?{sha}:{})})
-    });
-    if(res.ok) return res.json();
-    if(res.status===409){ await new Promise(r=>setTimeout(r,1500)); continue; }
+async function ghJson(path,opt={}){
+  const res=await gh(path,opt);
+  if(!res.ok){
     const t=await res.text();
-    throw new Error(`${path}: HTTP ${res.status} ${t.slice(0,200)}`);
+    const e=new Error(`${path.split('?')[0]}: HTTP ${res.status} ${t.slice(0,150)}`);
+    e.status=res.status;
+    throw e;
   }
-  throw new Error(`${path}: 競合が解消できませんでした。少し待って再度公開してください。`);
+  return res.json();
+}
+// 複数ファイルを1コミットにまとめて main に積む（Git Data API）
+// files: [{path, content, encoding:'base64'|'utf-8'}]
+async function commitFiles(files,message){
+  // blobは内容のみで決まるため、再試行時もそのまま使い回せる
+  const treeItems=[];
+  for(const f of files){
+    const blob=await ghJson('git/blobs',{method:'POST',
+      body:JSON.stringify({content:f.content,encoding:f.encoding})});
+    treeItems.push({path:f.path,mode:'100644',type:'blob',sha:blob.sha});
+  }
+  for(let attempt=0;attempt<4;attempt++){
+    const ref=await ghJson(`git/ref/heads/${BRANCH}`);
+    const headSha=ref.object.sha;
+    const headCommit=await ghJson(`git/commits/${headSha}`);
+    const tree=await ghJson('git/trees',{method:'POST',
+      body:JSON.stringify({base_tree:headCommit.tree.sha,tree:treeItems})});
+    const commit=await ghJson('git/commits',{method:'POST',
+      body:JSON.stringify({message,tree:tree.sha,parents:[headSha]})});
+    try{
+      await ghJson(`git/refs/heads/${BRANCH}`,{method:'PATCH',
+        body:JSON.stringify({sha:commit.sha})});
+      return commit;
+    }catch(e){
+      // 他のコミット（Actionsなど）が先に入った場合はやり直し
+      if(e.status===422||e.status===409){await new Promise(r=>setTimeout(r,2000));continue;}
+      throw e;
+    }
+  }
+  throw new Error('競合が解消できませんでした。少し待って再度公開してください。');
 }
 async function fetchImgList(force){
   if(imgListCache&&!force) return imgListCache;
@@ -475,6 +502,7 @@ function note(msg){$('loadNote').textContent=msg||'';}
 function noteWithButton(msg,btnLabel,fn){
   const el=$('loadNote');
   el.textContent=msg;
+  if(!btnLabel)return;
   const b=document.createElement('button');
   b.textContent=btnLabel;
   b.addEventListener('click',fn);
@@ -495,8 +523,7 @@ async function checkPublished(){
     currentDraftId=null; // 読み込んだ内容は編集し始めたら新しい下書きになる
     const raw=decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
     await importMd(raw,prefix);
-    noteWithButton(`${prefix}.md を読み込みました（編集して公開すると更新されます）`,'',()=>{});
-    $('loadNote').querySelector('button').remove();
+    note(`${prefix}.md を読み込みました（編集して公開すると更新されます）`);
   });
 }
 async function importMd(raw,prefix){
@@ -561,10 +588,6 @@ $('publishBtn').addEventListener('click',async()=>{
   btn.disabled=true;logEl.innerHTML='';
   try{
     const prefix=toPrefix($('dateIn').value);
-    // 最新のsha取得（既存記事なら更新になる）
-    let mdSha=null;
-    const shaRes=await gh(`contents/${MD_DIR}/${prefix}.md?ref=${BRANCH}`);
-    if(shaRes.ok)mdSha=(await shaRes.json()).sha;
     // 連番決定：リポジトリ内の既存 + 画面内で名前確定済みのもの
     log('既存画像を確認中…');
     const imgFiles=await fetchImgList(true);
@@ -576,7 +599,7 @@ $('publishBtn').addEventListener('click',async()=>{
         const m=b.dataset.filename.match(re);if(m)maxN=Math.max(maxN,+m[1]);
       }
     }
-    // 新規写真に名前を割り当ててアップロード
+    // 新規写真に名前を割り当て
     const newPhotos=[...blocksEl.children].filter(b=>b.dataset.type==='photo'&&!b.dataset.existing&&b._base64);
     for(const b of newPhotos){
       maxN++;
@@ -584,20 +607,20 @@ $('publishBtn').addEventListener('click',async()=>{
       b.dataset.filename=name;
       b.querySelector('.img-name').textContent=name;
     }
-    for(const b of newPhotos){
-      const name=b.dataset.filename;
-      log(`アップロード: ${name}`);
-      await putFile(`${IMG_DIR}/${name}`,b._base64,`diary: add ${name}`);
-      b.dataset.existing='1';b._base64=null;
-    }
     for(const b of blocksEl.children){
       if(b.dataset.type==='photo'&&!b.dataset.filename)throw new Error('名前未設定の写真があります');
     }
-    // md
+    // 写真＋mdを「1つのコミット」にまとめて送る（Actionsの競合防止）
     const md=buildMd(prefix);
-    const b64=btoa(unescape(encodeURIComponent(md)));
-    log(`保存: ${prefix}.md`);
-    await putFile(`${MD_DIR}/${prefix}.md`,b64,`diary: ${prefix}`,mdSha);
+    const files=newPhotos.map(b=>({
+      path:`${IMG_DIR}/${b.dataset.filename}`,
+      content:b._base64,
+      encoding:'base64'
+    }));
+    files.push({path:`${MD_DIR}/${prefix}.md`,content:md,encoding:'utf-8'});
+    log(`コミット中… （写真${newPhotos.length}枚 + ${prefix}.md）`);
+    await commitFiles(files,`diary: ${prefix}`);
+    for(const b of newPhotos){b.dataset.existing='1';b._base64=null;}
     if(currentDraftId){deleteDraft(currentDraftId);}
     log('✓ 公開しました。数分でWebP変換とサイト反映が完了します。','ok');
   }catch(err){
