@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>日記を書く - matsushima CHIHIRO.</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Shippori Mincho',serif;
+  background:#faf8f4;color:#3a3a3a;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  -webkit-font-smoothing:antialiased;
+}
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(250,248,244,.95);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;border-bottom:1px solid #e5e0d5;
+}
+header h1{font-size:15px;font-weight:600;letter-spacing:.12em}
+header .hbtns{display:flex;align-items:center;gap:6px}
+header .hbtn{
+  background:none;border:1px solid #ddd6c8;border-radius:8px;
+  font-size:12.5px;cursor:pointer;color:#8a8064;font-family:inherit;
+  padding:6px 10px;letter-spacing:.05em;
+}
+header .gear{background:none;border:none;font-size:20px;cursor:pointer;color:#888;font-family:inherit;padding:0 2px}
+main{max-width:560px;margin:0 auto;padding:18px 16px 120px}
+
+/* --- メタ情報 --- */
+.meta{display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
+.meta-row{display:flex;gap:10px}
+.meta input{
+  font-family:inherit;font-size:16px;color:#3a3a3a;
+  background:#fff;border:1px solid #ddd6c8;border-radius:8px;
+  padding:10px 12px;width:100%;
+}
+.meta input:focus{outline:none;border-color:#b3a888}
+#dateIn{flex:1.2}
+#weatherIn{flex:1}
+.load-note{font-size:12px;color:#a09880;min-height:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.load-note button{
+  font-family:inherit;font-size:11.5px;padding:4px 10px;border:1px solid #ddd6c8;
+  border-radius:6px;background:#fff;color:#8a8064;cursor:pointer;
+}
+
+/* --- ブロック --- */
+#blocks{display:flex;flex-direction:column;gap:6px}
+.block{position:relative;border-radius:10px}
+.block:focus-within,.block.selected{background:#f2eee3}
+.block textarea{
+  font-family:inherit;font-size:16px;line-height:1.9;color:#3a3a3a;
+  width:100%;border:none;background:transparent;resize:none;
+  padding:10px 12px;min-height:56px;display:block;
+}
+.block textarea:focus{outline:none}
+.block textarea::placeholder{color:#c8c0ae}
+.block .img-wrap{padding:6px 12px}
+.block img{width:100%;border-radius:6px;display:block}
+.block .img-name{font-size:11px;color:#a09880;margin-top:4px;letter-spacing:.05em}
+.block .ctrl{position:absolute;top:6px;right:6px;display:none;gap:4px}
+.block:focus-within .ctrl,.block.selected .ctrl{display:flex}
+.ctrl button{
+  width:32px;height:32px;border-radius:8px;border:1px solid #ddd6c8;
+  background:#fff;color:#8a8064;font-size:14px;cursor:pointer;font-family:inherit;
+}
+.ctrl button:active{background:#eee8d8}
+
+/* --- 追加バー --- */
+.addbar{display:flex;gap:10px;margin-top:18px}
+.addbar button{
+  flex:1;padding:13px 0;font-family:inherit;font-size:14px;letter-spacing:.1em;
+  background:#fff;border:1px dashed #c9c0a8;border-radius:10px;color:#8a8064;cursor:pointer;
+}
+.addbar button:active{background:#f2eee3}
+
+/* --- 公開 --- */
+#publishBtn{
+  width:100%;margin-top:26px;padding:16px 0;
+  font-family:inherit;font-size:15px;letter-spacing:.25em;font-weight:600;
+  background:#4a4438;color:#faf8f4;border:none;border-radius:10px;cursor:pointer;
+}
+#publishBtn:disabled{opacity:.45}
+#log{margin-top:14px;font-size:12.5px;line-height:1.9;color:#8a8064;white-space:pre-wrap;word-break:break-all}
+#log .err{color:#b05a4a}
+#log .ok{color:#6a8a5a}
+
+/* --- ダイアログ共通 --- */
+dialog{
+  border:none;border-radius:14px;padding:22px;width:min(92vw,440px);
+  font-family:inherit;color:#3a3a3a;max-height:80vh;
+}
+dialog::backdrop{background:rgba(0,0,0,.35)}
+dialog h2{font-size:15px;margin-bottom:14px;letter-spacing:.1em}
+dialog p{font-size:12.5px;color:#888;line-height:1.8;margin-bottom:10px}
+dialog input{
+  width:100%;font-size:14px;padding:10px;border:1px solid #ddd6c8;border-radius:8px;
+  font-family:monospace;margin-bottom:14px;
+}
+dialog .btns{display:flex;gap:10px}
+dialog .btns button{
+  flex:1;padding:11px 0;font-family:inherit;font-size:14px;border-radius:8px;cursor:pointer;
+  border:1px solid #ddd6c8;background:#fff;color:#666;
+}
+dialog button.primary{background:#4a4438;color:#faf8f4;border:none}
+
+/* --- 下書き一覧 --- */
+#draftList{list-style:none;margin:0 0 14px;max-height:50vh;overflow-y:auto}
+#draftList li{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 4px;border-bottom:1px solid #eee8d8;
+}
+#draftList li.current{background:#f7f3e8;border-radius:8px}
+.d-main{flex:1;min-width:0;cursor:pointer}
+.d-title{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.d-sub{font-size:11px;color:#a09880;margin-top:2px}
+.d-del{
+  border:1px solid #ddd6c8;background:#fff;color:#b05a4a;border-radius:8px;
+  width:34px;height:34px;font-size:13px;cursor:pointer;font-family:inherit;flex-shrink:0;
+}
+.d-empty{font-size:13px;color:#a09880;padding:16px 0;text-align:center}
+a{color:#8a8064}
+</style>
+</head>
+<body>
+<header>
+  <h1>日記を書く</h1>
+  <div class="hbtns">
+    <button class="hbtn" id="draftsBtn">下書き</button>
+    <button class="gear" id="gearBtn" title="設定">⚙</button>
+  </div>
+</header>
+
+<main>
+  <div class="meta">
+    <div class="meta-row">
+      <input type="date" id="dateIn">
+      <input type="text" id="weatherIn" placeholder="天気（晴 など）">
+    </div>
+    <input type="text" id="titleIn" placeholder="タイトル">
+    <div class="load-note" id="loadNote"></div>
+  </div>
+
+  <div id="blocks"></div>
+
+  <div class="addbar">
+    <button id="addTextBtn">＋ 文章</button>
+    <button id="addPhotoBtn">＋ 写真</button>
+  </div>
+
+  <button id="publishBtn">公　開</button>
+  <div id="log"></div>
+</main>
+
+<input type="file" id="fileIn" accept="image/jpeg,image/png,image/webp" multiple hidden>
+
+<dialog id="settingsDlg">
+  <h2>設定</h2>
+  <p>GitHub の Fine-grained personal access token（対象リポジトリ: matsu-co/homepage、権限: Contents → Read and write）を入力してください。この端末にのみ保存されます。</p>
+  <input type="password" id="tokenIn" placeholder="github_pat_...">
+  <div class="btns">
+    <button id="dlgCancel">閉じる</button>
+    <button class="primary" id="dlgSave">保存</button>
+  </div>
+</dialog>
+
+<dialog id="draftsDlg">
+  <h2>下書き</h2>
+  <ul id="draftList"></ul>
+  <div class="btns">
+    <button id="draftsClose">閉じる</button>
+    <button class="primary" id="newDraftBtn">＋ 新しい下書き</button>
+  </div>
+</dialog>
+
+<script>
+'use strict';
+const OWNER='matsu-co', REPO='homepage', BRANCH='main';
+const IMG_DIR='images/diary', MD_DIR='content/diary';
+const MAX_EDGE=1600, JPEG_Q=0.82;
+const LS_TOKEN='diary_gh_token';
+const LS_IDX='diary_d2_idx';                 // 下書きの目次 [{id,date,title,updated,photos}]
+const draftKey=id=>'diary_d2_'+id;
+const LS_OLD_PREFIX='diary_draft_';          // 旧バージョンの下書き（移行用）
+
+const $=id=>document.getElementById(id);
+const blocksEl=$('blocks'), logEl=$('log');
+let token=localStorage.getItem(LS_TOKEN)||'';
+let imgListCache=null;
+let selectedBlock=null;
+let currentDraftId=null;
+
+/* ---------- 日付 ---------- */
+function todayISO(){
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+// '2026-07-17' -> '2026-7-17' （既存の命名規則に合わせゼロ埋めなし）
+function toPrefix(iso){const [y,m,d]=iso.split('-');return `${+y}-${+m}-${+d}`;}
+function fmtTime(ts){
+  const d=new Date(ts);
+  return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+/* ---------- GitHub API ---------- */
+async function gh(path,opt={}){
+  return fetch(`https://api.github.com/repos/${OWNER}/${REPO}/${path}`,{
+    ...opt,
+    headers:{
+      'Accept':'application/vnd.github+json',
+      ...(token?{'Authorization':'Bearer '+token}:{}),
+      ...(opt.headers||{})
+    }
+  });
+}
+async function putFile(path,base64,message,sha){
+  for(let attempt=0;attempt<3;attempt++){
+    const res=await gh(`contents/${path}`,{
+      method:'PUT',
+      body:JSON.stringify({message,content:base64,branch:BRANCH,...(sha?{sha}:{})})
+    });
+    if(res.ok) return res.json();
+    if(res.status===409){ await new Promise(r=>setTimeout(r,1500)); continue; }
+    const t=await res.text();
+    throw new Error(`${path}: HTTP ${res.status} ${t.slice(0,200)}`);
+  }
+  throw new Error(`${path}: 競合が解消できませんでした。少し待って再度公開してください。`);
+}
+async function fetchImgList(force){
+  if(imgListCache&&!force) return imgListCache;
+  const res=await gh(`contents/${IMG_DIR}?ref=${BRANCH}`);
+  if(!res.ok) throw new Error('画像一覧の取得に失敗: HTTP '+res.status);
+  imgListCache=(await res.json()).map(f=>f.name);
+  return imgListCache;
+}
+
+/* ---------- ブロック ---------- */
+function makeCtrl(block){
+  const c=document.createElement('div');
+  c.className='ctrl';
+  const mk=(label,fn,title)=>{const b=document.createElement('button');b.textContent=label;b.title=title;
+    b.addEventListener('click',e=>{e.preventDefault();fn();saveDraft();});return b;};
+  c.append(
+    mk('↑',()=>{const p=block.previousElementSibling;if(p)blocksEl.insertBefore(block,p);},'上へ'),
+    mk('↓',()=>{const n=block.nextElementSibling;if(n)blocksEl.insertBefore(n,block);},'下へ'),
+    mk('✕',()=>{block.remove();if(selectedBlock===block)selectedBlock=null;},'削除')
+  );
+  return c;
+}
+function addTextBlock(text='',after=null){
+  const div=document.createElement('div');
+  div.className='block';div.dataset.type='text';
+  const ta=document.createElement('textarea');
+  ta.placeholder='文章…（空行で段落分け）';
+  ta.value=text;
+  ta.addEventListener('input',()=>{autoGrow(ta);saveDraft();});
+  ta.addEventListener('focus',()=>selectBlock(div));
+  div.append(ta,makeCtrl(div));
+  insertBlock(div,after);
+  autoGrow(ta);
+  return div;
+}
+function addPhotoBlock({src,filename,base64,existing},after=null){
+  const div=document.createElement('div');
+  div.className='block';div.dataset.type='photo';
+  if(filename)div.dataset.filename=filename;
+  if(base64)div._base64=base64;
+  div.dataset.existing=existing?'1':'';
+  const wrap=document.createElement('div');wrap.className='img-wrap';
+  const img=document.createElement('img');img.src=src;
+  const name=document.createElement('div');name.className='img-name';
+  name.textContent=filename||'（公開時に自動リネーム）';
+  wrap.append(img,name);
+  div.append(wrap,makeCtrl(div));
+  div.tabIndex=0;
+  div.addEventListener('click',()=>selectBlock(div));
+  insertBlock(div,after);
+  return div;
+}
+function insertBlock(div,after){
+  if(after&&after.parentNode===blocksEl) blocksEl.insertBefore(div,after.nextSibling);
+  else blocksEl.appendChild(div);
+}
+function selectBlock(div){
+  blocksEl.querySelectorAll('.block.selected').forEach(b=>b.classList.remove('selected'));
+  div.classList.add('selected');
+  selectedBlock=div;
+}
+function autoGrow(ta){ta.style.height='auto';ta.style.height=(ta.scrollHeight+2)+'px';}
+function clearBlocks(){blocksEl.innerHTML='';selectedBlock=null;}
+function editorIsEmpty(){
+  if($('titleIn').value.trim())return false;
+  for(const b of blocksEl.children){
+    if(b.dataset.type==='photo')return false;
+    if(b.querySelector('textarea').value.trim())return false;
+  }
+  return true;
+}
+
+/* ---------- 写真の取り込み（縮小＋JPEG化） ---------- */
+function loadImage(url){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=url;});}
+async function processFile(file){
+  const url=URL.createObjectURL(file);
+  try{
+    const img=await loadImage(url);
+    const scale=Math.min(1,MAX_EDGE/Math.max(img.naturalWidth,img.naturalHeight));
+    const w=Math.round(img.naturalWidth*scale),h=Math.round(img.naturalHeight*scale);
+    const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+    cv.getContext('2d').drawImage(img,0,0,w,h);
+    const dataUrl=cv.toDataURL('image/jpeg',JPEG_Q);
+    return {src:dataUrl,base64:dataUrl.split(',')[1]};
+  }finally{URL.revokeObjectURL(url);}
+}
+$('fileIn').addEventListener('change',async e=>{
+  const files=[...e.target.files];
+  e.target.value='';
+  let after=selectedBlock;
+  for(const f of files){
+    try{
+      const p=await processFile(f);
+      after=addPhotoBlock({...p,existing:false},after);
+    }catch(err){log('画像の読み込みに失敗: '+f.name,'err');}
+  }
+  saveDraft();
+});
+
+/* ---------- 下書きストア ---------- */
+function loadIdx(){try{return JSON.parse(localStorage.getItem(LS_IDX))||[];}catch(e){return [];}}
+function saveIdx(idx){localStorage.setItem(LS_IDX,JSON.stringify(idx));}
+function serializeEditor(){
+  return {
+    date:$('dateIn').value,
+    title:$('titleIn').value,
+    weather:$('weatherIn').value,
+    blocks:[...blocksEl.children].map(b=>b.dataset.type==='text'
+      ?{t:'text',v:b.querySelector('textarea').value}
+      :{t:'photo',f:b.dataset.filename||'',e:b.dataset.existing,
+        src:b.dataset.existing?b.querySelector('img').src:'',b64:b._base64||''})
+  };
+}
+let saveTimer=null;
+function saveDraft(){clearTimeout(saveTimer);saveTimer=setTimeout(saveDraftNow,400);}
+function saveDraftNow(){
+  if(!currentDraftId){
+    if(editorIsEmpty())return;
+    currentDraftId=Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+  }
+  const data=serializeEditor();
+  try{localStorage.setItem(draftKey(currentDraftId),JSON.stringify(data));}
+  catch(e){ // 容量オーバー：この下書きの写真データを除いて保存
+    data.blocks=data.blocks.map(x=>x.t==='photo'?{...x,b64:''}:x);
+    try{
+      localStorage.setItem(draftKey(currentDraftId),JSON.stringify(data));
+      note('端末の保存容量が足りず、写真は下書きに含められませんでした（開き直すと写真の再選択が必要です）');
+    }catch(e2){}
+  }
+  const idx=loadIdx().filter(d=>d.id!==currentDraftId);
+  idx.unshift({
+    id:currentDraftId,
+    date:toPrefix(data.date),
+    title:data.title.trim(),
+    updated:Date.now(),
+    photos:data.blocks.filter(b=>b.t==='photo').length
+  });
+  saveIdx(idx);
+  renderDraftCount();
+}
+function deleteDraft(id){
+  localStorage.removeItem(draftKey(id));
+  saveIdx(loadIdx().filter(d=>d.id!==id));
+  if(currentDraftId===id)currentDraftId=null;
+  renderDraftCount();
+}
+function openDraft(id){
+  const raw=localStorage.getItem(draftKey(id));
+  if(!raw){deleteDraft(id);return;}
+  let d;try{d=JSON.parse(raw);}catch(e){return;}
+  clearBlocks();
+  $('dateIn').value=d.date||todayISO();
+  $('titleIn').value=d.title||'';
+  $('weatherIn').value=d.weather||'';
+  let missing=0;
+  for(const b of d.blocks||[]){
+    if(b.t==='text')addTextBlock(b.v);
+    else if(b.b64)addPhotoBlock({src:'data:image/jpeg;base64,'+b.b64,base64:b.b64,filename:b.f||null,existing:false});
+    else if(b.e&&b.src)addPhotoBlock({src:b.src,filename:b.f,existing:true});
+    else missing++;
+  }
+  if(!blocksEl.children.length)addTextBlock();
+  currentDraftId=id;
+  note(missing?`写真${missing}枚は端末に保存できていなかったため、再選択が必要です`:'');
+  checkPublished();
+}
+function newDraft(){
+  saveDraftNow();
+  currentDraftId=null;
+  clearBlocks();
+  $('dateIn').value=todayISO();
+  $('titleIn').value='';$('weatherIn').value='';
+  addTextBlock();
+  note('');
+  checkPublished();
+}
+// 旧バージョン（1日付1下書き）からの移行
+function migrateOldDrafts(){
+  const olds=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.startsWith(LS_OLD_PREFIX)&&/^\d{4}-\d{1,2}-\d{1,2}$/.test(k.slice(LS_OLD_PREFIX.length)))olds.push(k);
+  }
+  for(const k of olds){
+    try{
+      const d=JSON.parse(localStorage.getItem(k));
+      const prefix=k.slice(LS_OLD_PREFIX.length);
+      const [y,m,dd]=prefix.split('-');
+      const iso=`${y}-${String(m).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
+      const id=Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+      localStorage.setItem(draftKey(id),JSON.stringify({date:iso,title:d.title||'',weather:d.weather||'',blocks:d.blocks||[]}));
+      const idx=loadIdx();
+      idx.unshift({id,date:prefix,title:(d.title||'').trim(),updated:Date.now(),
+        photos:(d.blocks||[]).filter(b=>b.t==='photo').length});
+      saveIdx(idx);
+    }catch(e){}
+    localStorage.removeItem(k);
+  }
+}
+
+/* ---------- 下書き一覧UI ---------- */
+function renderDraftCount(){
+  const n=loadIdx().length;
+  $('draftsBtn').textContent=n?`下書き（${n}）`:'下書き';
+}
+function renderDraftList(){
+  const list=$('draftList');
+  list.innerHTML='';
+  const idx=loadIdx().sort((a,b)=>b.updated-a.updated);
+  if(!idx.length){
+    const li=document.createElement('li');
+    li.className='d-empty';li.style.border='none';
+    li.textContent='下書きはありません';
+    list.appendChild(li);
+    return;
+  }
+  for(const d of idx){
+    const li=document.createElement('li');
+    if(d.id===currentDraftId)li.classList.add('current');
+    const main=document.createElement('div');main.className='d-main';
+    const t=document.createElement('div');t.className='d-title';
+    t.textContent=(d.title||'無題')+(d.id===currentDraftId?'（編集中）':'');
+    const s=document.createElement('div');s.className='d-sub';
+    s.textContent=`${d.date}　${d.photos?`写真${d.photos}枚　`:''}更新 ${fmtTime(d.updated)}`;
+    main.append(t,s);
+    main.addEventListener('click',()=>{
+      saveDraftNow();
+      openDraft(d.id);
+      $('draftsDlg').close();
+    });
+    const del=document.createElement('button');del.className='d-del';del.textContent='✕';
+    del.addEventListener('click',()=>{
+      if(!confirm(`「${d.title||'無題'}」を削除しますか？`))return;
+      deleteDraft(d.id);
+      renderDraftList();
+    });
+    li.append(main,del);
+    list.appendChild(li);
+  }
+}
+
+/* ---------- 公開済み記事 ---------- */
+function note(msg){$('loadNote').textContent=msg||'';}
+function noteWithButton(msg,btnLabel,fn){
+  const el=$('loadNote');
+  el.textContent=msg;
+  const b=document.createElement('button');
+  b.textContent=btnLabel;
+  b.addEventListener('click',fn);
+  el.appendChild(b);
+}
+let checkSeq=0;
+async function checkPublished(){
+  const seq=++checkSeq;
+  const prefix=toPrefix($('dateIn').value);
+  const res=await gh(`contents/${MD_DIR}/${prefix}.md?ref=${BRANCH}`).catch(()=>null);
+  if(seq!==checkSeq)return; // 日付がさらに変わっていたら破棄
+  if(!res||!res.ok)return;  // 404など＝未公開
+  const data=await res.json();
+  if(seq!==checkSeq)return;
+  noteWithButton(`${prefix}.md は公開済みです。公開すると上書きされます。`,'既存の記事を読み込む',async()=>{
+    if(!editorIsEmpty()&&!confirm('いま書いている内容を置き換えて、公開済みの記事を読み込みますか？（現在の内容は下書きに残ります）'))return;
+    saveDraftNow();
+    currentDraftId=null; // 読み込んだ内容は編集し始めたら新しい下書きになる
+    const raw=decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
+    await importMd(raw,prefix);
+    noteWithButton(`${prefix}.md を読み込みました（編集して公開すると更新されます）`,'',()=>{});
+    $('loadNote').querySelector('button').remove();
+  });
+}
+async function importMd(raw,prefix){
+  clearBlocks();
+  const fmMatch=raw.match(/^---\n([\s\S]*?)\n---/);
+  const body=raw.replace(/^---\n[\s\S]*?\n---\n?/,'').trim();
+  if(fmMatch){
+    const fm={};
+    fmMatch[1].split('\n').forEach(l=>{const[k,...v]=l.split(/[:：]/);if(k)fm[k.trim()]=v.join(':').trim();});
+    $('titleIn').value=fm.title||'';
+    const dparts=(fm.date||'').split(/　\/　|\/|／/);
+    $('weatherIn').value=(dparts[1]||'').trim();
+  }
+  let imgFiles=[];
+  try{imgFiles=await fetchImgList();}catch(e){}
+  const imgLine=/^[\w\-]+\.(jpg|jpeg|png|gif|webp)$/i;
+  let buf=[];
+  const flush=()=>{if(buf.length){addTextBlock(buf.join('\n\n'));buf=[];}};
+  for(const para of body.split('\n\n')){
+    const t=para.trim();
+    if(imgLine.test(t)){
+      flush();
+      const base=t.replace(/\.[^.]+$/,'').toLowerCase();
+      const actual=imgFiles.find(f=>f.replace(/\.[^.]+$/,'').toLowerCase()===base)||t;
+      addPhotoBlock({
+        src:`https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${IMG_DIR}/${actual}`,
+        filename:t,existing:true
+      });
+    }else if(t){buf.push(t);}
+  }
+  flush();
+  if(!blocksEl.children.length)addTextBlock();
+}
+
+/* ---------- md 生成 ---------- */
+function buildMd(prefix){
+  const title=$('titleIn').value.trim()||'無題';
+  const weather=$('weatherIn').value.trim();
+  const dateLine=weather?`${prefix}　/　${weather}`:prefix;
+  const parts=[];
+  for(const b of blocksEl.children){
+    if(b.dataset.type==='text'){
+      const t=b.querySelector('textarea').value.trim();
+      if(t)parts.push(t);
+    }else{
+      parts.push(b.dataset.filename);
+    }
+  }
+  return `---\ntitle:${title}\ndate: ${dateLine}\n---\n\n${parts.join('\n\n')}\n`;
+}
+
+/* ---------- 公開 ---------- */
+function log(msg,cls){
+  const s=document.createElement('span');
+  if(cls)s.className=cls;
+  s.textContent=msg+'\n';
+  logEl.appendChild(s);
+}
+$('publishBtn').addEventListener('click',async()=>{
+  if(!token){$('settingsDlg').showModal();return;}
+  const btn=$('publishBtn');
+  btn.disabled=true;logEl.innerHTML='';
+  try{
+    const prefix=toPrefix($('dateIn').value);
+    // 最新のsha取得（既存記事なら更新になる）
+    let mdSha=null;
+    const shaRes=await gh(`contents/${MD_DIR}/${prefix}.md?ref=${BRANCH}`);
+    if(shaRes.ok)mdSha=(await shaRes.json()).sha;
+    // 連番決定：リポジトリ内の既存 + 画面内で名前確定済みのもの
+    log('既存画像を確認中…');
+    const imgFiles=await fetchImgList(true);
+    let maxN=0;
+    const re=new RegExp('^'+prefix.replace(/[-]/g,'\\-')+'-(\\d+)\\.');
+    for(const f of imgFiles){const m=f.match(re);if(m)maxN=Math.max(maxN,+m[1]);}
+    for(const b of blocksEl.children){
+      if(b.dataset.type==='photo'&&b.dataset.filename){
+        const m=b.dataset.filename.match(re);if(m)maxN=Math.max(maxN,+m[1]);
+      }
+    }
+    // 新規写真に名前を割り当ててアップロード
+    const newPhotos=[...blocksEl.children].filter(b=>b.dataset.type==='photo'&&!b.dataset.existing&&b._base64);
+    for(const b of newPhotos){
+      maxN++;
+      const name=`${prefix}-${String(maxN).padStart(2,'0')}.jpg`;
+      b.dataset.filename=name;
+      b.querySelector('.img-name').textContent=name;
+    }
+    for(const b of newPhotos){
+      const name=b.dataset.filename;
+      log(`アップロード: ${name}`);
+      await putFile(`${IMG_DIR}/${name}`,b._base64,`diary: add ${name}`);
+      b.dataset.existing='1';b._base64=null;
+    }
+    for(const b of blocksEl.children){
+      if(b.dataset.type==='photo'&&!b.dataset.filename)throw new Error('名前未設定の写真があります');
+    }
+    // md
+    const md=buildMd(prefix);
+    const b64=btoa(unescape(encodeURIComponent(md)));
+    log(`保存: ${prefix}.md`);
+    await putFile(`${MD_DIR}/${prefix}.md`,b64,`diary: ${prefix}`,mdSha);
+    if(currentDraftId){deleteDraft(currentDraftId);}
+    log('✓ 公開しました。数分でWebP変換とサイト反映が完了します。','ok');
+  }catch(err){
+    log('エラー: '+err.message,'err');
+  }finally{
+    btn.disabled=false;
+  }
+});
+
+/* ---------- UI 配線 ---------- */
+$('addTextBtn').addEventListener('click',()=>{const b=addTextBlock('',selectedBlock);b.querySelector('textarea').focus();saveDraft();});
+$('addPhotoBtn').addEventListener('click',()=>$('fileIn').click());
+$('titleIn').addEventListener('input',saveDraft);
+$('weatherIn').addEventListener('input',saveDraft);
+$('dateIn').addEventListener('change',()=>{note('');saveDraft();checkPublished();});
+$('draftsBtn').addEventListener('click',()=>{renderDraftList();$('draftsDlg').showModal();});
+$('draftsClose').addEventListener('click',()=>$('draftsDlg').close());
+$('newDraftBtn').addEventListener('click',()=>{$('draftsDlg').close();newDraft();});
+$('gearBtn').addEventListener('click',()=>{$('tokenIn').value=token;$('settingsDlg').showModal();});
+$('dlgCancel').addEventListener('click',()=>$('settingsDlg').close());
+$('dlgSave').addEventListener('click',()=>{
+  token=$('tokenIn').value.trim();
+  localStorage.setItem(LS_TOKEN,token);
+  $('settingsDlg').close();
+});
+
+/* ---------- 初期化 ---------- */
+migrateOldDrafts();
+renderDraftCount();
+$('dateIn').value=todayISO();
+const _idx=loadIdx();
+if(_idx.length){
+  openDraft(_idx.sort((a,b)=>b.updated-a.updated)[0].id); // 最後に触った下書きを開く
+}else{
+  addTextBlock();
+  checkPublished();
+}
+if(!token)$('settingsDlg').showModal();
+</script>
+</body>
+</html>
