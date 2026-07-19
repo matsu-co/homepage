@@ -141,7 +141,7 @@ a{color:#8a8064}
 </head>
 <body>
 <header>
-  <h1>日記を書く<span class="ver">v4</span></h1>
+  <h1>日記を書く<span class="ver">v5</span></h1>
   <div class="hbtns">
     <button class="hbtn" id="draftsBtn">下書き</button>
     <button class="gear" id="gearBtn" title="設定">⚙</button>
@@ -193,7 +193,7 @@ a{color:#8a8064}
 
 <script>
 'use strict';
-const VERSION='v4';
+const VERSION='v5';
 const OWNER='matsu-co', REPO='homepage', BRANCH='main';
 const IMG_DIR='images/diary', MD_DIR='content/diary';
 const MAX_EDGE=1600, JPEG_Q=0.82;
@@ -376,6 +376,44 @@ $('fileIn').addEventListener('change',async e=>{
   saveDraft();
 });
 
+/* ---------- IndexedDB（写真つき下書きの保存先。localStorageの容量制限対策） ---------- */
+let _db=null;
+function idb(){
+  if(_db)return Promise.resolve(_db);
+  return new Promise((res,rej)=>{
+    const rq=indexedDB.open('diaryDrafts',1);
+    rq.onupgradeneeded=()=>rq.result.createObjectStore('drafts');
+    rq.onsuccess=()=>{_db=rq.result;res(_db);};
+    rq.onerror=()=>rej(rq.error);
+  });
+}
+async function idbSet(id,data){
+  const db=await idb();
+  return new Promise((res,rej)=>{
+    const tx=db.transaction('drafts','readwrite');
+    tx.objectStore('drafts').put(data,id);
+    tx.oncomplete=()=>res();
+    tx.onerror=()=>rej(tx.error);
+  });
+}
+async function idbGet(id){
+  const db=await idb();
+  return new Promise((res,rej)=>{
+    const rq=db.transaction('drafts').objectStore('drafts').get(id);
+    rq.onsuccess=()=>res(rq.result||null);
+    rq.onerror=()=>rej(rq.error);
+  });
+}
+async function idbDel(id){
+  const db=await idb();
+  return new Promise((res,rej)=>{
+    const tx=db.transaction('drafts','readwrite');
+    tx.objectStore('drafts').delete(id);
+    tx.oncomplete=()=>res();
+    tx.onerror=()=>rej(tx.error);
+  });
+}
+
 /* ---------- 下書きストア（端末内） ---------- */
 function loadIdx(){try{return JSON.parse(localStorage.getItem(LS_IDX))||[];}catch(e){return [];}}
 function saveIdx(idx){localStorage.setItem(LS_IDX,JSON.stringify(idx));}
@@ -393,43 +431,49 @@ function serializeEditor(){
 }
 let saveTimer=null;
 function saveDraft(){clearTimeout(saveTimer);saveTimer=setTimeout(saveDraftNow,400);}
-function saveDraftNow(){
+function updateIdx(id,data){
+  const idx=loadIdx().filter(d=>d.id!==id);
+  idx.unshift({
+    id,
+    date:toPrefix(data.date),
+    title:(data.title||'').trim(),
+    updated:data.updated||Date.now(),
+    photos:(data.blocks||[]).filter(b=>b.t==='photo').length
+  });
+  saveIdx(idx);
+  renderDraftCount();
+}
+async function saveDraftNow(){
   clearTimeout(saveTimer);
   if(!currentDraftId){
     if(editorIsEmpty())return;
     currentDraftId=Date.now().toString(36)+Math.random().toString(36).slice(2,5);
   }
   const data=serializeEditor();
-  try{localStorage.setItem(draftKey(currentDraftId),JSON.stringify(data));}
-  catch(e){ // 容量オーバー：この下書きの写真データを除いて保存
-    data.blocks=data.blocks.map(x=>x.t==='photo'?{...x,b64:''}:x);
-    try{
-      localStorage.setItem(draftKey(currentDraftId),JSON.stringify(data));
-      note('端末の保存容量が足りず、写真は下書きに含められませんでした（開き直すと写真の再選択が必要です）');
-    }catch(e2){}
+  updateIdx(currentDraftId,data);
+  try{
+    await idbSet(currentDraftId,data); // 写真ごとIndexedDBへ（容量に余裕あり）
+  }catch(e){
+    // IndexedDBが使えない環境向けの予備（localStorage。容量に注意）
+    try{localStorage.setItem(draftKey(currentDraftId),JSON.stringify(data));}
+    catch(e2){
+      data.blocks=data.blocks.map(x=>x.t==='photo'?{...x,b64:''}:x);
+      try{
+        localStorage.setItem(draftKey(currentDraftId),JSON.stringify(data));
+        note('端末の保存容量が足りず、写真は下書きに含められませんでした');
+      }catch(e3){}
+    }
   }
-  const idx=loadIdx().filter(d=>d.id!==currentDraftId);
-  idx.unshift({
-    id:currentDraftId,
-    date:toPrefix(data.date),
-    title:data.title.trim(),
-    updated:data.updated,
-    photos:data.blocks.filter(b=>b.t==='photo').length
-  });
-  saveIdx(idx);
-  renderDraftCount();
 }
 function storeDraftLocal(id,data){
-  try{localStorage.setItem(draftKey(id),JSON.stringify(data));}catch(e){}
-  const idx=loadIdx().filter(d=>d.id!==id);
-  idx.unshift({id,date:toPrefix(data.date),title:(data.title||'').trim(),
-    updated:data.updated||Date.now(),
-    photos:(data.blocks||[]).filter(b=>b.t==='photo').length});
-  saveIdx(idx);
-  renderDraftCount();
+  updateIdx(id,data);
+  idbSet(id,data).catch(()=>{
+    try{localStorage.setItem(draftKey(id),JSON.stringify(data));}catch(e){}
+  });
 }
 function deleteDraftLocal(id){
   localStorage.removeItem(draftKey(id));
+  idbDel(id).catch(()=>{});
   saveIdx(loadIdx().filter(d=>d.id!==id));
   if(currentDraftId===id)currentDraftId=null;
   renderDraftCount();
@@ -452,10 +496,14 @@ function loadDraftIntoEditor(id,d){
   note(missing?`写真${missing}枚は保存データに含まれていなかったため、再選択が必要です`:'');
   checkPublished();
 }
-function openDraft(id){
-  const raw=localStorage.getItem(draftKey(id));
-  if(!raw){deleteDraftLocal(id);return;}
-  let d;try{d=JSON.parse(raw);}catch(e){return;}
+async function openDraft(id){
+  let d=null;
+  try{d=await idbGet(id);}catch(e){}
+  if(!d){ // 旧バージョンがlocalStorageに保存した分
+    const raw=localStorage.getItem(draftKey(id));
+    if(raw){try{d=JSON.parse(raw);}catch(e){}}
+  }
+  if(!d){deleteDraftLocal(id);return;}
   loadDraftIntoEditor(id,d);
 }
 function newDraft(){
@@ -670,7 +718,7 @@ $('publishBtn').addEventListener('click',async()=>{
     log(`コミット中… （写真${newPhotos.length}枚 + ${prefix}.md）`);
     await commitFiles(files,`diary: ${prefix}`);
     for(const b of newPhotos){b.dataset.existing='1';b._base64=null;}
-    saveDraftNow(); // 下書きは残す（一覧で「公開済み」表示になる）
+    await saveDraftNow(); // 下書きは残す（一覧で「公開済み」表示になる）
     log('✓ 公開しました。数分でWebP変換とサイト反映が完了します。','ok');
   }catch(err){
     log('エラー: '+err.message,'err');
@@ -680,9 +728,9 @@ $('publishBtn').addEventListener('click',async()=>{
 });
 
 /* ---------- 下書き保存ボタン ---------- */
-$('saveDraftBtn').addEventListener('click',()=>{
+$('saveDraftBtn').addEventListener('click',async()=>{
   logEl.innerHTML='';
-  saveDraftNow();
+  await saveDraftNow();
   if(!currentDraftId){log('保存する内容がありません','err');return;}
   log('✓ 下書きを保存しました（'+fmtTime(Date.now())+'）','ok');
 });
@@ -705,17 +753,38 @@ $('dlgSave').addEventListener('click',()=>{
 });
 
 /* ---------- 初期化 ---------- */
-migrateOldDrafts();
-renderDraftCount();
-$('dateIn').value=todayISO();
-const _idx=loadIdx();
-if(_idx.length){
-  openDraft(_idx.sort((a,b)=>(b.updated||0)-(a.updated||0))[0].id); // 最後に触った下書きを開く
-}else{
-  addTextBlock();
-  checkPublished();
+// 旧バージョンがlocalStorageに保存した下書き本体をIndexedDBへ移す
+async function migrateLsToIdb(){
+  const keys=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k&&k.startsWith('diary_d2_')&&k!==LS_IDX)keys.push(k);
+  }
+  for(const k of keys){
+    try{
+      const d=JSON.parse(localStorage.getItem(k));
+      await idbSet(k.slice('diary_d2_'.length),d);
+      localStorage.removeItem(k);
+    }catch(e){}
+  }
 }
-if(!token)$('settingsDlg').showModal();
+(async()=>{
+  if(navigator.storage&&navigator.storage.persist){
+    try{await navigator.storage.persist();}catch(e){} // ブラウザに「このデータは消さないで」と依頼
+  }
+  migrateOldDrafts();
+  try{await migrateLsToIdb();}catch(e){}
+  renderDraftCount();
+  $('dateIn').value=todayISO();
+  const _idx=loadIdx();
+  if(_idx.length){
+    await openDraft(_idx.sort((a,b)=>(b.updated||0)-(a.updated||0))[0].id); // 最後に触った下書きを開く
+  }else{
+    addTextBlock();
+    checkPublished();
+  }
+  if(!token)$('settingsDlg').showModal();
+})();
 </script>
 </body>
 </html>
