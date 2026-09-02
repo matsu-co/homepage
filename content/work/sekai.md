@@ -1,5 +1,5 @@
 ---
-title: sekai
+title: 紙芝居/せかい
 order: 7
 category:　Life work
 tags: [illust,handcraft]
