@@ -1025,3 +1025,31 @@ button {
     text-align: center;
 }
 .page-footer p, .page-footer span { display: none !important; }
+
+/* ============================
+   記事本文中のリンク
+   ============================ */
+.article-container a,
+.article-content p a {
+  color: #b5714f;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(181, 113, 79, 0.45);
+  word-break: break-word;          /* 長いURLでも横にはみ出さない */
+  overflow-wrap: anywhere;
+  transition: color 0.25s ease, text-decoration-color 0.25s ease;
+}
+
+.article-container a:hover,
+.article-content p a:hover {
+  color: #8f5236;
+  text-decoration-color: #8f5236;
+}
+
+/* 前後の記事ナビは本文リンクの装飾を引き継がない */
+.article-nav a,
+.article-nav a:hover {
+  color: #333;
+  text-decoration: none;
+}
