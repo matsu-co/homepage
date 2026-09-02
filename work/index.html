@@ -121,9 +121,22 @@
                 buildFilterBar();
                 // カードを描画
                 renderCards();
+                // URLに ?id=... があればその作品を直接ひらく
+                openFromUrl(true);
             } catch (err) {
                 console.error("読み込みエラー:", err);
             }
+        }
+
+        // ?id=sekai / ?id=sekai&slide=2 で作品を直接ひらく
+        function openFromUrl(isInitial) {
+            const p = new URLSearchParams(location.search);
+            const id = p.get('id');
+            if (!id) { closeModal(true); return; }
+            const entry = allEntries.find(e => e.id === id);
+            if (!entry) { closeModal(true); return; }
+            const slide = Math.max(1, parseInt(p.get('slide') || '1', 10)) - 1;
+            openModal(entry, true, slide);
         }
 
         function buildFilterBar() {
@@ -209,17 +222,19 @@
             renderCards();
         }
 
-        function openModal(e) {
+        function openModal(e, fromUrl, startSlide) {
             const track = document.getElementById('modal-track');
             const dots = document.getElementById('modal-dots');
-            currentIdx = 0;
 
             const images = e.images && e.images.length > 0 ? e.images : (e.thumbnail ? [e.thumbnail] : []);
             imageCount = images.length;
+            currentIdx = Math.min(Math.max(0, startSlide || 0), Math.max(0, imageCount - 1));
 
+            // 動画のposter（表紙）には、動画以外の最初の画像を使う
+            const poster = images.find(u => !/\.mp4$/i.test(u)) || '';
             track.innerHTML = images.map(url => {
     if (/\.mp4$/i.test(url)) {
-        return `<div class="slider-item"><video src="${url}" controls playsinline style="max-width:100%;max-height:65vh;object-fit:contain;"></video></div>`;
+        return `<div class="slider-item"><video src="${url}" controls playsinline preload="metadata"${poster ? ` poster="${poster}"` : ''} style="max-width:100%;max-height:65vh;object-fit:contain;"></video></div>`;
     }
     return `<div class="slider-item"><img src="${url}" loading="lazy"></div>`;
 }).join('');
@@ -245,6 +260,12 @@
             updateSlider();
             document.getElementById('modal').style.display = 'block';
             document.body.style.overflow = 'hidden';
+
+            // URLを作品ごとのアドレスに変える（この状態でコピーすれば直リンクになる）
+            if (!fromUrl) {
+                const q = '?id=' + encodeURIComponent(e.id) + (currentIdx > 0 ? '&slide=' + (currentIdx + 1) : '');
+                history.pushState({ id: e.id }, '', q);
+            }
         }
 
         // モーダル内タグクリック → モーダルを閉じてフィルター適用
@@ -276,12 +297,27 @@
             document.getElementById('prev-btn').disabled = (currentIdx === 0);
             document.getElementById('next-btn').disabled = (currentIdx === imageCount - 1);
             document.querySelectorAll('.dot').forEach((dot, i) => dot.classList.toggle('active', i === currentIdx));
+            // 表示されていないスライドの動画は止める（音が鳴りっぱなしになるのを防ぐ）
+            document.querySelectorAll('#modal-track .slider-item').forEach((item, i) => {
+                const v = item.querySelector('video');
+                if (v && i !== currentIdx) v.pause();
+            });
         }
 
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
+        function closeModal(fromUrl) {
+            const modal = document.getElementById('modal');
+            const wasOpen = modal.style.display === 'block';
+            document.querySelectorAll('#modal-track video').forEach(v => v.pause());
+            modal.style.display = 'none';
             document.body.style.overflow = '';
+            // URLを一覧のアドレスに戻す
+            if (!fromUrl && wasOpen && location.search) {
+                history.pushState({}, '', location.pathname);
+            }
         }
+
+        // ブラウザの「戻る」で一覧に戻れるようにする
+        window.addEventListener('popstate', () => openFromUrl(false));
 
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
