@@ -288,6 +288,22 @@
       ]
     },
     {
+      "id": "natsuyasumin",
+      "title": "ナツヤスミン",
+      "category": "Life work",
+      "tags": [
+        "Application"
+      ],
+      "description": "宿題タスクゲーム「ナツヤスミン」春休みのハルヤスミンの改良版。他のご家庭でも遊んでいただけるようにしました。：https://matsu-co.github.io/natsuyasumin/ ,2026年",
+      "order": 6,
+      "thumbnail": "../images/work/natsuyasumin01.webp",
+      "images": [
+        "../images/work/natsuyasumin01.webp",
+        "../images/work/natsuyasumin02.MP4",
+        "../images/work/natsuyasumin03.webp"
+      ]
+    },
+    {
       "id": "tatoo",
       "title": "あそび心を刻む　タトゥーシール",
       "category": "work",
