@@ -237,8 +237,11 @@
       ],
       "description": "見た目じゃないよ、とくべつな出会い。小学校の読み聞かせ用,2026年",
       "order": 8,
-      "thumbnail": "",
-      "images": []
+      "thumbnail": "../images/work/kudamono01.jpg",
+      "images": [
+        "../images/work/kudamono01.jpg",
+        "../images/work/kudamono02.mp4"
+      ]
     },
     {
       "id": "letter",
